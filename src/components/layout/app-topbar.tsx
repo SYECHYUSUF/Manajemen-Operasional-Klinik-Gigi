@@ -104,10 +104,11 @@ export function AppTopbar() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Settings shortcut */}
+          {/* Settings shortcut → App Settings */}
           <Link
-            href="/settings"
+            href="/pengaturan"
             className="rounded-full p-2 text-slate-500 hover:bg-slate-100 transition-colors hidden sm:flex"
+            title="Pengaturan Aplikasi"
           >
             <Settings className="h-5 w-5" />
           </Link>
@@ -140,7 +141,7 @@ export function AppTopbar() {
               <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/profile")}>
                 <User className="h-4 w-4 text-slate-400 mr-2" /> Profil Saya
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/settings")}>
+              <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/pengaturan")}>
                 <Settings className="h-4 w-4 text-slate-400 mr-2" /> Pengaturan
               </DropdownMenuItem>
               <DropdownMenuSeparator />

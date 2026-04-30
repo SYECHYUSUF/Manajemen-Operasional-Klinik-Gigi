@@ -1,6 +1,6 @@
 "use client";
 
-import { PlusCircle, Activity, TrendingUp, Grid, Clock, Filter, Download, Edit, Trash2, Upload, Percent, RefreshCw, BarChart2 } from "lucide-react";
+import { PlusCircle, Activity, TrendingUp, Grid, Clock, Filter, Download, Edit, Trash2, Upload, Percent, RefreshCw, BarChart2, Blocks, Shapes } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -43,7 +43,7 @@ export default function SettingsPage() {
         <Card className="border-slate-100 shadow-sm">
           <CardContent className="p-6">
             <div className="w-10 h-10 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center mb-4">
-              <Grid className="h-5 w-5" />
+              <Shapes className="h-5 w-5" />
             </div>
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Kategori</p>
             <p className="text-3xl font-extrabold text-slate-900 mt-1">8</p>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Users, CalendarDays, FileText,
-  Package, Receipt, BarChart3, Settings,
+  Package, Receipt, BarChart3, Database,
   Stethoscope, LogOut, HelpCircle, CalendarPlus, X, Menu,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -21,7 +21,7 @@ const NAV_ITEMS = [
   { label: "Inventaris",      href: "/inventory",       icon: Package },
   { label: "Kasir & Billing", href: "/billing",         icon: Receipt },
   { label: "Laporan",         href: "/reports",         icon: BarChart3 },
-  { label: "Pengaturan",      href: "/settings",        icon: Settings },
+  { label: "Master Data",     href: "/settings",        icon: Database },
 ];
 
 export function AppSidebar() {
