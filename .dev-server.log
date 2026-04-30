@@ -1393,3 +1393,76 @@ https://react.dev/link/hydration-mismatch
   35 |       setIsLoading(false);
   36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
 ✓ Compiled in 40ms
+ GET /settings 200 in 51ms (next.js: 28ms, application-code: 23ms)
+[browser] Uncaught Error: Base UI: MenuGroupRootContext is missing. Menu group parts must be used within <Menu.Group>.
+    at DropdownMenuLabel (../../Manajemen Klinik/klinik-gigi-app/src/components/ui/dropdown-menu.tsx:64:5)
+    at AppTopbar (../../Manajemen Klinik/klinik-gigi-app/src/components/layout/app-topbar.tsx:131:15)
+    at DashboardLayout (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/layout.tsx:8:7)
+  62 | }) {
+  63 |   return (
+> 64 |     <MenuPrimitive.GroupLabel
+     |     ^
+  65 |       data-slot="dropdown-menu-label"
+  66 |       data-inset={inset}
+  67 |       className={cn(
+ GET /settings? 200 in 83ms (next.js: 3ms, application-code: 80ms)
+[browser] Uncaught Error: Base UI: MenuGroupRootContext is missing. Menu group parts must be used within <Menu.Group>.
+    at DropdownMenuLabel (../../Manajemen Klinik/klinik-gigi-app/src/components/ui/dropdown-menu.tsx:64:5)
+    at AppTopbar (../../Manajemen Klinik/klinik-gigi-app/src/components/layout/app-topbar.tsx:131:15)
+    at DashboardLayout (src/app/(dashboard)/layout.tsx:8:7)
+  62 | }) {
+  63 |   return (
+> 64 |     <MenuPrimitive.GroupLabel
+     |     ^
+  65 |       data-slot="dropdown-menu-label"
+  66 |       data-inset={inset}
+  67 |       className={cn(
+ GET /settings? 200 in 69ms (next.js: 4ms, application-code: 66ms)
+[browser] Uncaught Error: Base UI: MenuGroupRootContext is missing. Menu group parts must be used within <Menu.Group>.
+    at DropdownMenuLabel (../../Manajemen Klinik/klinik-gigi-app/src/components/ui/dropdown-menu.tsx:64:5)
+    at AppTopbar (../../Manajemen Klinik/klinik-gigi-app/src/components/layout/app-topbar.tsx:131:15)
+    at DashboardLayout (src/app/(dashboard)/layout.tsx:8:7)
+  62 | }) {
+  63 |   return (
+> 64 |     <MenuPrimitive.GroupLabel
+     |     ^
+  65 |       data-slot="dropdown-menu-label"
+  66 |       data-inset={inset}
+  67 |       className={cn(
+ GET /reports 200 in 63ms (next.js: 10ms, application-code: 53ms)
+ GET /billing 200 in 30ms (next.js: 9ms, application-code: 21ms)
+ GET /inventory 200 in 33ms (next.js: 8ms, application-code: 26ms)
+✓ Compiled in 84ms
+✓ Compiled in 34ms
+✓ Compiled in 0ms
+ GET /inventory 200 in 204ms (next.js: 76ms, application-code: 128ms)
+ GET /inventory 200 in 141ms (next.js: 3ms, application-code: 138ms)
+ GET /inventory 200 in 111ms (next.js: 3ms, application-code: 108ms)
+ GET /inventory 200 in 90ms (next.js: 4ms, application-code: 87ms)
+ GET /inventory 200 in 62ms (next.js: 3ms, application-code: 59ms)
+ GET /inventory 200 in 50ms (next.js: 1712µs, application-code: 48ms)
+ GET /inventory 200 in 49ms (next.js: 929µs, application-code: 48ms)
+ GET /inventory 200 in 63ms (next.js: 1057µs, application-code: 62ms)
+ GET /inventory 200 in 64ms (next.js: 1953µs, application-code: 62ms)
+ GET /inventory 200 in 65ms (next.js: 1491µs, application-code: 64ms)
+ GET /inventory 200 in 64ms (next.js: 1292µs, application-code: 63ms)
+ GET /inventory 200 in 72ms (next.js: 1551µs, application-code: 70ms)
+ GET /inventory 200 in 71ms (next.js: 1101µs, application-code: 70ms)
+ GET /inventory 200 in 71ms (next.js: 1352µs, application-code: 70ms)
+ GET /inventory 200 in 69ms (next.js: 1162µs, application-code: 68ms)
+ GET /inventory 200 in 67ms (next.js: 1146µs, application-code: 66ms)
+ GET /inventory 200 in 59ms (next.js: 1348µs, application-code: 58ms)
+ GET /inventory 200 in 49ms (next.js: 1304µs, application-code: 48ms)
+ GET /inventory 200 in 73ms (next.js: 1188µs, application-code: 72ms)
+ GET /inventory 200 in 83ms (next.js: 973µs, application-code: 82ms)
+ GET /inventory 200 in 87ms (next.js: 1310µs, application-code: 86ms)
+ GET /inventory 200 in 78ms (next.js: 3ms, application-code: 75ms)
+ GET /inventory 200 in 76ms (next.js: 1534µs, application-code: 74ms)
+ GET /inventory 200 in 68ms (next.js: 1667µs, application-code: 67ms)
+ GET /inventory 200 in 80ms (next.js: 1799µs, application-code: 78ms)
+ GET /inventory 200 in 67ms (next.js: 2ms, application-code: 64ms)
+ GET /inventory 200 in 65ms (next.js: 1701µs, application-code: 63ms)
+ GET /inventory 200 in 53ms (next.js: 3ms, application-code: 50ms)
+ GET /inventory 200 in 29ms (next.js: 1336µs, application-code: 27ms)
+ GET /inventory 200 in 17ms (next.js: 1567µs, application-code: 16ms)
+✓ Compiled in 109ms

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Bell, Search, Settings, ChevronDown, Check, AlertCircle, CalendarClock, PhoneCall, Cake, ServerCog, X, LogOut, User } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
+  DropdownMenuGroup, DropdownMenuSeparator, DropdownMenuLabel, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -67,14 +67,16 @@ export function AppTopbar() {
               )}
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-80">
-              <DropdownMenuLabel className="flex items-center justify-between">
-                <span>Notifikasi</span>
-                {unreadCount > 0 && (
-                  <Badge variant="destructive" className="text-xs h-5 px-1.5">
-                    {unreadCount} baru
-                  </Badge>
-                )}
-              </DropdownMenuLabel>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="flex items-center justify-between">
+                  <span>Notifikasi</span>
+                  {unreadCount > 0 && (
+                    <Badge variant="destructive" className="text-xs h-5 px-1.5">
+                      {unreadCount} baru
+                    </Badge>
+                  )}
+                </DropdownMenuLabel>
+              </DropdownMenuGroup>
               <DropdownMenuSeparator />
               {mockNotifications.map((notif) => (
                 <DropdownMenuItem key={notif.id} className="flex items-start gap-3 py-3 cursor-pointer">
@@ -128,10 +130,12 @@ export function AppTopbar() {
               <ChevronDown className="hidden md:block h-4 w-4 text-slate-400" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-52">
+              <DropdownMenuGroup>
               <DropdownMenuLabel className="text-xs text-slate-500 font-normal">Masuk sebagai</DropdownMenuLabel>
               <DropdownMenuItem disabled className="font-bold text-[#0d5a94] text-sm">
                 drg. Sarah Amelia
               </DropdownMenuItem>
+            </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/profile")}>
                 <User className="h-4 w-4 text-slate-400 mr-2" /> Profil Saya
