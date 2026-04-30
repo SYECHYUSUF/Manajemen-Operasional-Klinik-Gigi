@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, CalendarIcon, Users, AlertTriangle, DollarSign, MoreVertical, Settings } from "lucide-react";
+import { Download, CalendarIcon, Users, AlertTriangle, DollarSign, MoreVertical, Settings, Banknote } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -84,7 +84,7 @@ export default function DashboardPage() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="p-2 bg-slate-50 rounded-lg text-[#0D5A94]">
-                <DollarSign className="h-5 w-5" />
+                <Banknote className="h-7 w-7" />
               </div>
               <span className="text-[#006b57] text-[11px] font-bold bg-[#006b57]/10 px-2 py-1 rounded">
                 On track

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Filter, Download, Plus, MoreVertical, ChevronLeft, ChevronRight, Check, Users, TrendingUp, Hourglass, CheckCircle2 } from "lucide-react";
+import { Search, Filter, Download, Plus, MoreVertical, ChevronLeft, ChevronRight, Check, Users, TrendingUp, Hourglass, CheckCircle2, BriefcaseMedical } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,7 +70,7 @@ export default function PatientsPage() {
         {[
           { label: "Total Pasien", value: "1,284", icon: <Users className="h-6 w-6" />, bg: "bg-blue-50", color: "text-[#0D5A94]" },
           { label: "Baru Bulan Ini", value: "42", icon: <TrendingUp className="h-6 w-6" />, bg: "bg-green-50", color: "text-green-600" },
-          { label: "Kasus Aktif", value: "156", icon: <Hourglass className="h-6 w-6" />, bg: "bg-orange-50", color: "text-orange-600" },
+          { label: "Kasus Aktif", value: "156", icon: <BriefcaseMedical className="h-6 w-6" />, bg: "bg-orange-50", color: "text-orange-600" },
           { label: "Selesai", value: "89%", icon: <CheckCircle2 className="h-6 w-6" />, bg: "bg-purple-50", color: "text-purple-600" },
         ].map((stat, i) => (
           <Card key={i} className="border-slate-100 shadow-sm shadow-slate-200/50">
