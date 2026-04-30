@@ -144,9 +144,6 @@ export default function InventoryPage() {
     if (!roleLoading && !isDoctor) router.replace("/dashboard");
   }, [roleLoading, isDoctor, router]);
 
-  if (roleLoading) return <div className="flex items-center justify-center h-64 text-slate-400">Memuat...</div>;
-  if (!isDoctor) return null;
-
   const filtered = useMemo(() => {
     return MOCK_PRODUCTS.filter(p => {
       const matchCat = activeCategory === "Semua" || p.category === activeCategory;
@@ -154,6 +151,9 @@ export default function InventoryPage() {
       return matchCat && matchSearch;
     });
   }, [activeCategory, searchQuery]);
+
+  if (roleLoading) return <div className="flex items-center justify-center h-64 text-slate-400">Memuat...</div>;
+  if (!isDoctor) return null;
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);

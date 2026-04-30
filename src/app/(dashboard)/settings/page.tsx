@@ -110,15 +110,6 @@ export default function SettingsPage() {
 
   useEffect(() => { fetchData(); }, []);
 
-  if (roleLoading) return <div className="flex items-center justify-center h-64 text-slate-400">Memuat...</div>;
-  if (!isAdmin) return (
-    <div className="flex flex-col items-center justify-center h-64 gap-4 text-slate-500">
-      <ShieldAlert className="h-12 w-12 text-red-400" />
-      <p className="font-semibold">Akses ditolak. Halaman ini hanya untuk Admin.</p>
-    </div>
-  );
-
-
   const categoryNames = ["Semua Layanan", ...categories.map(c => c.name)];
 
   const filteredServices = useMemo(() => {
@@ -130,6 +121,15 @@ export default function SettingsPage() {
       return matchCategory && matchSearch;
     });
   }, [services, activeCategory, searchQuery]);
+
+  if (roleLoading) return <div className="flex items-center justify-center h-64 text-slate-400">Memuat...</div>;
+  if (!isAdmin) return (
+    <div className="flex flex-col items-center justify-center h-64 gap-4 text-slate-500">
+      <ShieldAlert className="h-12 w-12 text-red-400" />
+      <p className="font-semibold">Akses ditolak. Halaman ini hanya untuk Admin.</p>
+    </div>
+  );
+
 
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-500 max-w-7xl mx-auto">
