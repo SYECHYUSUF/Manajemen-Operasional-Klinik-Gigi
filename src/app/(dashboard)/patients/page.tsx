@@ -202,7 +202,7 @@ export default function PatientsPage() {
         <div className="relative overflow-hidden rounded-2xl bg-[#0D5A94] p-8 text-white flex flex-col justify-center min-h-[200px]">
           <div className="relative z-10">
             <h4 className="text-xl font-bold mb-2">Automated Check-ups</h4>
-            <p className="text-sm text-blue-100  mb-6 leading-relaxed">
+            <p className="text-sm text-blue-100 mb-6 leading-relaxed">
               Jadwalkan pengingat pembersihan karang gigi otomatis untuk pasien yang belum berkunjung lebih dari 6 bulan.
             </p>
             <Button className="bg-white text-[#0D5A94] hover:bg-slate-50 font-bold">Mulai Kampanye</Button>

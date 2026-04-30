@@ -199,7 +199,7 @@ export default function SettingsPage() {
       {/* ── Management Section (Asymmetric / Glassmorphism Concept) ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 bg-gradient-to-br from-[#0D5A94] to-[#004271] rounded-2xl p-8 text-white relative overflow-hidden shadow-xl">
-          <div className="relative z-10 max-w-md">
+          <div className="relative z-10 ">
             <h4 className="text-3xl font-extrabold mb-4">Pricing Analytics</h4>
             <p className="text-blue-100 text-sm mb-8 opacity-90 leading-relaxed">
               Tinjau bagaimana tarif layanan Anda dibandingkan dengan tolok ukur klinis sekitar dan optimalkan siklus pendapatan klinik Anda.

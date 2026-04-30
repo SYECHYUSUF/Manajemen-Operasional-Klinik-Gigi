@@ -1025,3 +1025,371 @@ https://react.dev/link/hydration-mismatch
  GET /patients? 200 in 61ms (next.js: 5ms, application-code: 57ms)
  GET /appointments/new 404 in 22ms (next.js: 11ms, application-code: 11ms)
  GET /appointments/new 404 in 17ms (next.js: 1180µs, application-code: 15ms)
+ GET /settings 200 in 84ms (next.js: 13ms, application-code: 71ms)
+ GET /settings 200 in 14ms (next.js: 5ms, application-code: 9ms)
+ GET /settings 200 in 19ms (next.js: 3ms, application-code: 16ms)
+ GET /settings 200 in 15ms (next.js: 5ms, application-code: 9ms)
+ GET /settings 200 in 13ms (next.js: 1938µs, application-code: 11ms)
+ GET /reports 200 in 26ms (next.js: 5ms, application-code: 21ms)
+ GET /settings 200 in 24ms (next.js: 3ms, application-code: 21ms)
+ GET /reports 200 in 24ms (next.js: 3ms, application-code: 20ms)
+ GET /billing 200 in 27ms (next.js: 5ms, application-code: 21ms)
+ GET /billing 200 in 22ms (next.js: 3ms, application-code: 19ms)
+ GET /inventory 200 in 26ms (next.js: 6ms, application-code: 21ms)
+ GET /medical-records 200 in 51ms (next.js: 25ms, application-code: 26ms)
+ GET /appointments 200 in 42ms (next.js: 22ms, application-code: 19ms)
+ GET /patients 200 in 26ms (next.js: 7ms, application-code: 19ms)
+ GET /dashboard 200 in 28ms (next.js: 8ms, application-code: 21ms)
+ GET /patients 200 in 24ms (next.js: 4ms, application-code: 20ms)
+ GET /settings 200 in 22ms (next.js: 3ms, application-code: 19ms)
+ GET /billing 200 in 25ms (next.js: 3ms, application-code: 22ms)
+ GET /settings 200 in 23ms (next.js: 3ms, application-code: 20ms)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11977:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11991:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1018:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11977:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11991:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1018:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+ GET /patients 200 in 8ms (next.js: 959µs, application-code: 7ms)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11977:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11991:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1018:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11977:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11991:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1018:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+ GET /help 404 in 22ms (next.js: 6ms, application-code: 17ms)
+ GET /help 404 in 27ms (next.js: 2ms, application-code: 25ms)
+ GET /medical-records 200 in 72ms (next.js: 8ms, application-code: 63ms)
+✓ Compiled in 106ms
+ GET /medical-records 200 in 175ms (next.js: 109ms, application-code: 66ms)
+ GET /medical-records 200 in 64ms (next.js: 3ms, application-code: 61ms)
+ GET /medical-records 200 in 58ms (next.js: 1692µs, application-code: 56ms)
+ GET /medical-records 200 in 55ms (next.js: 1286µs, application-code: 54ms)
+ GET /medical-records 200 in 53ms (next.js: 1743µs, application-code: 52ms)
+ GET /medical-records 200 in 52ms (next.js: 1766µs, application-code: 50ms)
+ GET /medical-records 200 in 50ms (next.js: 1931µs, application-code: 48ms)
+ GET /medical-records 200 in 51ms (next.js: 1365µs, application-code: 49ms)
+ GET /medical-records 200 in 49ms (next.js: 1074µs, application-code: 48ms)
+ GET /medical-records 200 in 82ms (next.js: 1674µs, application-code: 80ms)
+ GET /medical-records 200 in 89ms (next.js: 2ms, application-code: 86ms)
+ GET /medical-records 200 in 87ms (next.js: 1761µs, application-code: 86ms)
+ GET /medical-records 200 in 88ms (next.js: 1879µs, application-code: 86ms)
+ GET /medical-records 200 in 56ms (next.js: 3ms, application-code: 54ms)
+ GET /medical-records 200 in 54ms (next.js: 1775µs, application-code: 52ms)
+ GET /medical-records 200 in 55ms (next.js: 1763µs, application-code: 53ms)
+ GET /medical-records 200 in 53ms (next.js: 1187µs, application-code: 51ms)
+ GET /medical-records 200 in 55ms (next.js: 1228µs, application-code: 54ms)
+ GET /medical-records 200 in 60ms (next.js: 3ms, application-code: 57ms)
+ GET /medical-records 200 in 68ms (next.js: 1699µs, application-code: 66ms)
+ GET /medical-records 200 in 80ms (next.js: 1574µs, application-code: 78ms)
+ GET /medical-records 200 in 65ms (next.js: 3ms, application-code: 63ms)
+ GET /medical-records 200 in 48ms (next.js: 3ms, application-code: 45ms)
+ GET /medical-records 200 in 27ms (next.js: 1700µs, application-code: 25ms)
+ GET /medical-records 200 in 165ms (next.js: 73ms, application-code: 92ms)
+ GET /medical-records 200 in 64ms (next.js: 3ms, application-code: 60ms)
+ GET /medical-records 200 in 75ms (next.js: 10ms, application-code: 65ms)
+ GET /medical-records 200 in 66ms (next.js: 1403µs, application-code: 64ms)
+ GET /medical-records 200 in 64ms (next.js: 1632µs, application-code: 63ms)
+ GET /medical-records 200 in 53ms (next.js: 1801µs, application-code: 52ms)
+ GET /medical-records 200 in 50ms (next.js: 1870µs, application-code: 48ms)
+ GET /medical-records 200 in 47ms (next.js: 1325µs, application-code: 46ms)
+ GET /medical-records 200 in 46ms (next.js: 1083µs, application-code: 45ms)
+ GET /medical-records 200 in 49ms (next.js: 1537µs, application-code: 48ms)
+ GET /medical-records 200 in 49ms (next.js: 1525µs, application-code: 47ms)
+ GET /medical-records 200 in 50ms (next.js: 1381µs, application-code: 49ms)
+ GET /medical-records 200 in 49ms (next.js: 2ms, application-code: 46ms)
+ GET /medical-records 200 in 49ms (next.js: 1162µs, application-code: 47ms)
+ GET /medical-records 200 in 54ms (next.js: 936µs, application-code: 53ms)
+ GET /medical-records 200 in 56ms (next.js: 1726µs, application-code: 54ms)
+ GET /medical-records 200 in 55ms (next.js: 1144µs, application-code: 54ms)
+ GET /medical-records 200 in 53ms (next.js: 1108µs, application-code: 52ms)
+ GET /medical-records 200 in 49ms (next.js: 2ms, application-code: 47ms)
+ GET /medical-records 200 in 48ms (next.js: 1881µs, application-code: 46ms)
+ GET /medical-records 200 in 49ms (next.js: 4ms, application-code: 45ms)
+ GET /medical-records 200 in 49ms (next.js: 1501µs, application-code: 48ms)
+ GET /medical-records 200 in 51ms (next.js: 1640µs, application-code: 49ms)
+ GET /medical-records 200 in 41ms (next.js: 1478µs, application-code: 40ms)
+ GET /medical-records 200 in 29ms (next.js: 1026µs, application-code: 28ms)
+ GET /medical-records 200 in 16ms (next.js: 1067µs, application-code: 15ms)
+✓ Compiled in 1ms
+✓ Compiled in 46ms
+ GET /reports 200 in 43ms (next.js: 22ms, application-code: 21ms)
+ GET /billing 200 in 39ms (next.js: 20ms, application-code: 19ms)
+ GET /inventory 200 in 37ms (next.js: 20ms, application-code: 17ms)
+ GET /medical-records 200 in 27ms (next.js: 4ms, application-code: 23ms)
+ GET /appointments 200 in 40ms (next.js: 20ms, application-code: 19ms)
+ GET /patients 200 in 40ms (next.js: 23ms, application-code: 17ms)
+ GET /dashboard 200 in 39ms (next.js: 21ms, application-code: 18ms)
+ GET /settings 200 in 41ms (next.js: 23ms, application-code: 18ms)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11977:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11991:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1018:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11977:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11991:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1018:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+✓ Compiled in 0ms
+ GET /settings 200 in 203ms (next.js: 74ms, application-code: 129ms)
+ GET /settings 200 in 110ms (next.js: 3ms, application-code: 107ms)
+ GET /settings 200 in 72ms (next.js: 5ms, application-code: 67ms)
+ GET /settings 200 in 60ms (next.js: 1976µs, application-code: 58ms)
+ GET /settings 200 in 53ms (next.js: 3ms, application-code: 50ms)
+ GET /settings 200 in 49ms (next.js: 1984µs, application-code: 47ms)
+ GET /settings 200 in 47ms (next.js: 1299µs, application-code: 46ms)
+ GET /settings 200 in 48ms (next.js: 1558µs, application-code: 47ms)
+ GET /settings 200 in 46ms (next.js: 1473µs, application-code: 45ms)
+ GET /settings 200 in 47ms (next.js: 1584µs, application-code: 46ms)
+ GET /settings 200 in 45ms (next.js: 1069µs, application-code: 44ms)
+ GET /settings 200 in 46ms (next.js: 1450µs, application-code: 44ms)
+ GET /settings 200 in 49ms (next.js: 1630µs, application-code: 47ms)
+ GET /settings 200 in 49ms (next.js: 1233µs, application-code: 48ms)
+ GET /settings 200 in 52ms (next.js: 1740µs, application-code: 50ms)
+ GET /settings 200 in 49ms (next.js: 5ms, application-code: 44ms)
+ GET /settings 200 in 44ms (next.js: 984µs, application-code: 43ms)
+ GET /settings 200 in 44ms (next.js: 1606µs, application-code: 42ms)
+ GET /settings 200 in 43ms (next.js: 3ms, application-code: 40ms)
+ GET /settings 200 in 43ms (next.js: 1401µs, application-code: 41ms)
+ GET /settings 200 in 42ms (next.js: 1792µs, application-code: 41ms)
+ GET /settings 200 in 45ms (next.js: 1419µs, application-code: 44ms)
+ GET /settings 200 in 45ms (next.js: 1519µs, application-code: 44ms)
+ GET /settings 200 in 46ms (next.js: 1397µs, application-code: 45ms)
+ GET /settings 200 in 47ms (next.js: 2ms, application-code: 45ms)
+ GET /settings 200 in 34ms (next.js: 1409µs, application-code: 33ms)
+ GET /settings 200 in 25ms (next.js: 1409µs, application-code: 24ms)
+ GET /settings 200 in 16ms (next.js: 3ms, application-code: 12ms)
+ GET /settings 200 in 147ms (next.js: 4ms, application-code: 143ms)
+✓ Compiled in 24ms
+ GET /dashboard 200 in 41ms (next.js: 18ms, application-code: 23ms)
+✓ Compiled in 206ms
+✓ Compiled in 0ms
+ GET /dashboard 200 in 304ms (next.js: 52ms, application-code: 252ms)
+ GET /dashboard 200 in 68ms (next.js: 2ms, application-code: 66ms)
+ GET /dashboard 200 in 48ms (next.js: 1633µs, application-code: 46ms)
+ GET /dashboard 200 in 33ms (next.js: 1792µs, application-code: 31ms)
+ GET /dashboard 200 in 257ms (next.js: 28ms, application-code: 228ms)
+[browser] Uncaught Error: Base UI: MenuGroupRootContext is missing. Menu group parts must be used within <Menu.Group>.
+    at DropdownMenuLabel (../../Manajemen Klinik/klinik-gigi-app/src/components/ui/dropdown-menu.tsx:64:5)
+    at AppTopbar (../../Manajemen Klinik/klinik-gigi-app/src/components/layout/app-topbar.tsx:70:15)
+    at DashboardLayout (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/layout.tsx:8:7)
+  62 | }) {
+  63 |   return (
+> 64 |     <MenuPrimitive.GroupLabel
+     |     ^
+  65 |       data-slot="dropdown-menu-label"
+  66 |       data-inset={inset}
+  67 |       className={cn(
+ GET /dashboard? 200 in 68ms (next.js: 4ms, application-code: 63ms)
+ GET /settings 200 in 47ms (next.js: 24ms, application-code: 23ms)
+ GET /settings 200 in 26ms (next.js: 4ms, application-code: 22ms)
+[browser] Uncaught Error: Base UI: MenuGroupRootContext is missing. Menu group parts must be used within <Menu.Group>.
+    at DropdownMenuLabel (../../Manajemen Klinik/klinik-gigi-app/src/components/ui/dropdown-menu.tsx:64:5)
+    at AppTopbar (../../Manajemen Klinik/klinik-gigi-app/src/components/layout/app-topbar.tsx:131:15)
+    at DashboardLayout (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/layout.tsx:8:7)
+  62 | }) {
+  63 |   return (
+> 64 |     <MenuPrimitive.GroupLabel
+     |     ^
+  65 |       data-slot="dropdown-menu-label"
+  66 |       data-inset={inset}
+  67 |       className={cn(
+ GET /settings? 200 in 50ms (next.js: 1361µs, application-code: 49ms)
+[browser] Uncaught Error: Base UI: MenuGroupRootContext is missing. Menu group parts must be used within <Menu.Group>.
+    at DropdownMenuLabel (../../Manajemen Klinik/klinik-gigi-app/src/components/ui/dropdown-menu.tsx:64:5)
+    at AppTopbar (../../Manajemen Klinik/klinik-gigi-app/src/components/layout/app-topbar.tsx:131:15)
+    at DashboardLayout (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/layout.tsx:8:7)
+  62 | }) {
+  63 |   return (
+> 64 |     <MenuPrimitive.GroupLabel
+     |     ^
+  65 |       data-slot="dropdown-menu-label"
+  66 |       data-inset={inset}
+  67 |       className={cn(
+ GET /settings? 200 in 65ms (next.js: 3ms, application-code: 62ms)
+ GET /help 200 in 217ms (next.js: 205ms, application-code: 12ms)
+✓ Compiled in 290ms
+ GET /help 200 in 162ms (next.js: 143ms, application-code: 19ms)
+ GET /help 200 in 235ms (next.js: 44ms, application-code: 191ms)
+ GET /help 200 in 187ms (next.js: 1468µs, application-code: 185ms)
+✓ Compiled in 23ms
+ GET /help 200 in 32ms (next.js: 1973µs, application-code: 30ms)
+ GET /help 200 in 38ms (next.js: 817µs, application-code: 37ms)
+ GET /help 200 in 38ms (next.js: 688µs, application-code: 37ms)
+ GET /help 200 in 40ms (next.js: 718µs, application-code: 39ms)
+ GET /help 200 in 40ms (next.js: 723µs, application-code: 39ms)
+ GET /help 200 in 38ms (next.js: 715µs, application-code: 38ms)
+ GET /help 200 in 30ms (next.js: 810µs, application-code: 29ms)
+ GET /help 200 in 20ms (next.js: 1636µs, application-code: 19ms)
+ GET /help 200 in 10ms (next.js: 1298µs, application-code: 9ms)
+ GET /inventory 200 in 48ms (next.js: 25ms, application-code: 22ms)
+ GET /billing 200 in 42ms (next.js: 23ms, application-code: 19ms)
+ GET /reports 200 in 42ms (next.js: 23ms, application-code: 19ms)
+ GET /inventory 200 in 23ms (next.js: 3ms, application-code: 20ms)
+ GET /inventory 200 in 13ms (next.js: 984µs, application-code: 12ms)
+✓ Compiled in 20ms
+ GET /medical-records 200 in 20ms (next.js: 10ms, application-code: 10ms)
+ GET /appointments 200 in 35ms (next.js: 22ms, application-code: 13ms)
+ GET /patients 200 in 41ms (next.js: 22ms, application-code: 19ms)
+ GET /dashboard 200 in 43ms (next.js: 26ms, application-code: 17ms)
+ GET /patients 200 in 30ms (next.js: 3ms, application-code: 27ms)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0-sah.-._.js:13472:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0-sah.-._.js:13486:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0wl8igd._.js:670:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0-sah.-._.js:13472:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0-sah.-._.js:13486:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0wl8igd._.js:670:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0-sah.-._.js:13472:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0-sah.-._.js:13486:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0wl8igd._.js:670:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0-sah.-._.js:13472:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0-sah.-._.js:13486:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0wl8igd._.js:670:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+✓ Compiled in 40ms
