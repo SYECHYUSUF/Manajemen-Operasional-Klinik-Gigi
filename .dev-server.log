@@ -16,3 +16,1012 @@
 
  HEAD / 307 in 1078ms (next.js: 979ms, application-code: 99ms)
   Reload env: .env.local
+ GET / 307 in 121ms (next.js: 45ms, application-code: 77ms)
+ GET /dashboard 200 in 526ms (next.js: 451ms, application-code: 75ms)
+[browser] In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  ...
+    <SegmentViewNode type="layout" pagePath="(dashboard...">
+      <SegmentTrieNode>
+      <script>
+      <script>
+      <script>
+      <DashboardLayout>
+        <div className="min-h-scre...">
+          <AppSidebar>
+          <AppTopbar>
+            <header className="fixed top-...">
+              <div>
+              <div className="flex items...">
+                <DropdownMenu>
+                  <MenuRoot data-slot="dropdown-menu">
+                    <FloatingTree externalTree={{nodesRef:{...}, ...}}>
+                      <DropdownMenuTrigger>
+                        <MenuTrigger data-slot="dropdown-m...">
+>                         <button
+>                           type="button"
+>                           onClick={function}
+>                           onMouseDown={function}
+>                           onKeyDown={function}
+>                           onKeyUp={function}
+>                           onPointerDown={function}
+>                           tabIndex={0}
+>                           disabled={false}
+>                           aria-haspopup="menu"
+>                           id="base-ui-_R_36l5rlb_"
+>                           data-slot="dropdown-menu-trigger"
+>                           ref={function}
+>                         >
+>                           <button
+>                             className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100 transition-colors"
+>                           >
+                      ...
+                ...
+          ...
+ 
+[browser] <button> cannot contain a nested <button>.
+See this log for the ancestor stack trace. 
+[browser] Uncaught Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at button (<anonymous>)
+    at AppTopbar (../../Manajemen Klinik/klinik-gigi-app/src/components/layout/app-topbar.tsx:46:13)
+    at DashboardLayout (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/layout.tsx:8:7)
+  44 |         <DropdownMenu>
+  45 |           <DropdownMenuTrigger>
+> 46 |             <button className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100...
+     |             ^
+  47 |               <Bell className="h-5 w-5" />
+  48 |               {unreadCount > 0 && (
+  49 |                 <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-50...
+ GET /inventory 200 in 229ms (next.js: 214ms, application-code: 15ms)
+ GET /inventory 200 in 23ms (next.js: 4ms, application-code: 19ms)
+ GET /medical-records 200 in 207ms (next.js: 195ms, application-code: 12ms)
+ GET /appointments 200 in 194ms (next.js: 183ms, application-code: 11ms)
+ GET /patients 200 in 390ms (next.js: 379ms, application-code: 11ms)
+✓ Compiled in 58ms
+[browser] ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:11:24
+the name `DropdownMenuContent` is defined multiple times
+   9 | import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+  10 | import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "...
+> 11 | import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "...
+     |                        ^^^^^^^^^^^^^^^^^^^
+  12 | import { formatDateShort, getInitials } from "@/lib/utils";
+  13 | import { Patient } from "@/types";
+  14 | import { useTable } from "@/hooks/use-table";
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component Browser]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component SSR]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component] 
+[browser] ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:11:45
+the name `DropdownMenuItem` is defined multiple times
+   9 | ...Avatar, AvatarFallback } from "@/components/ui/avatar";
+  10 | ...DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/comp...
+> 11 | ...DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/comp...
+     |                                       ^^^^^^^^^^^^^^^^
+  12 | ...formatDateShort, getInitials } from "@/lib/utils";
+  13 | ...Patient } from "@/types";
+  14 | ...useTable } from "@/hooks/use-table";
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component Browser]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component SSR]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component] 
+[browser] ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:11:63
+the name `DropdownMenuTrigger` is defined multiple times
+   9 | ...ack } from "@/components/ui/avatar";
+  10 | ...ownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-...
+> 11 | ...ownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-...
+     |                                      ^^^^^^^^^^^^^^^^^^^
+  12 | ...tInitials } from "@/lib/utils";
+  13 | ...ypes";
+  14 | ...hooks/use-table";
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component Browser]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component SSR]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component] 
+[browser] ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:11:10
+the name `DropdownMenu` is defined multiple times
+   9 | import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+  10 | import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "...
+> 11 | import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "...
+     |          ^^^^^^^^^^^^
+  12 | import { formatDateShort, getInitials } from "@/lib/utils";
+  13 | import { Patient } from "@/types";
+  14 | import { useTable } from "@/hooks/use-table";
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component Browser]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component SSR]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component] 
+[browser] ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:18:10
+the name `PatientFormDialog` is defined multiple times
+  16 | import { supabase } from "@/lib/supabase";
+  17 | import { useEffect, useState as useReactState } from "react";
+> 18 | import { PatientFormDialog } from "@/components/features/patients/patient-form-dialog";
+     |          ^^^^^^^^^^^^^^^^^
+  19 |
+  20 | export default function PatientsPage() {
+  21 |   const [dbPatients, setDbPatients] = useReactState<Patient[]>([]);
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component Browser]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component SSR]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component] 
+[browser] ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:11:24
+the name `DropdownMenuContent` is defined multiple times
+   9 | import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+  10 | import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "...
+> 11 | import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "...
+     |                        ^^^^^^^^^^^^^^^^^^^
+  12 | import { formatDateShort, getInitials } from "@/lib/utils";
+  13 | import { Patient } from "@/types";
+  14 | import { useTable } from "@/hooks/use-table";
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component Browser]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component SSR]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component] 
+[browser] ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:11:45
+the name `DropdownMenuItem` is defined multiple times
+   9 | ...Avatar, AvatarFallback } from "@/components/ui/avatar";
+  10 | ...DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/comp...
+> 11 | ...DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/comp...
+     |                                       ^^^^^^^^^^^^^^^^
+  12 | ...formatDateShort, getInitials } from "@/lib/utils";
+  13 | ...Patient } from "@/types";
+  14 | ...useTable } from "@/hooks/use-table";
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component Browser]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component SSR]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component] 
+[browser] ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:11:63
+the name `DropdownMenuTrigger` is defined multiple times
+   9 | ...ack } from "@/components/ui/avatar";
+  10 | ...ownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-...
+> 11 | ...ownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-...
+     |                                      ^^^^^^^^^^^^^^^^^^^
+  12 | ...tInitials } from "@/lib/utils";
+  13 | ...ypes";
+  14 | ...hooks/use-table";
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component Browser]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component SSR]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component] 
+[browser] ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:11:10
+the name `DropdownMenu` is defined multiple times
+   9 | import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+  10 | import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "...
+> 11 | import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "...
+     |          ^^^^^^^^^^^^
+  12 | import { formatDateShort, getInitials } from "@/lib/utils";
+  13 | import { Patient } from "@/types";
+  14 | import { useTable } from "@/hooks/use-table";
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component Browser]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component SSR]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component] 
+[browser] ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:18:10
+the name `PatientFormDialog` is defined multiple times
+  16 | import { supabase } from "@/lib/supabase";
+  17 | import { useEffect, useState as useReactState } from "react";
+> 18 | import { PatientFormDialog } from "@/components/features/patients/patient-form-dialog";
+     |          ^^^^^^^^^^^^^^^^^
+  19 |
+  20 | export default function PatientsPage() {
+  21 |   const [dbPatients, setDbPatients] = useReactState<Patient[]>([]);
+
+Ecmascript file had an error
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component Browser]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Client Component SSR]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx [Server Component] 
+ GET /patients 200 in 97ms (next.js: 35ms, application-code: 62ms)
+ GET /patients 200 in 29ms (next.js: 1502µs, application-code: 28ms)
+ GET /patients 200 in 23ms (next.js: 817µs, application-code: 22ms)
+ GET /patients 200 in 13ms (next.js: 1698µs, application-code: 12ms)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0te.bj-._.js:11997:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0te.bj-._.js:12011:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js?id=%255Bproject%255D%252FDownloads%252FManajemen+Klinik%252Fklinik-gigi-app%252Fsrc%252Fapp%252F%2528dashboard%2529%252Fpatients%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:50:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+ GET /appointments 200 in 38ms (next.js: 15ms, application-code: 24ms)
+ GET /billing 200 in 233ms (next.js: 222ms, application-code: 11ms)
+ GET /medical-records 200 in 32ms (next.js: 13ms, application-code: 19ms)
+ GET /appointments 200 in 26ms (next.js: 5ms, application-code: 21ms)
+ GET /patients 200 in 27ms (next.js: 5ms, application-code: 22ms)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0te.bj-._.js:11997:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0te.bj-._.js:12011:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js?id=%255Bproject%255D%252FDownloads%252FManajemen+Klinik%252Fklinik-gigi-app%252Fsrc%252Fapp%252F%2528dashboard%2529%252Fpatients%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:50:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0te.bj-._.js:11997:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0te.bj-._.js:12011:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js?id=%255Bproject%255D%252FDownloads%252FManajemen+Klinik%252Fklinik-gigi-app%252Fsrc%252Fapp%252F%2528dashboard%2529%252Fpatients%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:50:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+[browser] Uncaught Error: Base UI: MenuGroupRootContext is missing. Menu group parts must be used within <Menu.Group>.
+    at DropdownMenuLabel (../../Manajemen Klinik/klinik-gigi-app/src/components/ui/dropdown-menu.tsx:64:5)
+    at AppTopbar (../../Manajemen Klinik/klinik-gigi-app/src/components/layout/app-topbar.tsx:115:13)
+    at DashboardLayout (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/layout.tsx:8:7)
+  62 | }) {
+  63 |   return (
+> 64 |     <MenuPrimitive.GroupLabel
+     |     ^
+  65 |       data-slot="dropdown-menu-label"
+  66 |       data-inset={inset}
+  67 |       className={cn(
+ GET /patients? 200 in 174ms (next.js: 6ms, application-code: 168ms)
+[browser] In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  ...
+    <SegmentViewNode type="layout" pagePath="(dashboard...">
+      <SegmentTrieNode>
+      <script>
+      <script>
+      <script>
+      <DashboardLayout>
+        <div className="min-h-scre...">
+          <AppSidebar>
+          <AppTopbar>
+            <header className="fixed top-...">
+              <div>
+              <div className="flex items...">
+                <DropdownMenu>
+                  <MenuRoot data-slot="dropdown-menu">
+                    <FloatingTree externalTree={{nodesRef:{...}, ...}}>
+                      <DropdownMenuTrigger>
+                        <MenuTrigger data-slot="dropdown-m...">
+>                         <button
+>                           type="button"
+>                           onClick={function}
+>                           onMouseDown={function}
+>                           onKeyDown={function}
+>                           onKeyUp={function}
+>                           onPointerDown={function}
+>                           tabIndex={0}
+>                           disabled={false}
+>                           aria-haspopup="menu"
+>                           id="base-ui-_R_36l5rlb_"
+>                           data-slot="dropdown-menu-trigger"
+>                           ref={function}
+>                         >
+>                           <button
+>                             className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100 transition-colors"
+>                           >
+                      ...
+                ...
+          ...
+ 
+[browser] <button> cannot contain a nested <button>.
+See this log for the ancestor stack trace. 
+[browser] Uncaught Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at button (<anonymous>)
+    at AppTopbar (../../Manajemen Klinik/klinik-gigi-app/src/components/layout/app-topbar.tsx:46:13)
+    at DashboardLayout (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/layout.tsx:8:7)
+  44 |         <DropdownMenu>
+  45 |           <DropdownMenuTrigger>
+> 46 |             <button className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100...
+     |             ^
+  47 |               <Bell className="h-5 w-5" />
+  48 |               {unreadCount > 0 && (
+  49 |                 <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-50...
+[browser] Uncaught Error: Base UI: MenuGroupRootContext is missing. Menu group parts must be used within <Menu.Group>.
+    at DropdownMenuLabel (../../Manajemen Klinik/klinik-gigi-app/src/components/ui/dropdown-menu.tsx:64:5)
+    at AppTopbar (../../Manajemen Klinik/klinik-gigi-app/src/components/layout/app-topbar.tsx:115:13)
+    at DashboardLayout (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/layout.tsx:8:7)
+  62 | }) {
+  63 |   return (
+> 64 |     <MenuPrimitive.GroupLabel
+     |     ^
+  65 |       data-slot="dropdown-menu-label"
+  66 |       data-inset={inset}
+  67 |       className={cn(
+ GET /patients? 200 in 62ms (next.js: 6ms, application-code: 56ms)
+[browser] In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  ...
+    <SegmentViewNode type="layout" pagePath="(dashboard...">
+      <SegmentTrieNode>
+      <script>
+      <script>
+      <script>
+      <DashboardLayout>
+        <div className="min-h-scre...">
+          <AppSidebar>
+          <AppTopbar>
+            <header className="fixed top-...">
+              <div>
+              <div className="flex items...">
+                <DropdownMenu>
+                  <MenuRoot data-slot="dropdown-menu">
+                    <FloatingTree externalTree={{nodesRef:{...}, ...}}>
+                      <DropdownMenuTrigger>
+                        <MenuTrigger data-slot="dropdown-m...">
+>                         <button
+>                           type="button"
+>                           onClick={function}
+>                           onMouseDown={function}
+>                           onKeyDown={function}
+>                           onKeyUp={function}
+>                           onPointerDown={function}
+>                           tabIndex={0}
+>                           disabled={false}
+>                           aria-haspopup="menu"
+>                           id="base-ui-_R_36l5rlb_"
+>                           data-slot="dropdown-menu-trigger"
+>                           ref={function}
+>                         >
+>                           <button
+>                             className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100 transition-colors"
+>                           >
+                      ...
+                ...
+          ...
+ 
+[browser] <button> cannot contain a nested <button>.
+See this log for the ancestor stack trace. 
+[browser] Uncaught Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at button (<anonymous>)
+    at AppTopbar (../../Manajemen Klinik/klinik-gigi-app/src/components/layout/app-topbar.tsx:46:13)
+    at DashboardLayout (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/layout.tsx:8:7)
+  44 |         <DropdownMenu>
+  45 |           <DropdownMenuTrigger>
+> 46 |             <button className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100...
+     |             ^
+  47 |               <Bell className="h-5 w-5" />
+  48 |               {unreadCount > 0 && (
+  49 |                 <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-50...
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._066ak-k._.js:11829:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._066ak-k._.js:11843:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1014:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._066ak-k._.js:11829:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._066ak-k._.js:11843:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1014:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+ GET /appointments 200 in 35ms (next.js: 9ms, application-code: 26ms)
+ GET /patients 200 in 26ms (next.js: 4ms, application-code: 22ms)
+ GET /dashboard 200 in 49ms (next.js: 21ms, application-code: 29ms)
+ GET /patients 200 in 24ms (next.js: 4ms, application-code: 20ms)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._066ak-k._.js:11829:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._066ak-k._.js:11843:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1014:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+ GET /appointments 200 in 23ms (next.js: 3ms, application-code: 20ms)
+ GET /medical-records 200 in 28ms (next.js: 6ms, application-code: 22ms)
+ GET /inventory 200 in 44ms (next.js: 20ms, application-code: 24ms)
+ GET /billing 200 in 25ms (next.js: 5ms, application-code: 20ms)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._066ak-k._.js:11829:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._066ak-k._.js:11843:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1014:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._066ak-k._.js:11829:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._066ak-k._.js:11843:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1014:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+ GET /reports 200 in 231ms (next.js: 220ms, application-code: 11ms)
+ GET /appointments/new 404 in 155ms (next.js: 147ms, application-code: 9ms)
+ GET /appointments/new 404 in 15ms (next.js: 918µs, application-code: 14ms)
+ GET /reports 200 in 62ms (next.js: 4ms, application-code: 58ms)
+[browser] In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  ...
+    <SegmentViewNode type="layout" pagePath="(dashboard...">
+      <SegmentTrieNode>
+      <script>
+      <script>
+      <script>
+      <DashboardLayout>
+        <div className="min-h-scre...">
+          <AppSidebar>
+          <AppTopbar>
+            <header className="fixed top-...">
+              <div>
+              <div className="flex items...">
+                <DropdownMenu>
+                  <MenuRoot data-slot="dropdown-menu">
+                    <FloatingTree externalTree={{nodesRef:{...}, ...}}>
+                      <DropdownMenuTrigger>
+                        <MenuTrigger data-slot="dropdown-m...">
+>                         <button
+>                           type="button"
+>                           onClick={function}
+>                           onMouseDown={function}
+>                           onKeyDown={function}
+>                           onKeyUp={function}
+>                           onPointerDown={function}
+>                           tabIndex={0}
+>                           disabled={false}
+>                           aria-haspopup="menu"
+>                           id="base-ui-_R_36l5rlb_"
+>                           data-slot="dropdown-menu-trigger"
+>                           ref={function}
+>                         >
+>                           <button
+>                             className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100 transition-colors"
+>                           >
+                      ...
+                ...
+          ...
+ 
+[browser] <button> cannot contain a nested <button>.
+See this log for the ancestor stack trace. 
+[browser] Uncaught Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at button (<anonymous>)
+    at AppTopbar (../../Manajemen Klinik/klinik-gigi-app/src/components/layout/app-topbar.tsx:46:13)
+    at DashboardLayout (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/layout.tsx:8:7)
+  44 |         <DropdownMenu>
+  45 |           <DropdownMenuTrigger>
+> 46 |             <button className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100...
+     |             ^
+  47 |               <Bell className="h-5 w-5" />
+  48 |               {unreadCount > 0 && (
+  49 |                 <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-50...
+ GET /dashboard 200 in 24ms (next.js: 4ms, application-code: 20ms)
+ GET /settings 200 in 203ms (next.js: 191ms, application-code: 12ms)
+ GET /settings 200 in 25ms (next.js: 3ms, application-code: 21ms)
+[browser] Uncaught Error: Base UI: MenuGroupRootContext is missing. Menu group parts must be used within <Menu.Group>.
+    at DropdownMenuLabel (../../Manajemen Klinik/klinik-gigi-app/src/components/ui/dropdown-menu.tsx:64:5)
+    at AppTopbar (../../Manajemen Klinik/klinik-gigi-app/src/components/layout/app-topbar.tsx:54:13)
+    at DashboardLayout (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/layout.tsx:8:7)
+  62 | }) {
+  63 |   return (
+> 64 |     <MenuPrimitive.GroupLabel
+     |     ^
+  65 |       data-slot="dropdown-menu-label"
+  66 |       data-inset={inset}
+  67 |       className={cn(
+ GET /settings? 200 in 54ms (next.js: 1003µs, application-code: 53ms)
+[browser] In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  ...
+    <SegmentViewNode type="layout" pagePath="(dashboard...">
+      <SegmentTrieNode>
+      <script>
+      <script>
+      <script>
+      <DashboardLayout>
+        <div className="min-h-scre...">
+          <AppSidebar>
+          <AppTopbar>
+            <header className="fixed top-...">
+              <div>
+              <div className="flex items...">
+                <DropdownMenu>
+                  <MenuRoot data-slot="dropdown-menu">
+                    <FloatingTree externalTree={{nodesRef:{...}, ...}}>
+                      <DropdownMenuTrigger>
+                        <MenuTrigger data-slot="dropdown-m...">
+>                         <button
+>                           type="button"
+>                           onClick={function}
+>                           onMouseDown={function}
+>                           onKeyDown={function}
+>                           onKeyUp={function}
+>                           onPointerDown={function}
+>                           tabIndex={0}
+>                           disabled={false}
+>                           aria-haspopup="menu"
+>                           id="base-ui-_R_36l5rlb_"
+>                           data-slot="dropdown-menu-trigger"
+>                           ref={function}
+>                         >
+>                           <button
+>                             className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100 transition-colors"
+>                           >
+                      ...
+                ...
+          ...
+ 
+[browser] <button> cannot contain a nested <button>.
+See this log for the ancestor stack trace. 
+[browser] Uncaught Error: Hydration failed because the server rendered HTML didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at button (<anonymous>)
+    at AppTopbar (../../Manajemen Klinik/klinik-gigi-app/src/components/layout/app-topbar.tsx:46:13)
+    at DashboardLayout (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/layout.tsx:8:7)
+  44 |         <DropdownMenu>
+  45 |           <DropdownMenuTrigger>
+> 46 |             <button className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100...
+     |             ^
+  47 |               <Bell className="h-5 w-5" />
+  48 |               {unreadCount > 0 && (
+  49 |                 <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-50...
+ GET /reports 200 in 21ms (next.js: 5ms, application-code: 17ms)
+ GET /billing 200 in 26ms (next.js: 4ms, application-code: 22ms)
+ GET /inventory 200 in 27ms (next.js: 6ms, application-code: 21ms)
+ GET /medical-records 200 in 25ms (next.js: 5ms, application-code: 20ms)
+ GET /appointments 200 in 25ms (next.js: 4ms, application-code: 21ms)
+ GET /patients 200 in 26ms (next.js: 6ms, application-code: 20ms)
+ GET /dashboard 200 in 24ms (next.js: 5ms, application-code: 19ms)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._066ak-k._.js:11829:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._066ak-k._.js:11843:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1014:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._066ak-k._.js:11829:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._066ak-k._.js:11843:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1014:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+✓ Compiled in 168ms
+ GET /dashboard 200 in 258ms (next.js: 232ms, application-code: 26ms)
+ GET /dashboard 200 in 264ms (next.js: 51ms, application-code: 213ms)
+[browser] Uncaught Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
+      <RedirectBoundary>
+        <RedirectErrorBoundary router={{...}}>
+          <InnerLayoutRouter url="/dashboard" tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} segmentPath={[...]} ...>
+            <SegmentViewNode type="page" pagePath="(dashboard...">
+              <SegmentTrieNode>
+              <ClientPageRoot Component={function DashboardPage} serverProvidedParams={{...}}>
+                <DashboardPage params={Promise} searchParams={Promise}>
+                  <div className="space-y-8 ...">
+                    <div>
+                    <div className="grid grid-...">
+                      <Card>
+                      <Card className="border-sla...">
+                        <div data-slot="card" data-size="default" className={"group/ca..."}>
+                          <CardContent className="p-6">
+                            <div data-slot="card-content" className="group-data...">
+                              <div>
+                              <p>
+                              <h3 className="text-3xl font-extrabold text-[#0D5A94]">
++                               1.284
+-                               1,284
+                              ...
+                      ...
+                    ...
+            ...
+          ...
+
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at h3 (<anonymous>)
+    at DashboardPage (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/dashboard/page.tsx:62:13)
+  60 |             </div>
+  61 |             <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb...
+> 62 |             <h3 className="text-3xl font-extrabold text-[#0D5A94]">{mockStats.totalPatient...
+     |             ^
+  63 |             <p className="text-xs text-slate-400 mt-2">Active records updated daily</p>
+  64 |           </CardContent>
+  65 |         </Card>
+ GET /dashboard 200 in 95ms (next.js: 34ms, application-code: 61ms)
+ GET /dashboard 200 in 27ms (next.js: 1415µs, application-code: 26ms)
+ GET /dashboard 200 in 17ms (next.js: 2ms, application-code: 14ms)
+ GET /dashboard 200 in 145ms (next.js: 5ms, application-code: 141ms)
+[browser] Uncaught Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
+      <RedirectBoundary>
+        <RedirectErrorBoundary router={{...}}>
+          <InnerLayoutRouter url="/dashboard" tree={[...]} params={{}} cacheNode={{rsc:{...}, ...}} segmentPath={[...]} ...>
+            <SegmentViewNode type="page" pagePath="(dashboard...">
+              <SegmentTrieNode>
+              <ClientPageRoot Component={function DashboardPage} serverProvidedParams={{...}}>
+                <DashboardPage params={Promise} searchParams={Promise}>
+                  <div className="space-y-8 ...">
+                    <div>
+                    <div className="grid grid-...">
+                      <Card>
+                      <Card className="border-sla...">
+                        <div data-slot="card" data-size="default" className={"group/ca..."}>
+                          <CardContent className="p-6">
+                            <div data-slot="card-content" className="group-data...">
+                              <div>
+                              <p>
+                              <h3 className="text-3xl font-extrabold text-[#0D5A94]">
++                               1.284
+-                               1,284
+                              ...
+                      ...
+                    ...
+            ...
+          ...
+
+    at <unknown> (https://react.dev/link/hydration-mismatch)
+    at h3 (<anonymous>)
+    at DashboardPage (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/dashboard/page.tsx:62:13)
+  60 |             </div>
+  61 |             <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb...
+> 62 |             <h3 className="text-3xl font-extrabold text-[#0D5A94]">{mockStats.totalPatient...
+     |             ^
+  63 |             <p className="text-xs text-slate-400 mt-2">Active records updated daily</p>
+  64 |           </CardContent>
+  65 |         </Card>
+ GET /patients 200 in 34ms (next.js: 15ms, application-code: 20ms)
+✓ Compiled in 31ms
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11977:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11991:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1018:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11977:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11991:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1018:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+ GET /patients 200 in 102ms (next.js: 9ms, application-code: 93ms)
+✓ Compiled in 23ms
+ GET /patients 200 in 67ms (next.js: 8ms, application-code: 58ms)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11977:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11991:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1018:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+ GET /billing 200 in 50ms (next.js: 21ms, application-code: 28ms)
+ GET /reports 200 in 42ms (next.js: 22ms, application-code: 21ms)
+ GET /billing 200 in 25ms (next.js: 3ms, application-code: 22ms)
+ GET /settings 200 in 42ms (next.js: 23ms, application-code: 20ms)
+ GET /billing 200 in 25ms (next.js: 3ms, application-code: 22ms)
+ GET /reports 200 in 24ms (next.js: 3ms, application-code: 21ms)
+ GET /inventory 200 in 42ms (next.js: 24ms, application-code: 19ms)
+ GET /patients 200 in 27ms (next.js: 5ms, application-code: 22ms)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11977:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11991:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1018:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11977:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0viv90-._.js:11991:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0ewi4qj._.js:1018:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+[browser] Uncaught Error: Base UI: MenuGroupRootContext is missing. Menu group parts must be used within <Menu.Group>.
+    at DropdownMenuLabel (../../Manajemen Klinik/klinik-gigi-app/src/components/ui/dropdown-menu.tsx:64:5)
+    at AppTopbar (../../Manajemen Klinik/klinik-gigi-app/src/components/layout/app-topbar.tsx:52:13)
+    at DashboardLayout (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/layout.tsx:8:7)
+  62 | }) {
+  63 |   return (
+> 64 |     <MenuPrimitive.GroupLabel
+     |     ^
+  65 |       data-slot="dropdown-menu-label"
+  66 |       data-inset={inset}
+  67 |       className={cn(
+ GET /patients? 200 in 61ms (next.js: 5ms, application-code: 57ms)
+ GET /appointments/new 404 in 22ms (next.js: 11ms, application-code: 11ms)
+ GET /appointments/new 404 in 17ms (next.js: 1180µs, application-code: 15ms)

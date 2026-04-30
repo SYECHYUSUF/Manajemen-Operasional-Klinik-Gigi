@@ -1,27 +1,52 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Filter, Download, Plus, MoreVertical, ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { Search, Filter, Download, Plus, MoreVertical, ChevronLeft, ChevronRight, Check, Users, TrendingUp, Hourglass, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { mockPatients } from "@/lib/mock-data";
 import { formatDateShort, getInitials } from "@/lib/utils";
 import { Patient } from "@/types";
 import { useTable } from "@/hooks/use-table";
+import { supabase } from "@/lib/supabase";
+import { useEffect, useState as useReactState } from "react";
 import { PatientFormDialog } from "@/components/features/patients/patient-form-dialog";
 
 export default function PatientsPage() {
+  const [dbPatients, setDbPatients] = useReactState<Patient[]>([]);
+  const [isLoading, setIsLoading] = useReactState(true);
+
+  const fetchPatients = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('patients')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      if (data) setDbPatients(data as Patient[]);
+    } catch (error) {
+      console.error("Error fetching patients:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPatients();
+  }, []);
+
   const {
     query, setQuery,
     rows: patients,
     page, setPage, totalPages,
     totalRows
   } = useTable<Patient>({
-    data: mockPatients,
+    data: dbPatients,
     searchKeys: ["full_name", "patient_code", "phone"],
   });
 
@@ -43,14 +68,14 @@ export default function PatientsPage() {
       {/* ── Stats Bento ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Total Pasien", value: "1,284", icon: "👥", bg: "bg-blue-50", color: "text-[#0D5A94]" },
-          { label: "Baru Bulan Ini", value: "42", icon: "📈", bg: "bg-green-50", color: "text-green-600" },
-          { label: "Kasus Aktif", value: "156", icon: "⏳", bg: "bg-orange-50", color: "text-orange-600" },
-          { label: "Selesai", value: "89%", icon: "✅", bg: "bg-purple-50", color: "text-purple-600" },
+          { label: "Total Pasien", value: "1,284", icon: <Users className="h-6 w-6" />, bg: "bg-blue-50", color: "text-[#0D5A94]" },
+          { label: "Baru Bulan Ini", value: "42", icon: <TrendingUp className="h-6 w-6" />, bg: "bg-green-50", color: "text-green-600" },
+          { label: "Kasus Aktif", value: "156", icon: <Hourglass className="h-6 w-6" />, bg: "bg-orange-50", color: "text-orange-600" },
+          { label: "Selesai", value: "89%", icon: <CheckCircle2 className="h-6 w-6" />, bg: "bg-purple-50", color: "text-purple-600" },
         ].map((stat, i) => (
           <Card key={i} className="border-slate-100 shadow-sm shadow-slate-200/50">
             <CardContent className="p-6 flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${stat.bg}`}>
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${stat.bg} ${stat.color}`}>
                 {stat.icon}
               </div>
               <div>
@@ -144,7 +169,7 @@ export default function PatientsPage() {
               )) : (
                 <tr>
                   <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
-                    Tidak ada pasien ditemukan.
+                    {isLoading ? "Memuat data pasien..." : "Tidak ada pasien ditemukan."}
                   </td>
                 </tr>
               )}
@@ -177,7 +202,7 @@ export default function PatientsPage() {
         <div className="relative overflow-hidden rounded-2xl bg-[#0D5A94] p-8 text-white flex flex-col justify-center min-h-[200px]">
           <div className="relative z-10">
             <h4 className="text-xl font-bold mb-2">Automated Check-ups</h4>
-            <p className="text-sm text-blue-100 max-w-sm mb-6 leading-relaxed">
+            <p className="text-sm text-blue-100  mb-6 leading-relaxed">
               Jadwalkan pengingat pembersihan karang gigi otomatis untuk pasien yang belum berkunjung lebih dari 6 bulan.
             </p>
             <Button className="bg-white text-[#0D5A94] hover:bg-slate-50 font-bold">Mulai Kampanye</Button>
@@ -194,7 +219,10 @@ export default function PatientsPage() {
         </div>
       </div>
 
-      <PatientFormDialog open={isFormOpen} onOpenChange={setIsFormOpen} />
+      <PatientFormDialog open={isFormOpen} onOpenChange={(open) => {
+        setIsFormOpen(open);
+        if (!open) fetchPatients(); // Refresh data when modal closes
+      }} />
     </div>
   );
 }

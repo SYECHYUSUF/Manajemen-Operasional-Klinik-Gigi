@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, Search, Settings, ChevronDown, Check } from "lucide-react";
+import { Bell, Search, Settings, ChevronDown, Check, AlertCircle, CalendarClock, PhoneCall, Cake, ServerCog } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -13,12 +13,12 @@ import { mockNotifications } from "@/lib/mock-data";
 import { formatRelative } from "@/lib/utils";
 import Link from "next/link";
 
-const NOTIFICATION_TYPE_ICON: Record<string, string> = {
-  stock_alert:           "🔴",
-  appointment_reminder:  "📅",
-  follow_up:             "🔔",
-  birthday:              "🎂",
-  system:                "⚙️",
+const NOTIFICATION_TYPE_ICON: Record<string, React.ReactNode> = {
+  stock_alert:           <AlertCircle className="h-4 w-4 text-red-500" />,
+  appointment_reminder:  <CalendarClock className="h-4 w-4 text-blue-500" />,
+  follow_up:             <PhoneCall className="h-4 w-4 text-orange-500" />,
+  birthday:              <Cake className="h-4 w-4 text-purple-500" />,
+  system:                <ServerCog className="h-4 w-4 text-slate-500" />,
 };
 
 export function AppTopbar() {
@@ -42,13 +42,11 @@ export function AppTopbar() {
       <div className="flex items-center gap-2">
         {/* Notifications */}
         <DropdownMenu>
-          <DropdownMenuTrigger>
-            <button className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100 transition-colors">
-              <Bell className="h-5 w-5" />
-              {unreadCount > 0 && (
-                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
-              )}
-            </button>
+          <DropdownMenuTrigger className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100 transition-colors outline-none focus:ring-2 focus:ring-[#0d5a94]">
+            <Bell className="h-5 w-5" />
+            {unreadCount > 0 && (
+              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
+            )}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-80">
             <DropdownMenuLabel className="flex items-center justify-between">
@@ -62,9 +60,9 @@ export function AppTopbar() {
             <DropdownMenuSeparator />
             {mockNotifications.map((notif) => (
               <DropdownMenuItem key={notif.id} className="flex items-start gap-3 py-3 cursor-pointer">
-                <span className="text-lg leading-none mt-0.5">
-                  {NOTIFICATION_TYPE_ICON[notif.type] ?? "🔔"}
-                </span>
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-50 border border-slate-100 mt-0.5">
+                  {NOTIFICATION_TYPE_ICON[notif.type] ?? <Bell className="h-4 w-4 text-slate-500" />}
+                </div>
                 <div className="flex-1 min-w-0">
                   <p className={`text-sm leading-snug ${!notif.is_read ? "font-semibold" : "font-medium"}`}>
                     {notif.title}
@@ -99,17 +97,17 @@ export function AppTopbar() {
 
         {/* User menu */}
         <DropdownMenu>
-          <DropdownMenuTrigger>
-            <button className="flex items-center gap-2.5 rounded-full py-1 px-2 hover:bg-slate-50 transition-colors group">
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-[#0d5a94] leading-none">drg. Sarah Amelia</p>
-                <p className="text-[11px] text-slate-400 mt-0.5">Administrator</p>
-              </div>
-              <Avatar className="h-9 w-9 border-2 border-slate-100 group-hover:border-[#9dcaff] transition-colors">
-                <AvatarFallback className="bg-[#0d5a94] text-white text-xs font-bold">SA</AvatarFallback>
-              </Avatar>
-              <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
-            </button>
+          <DropdownMenuTrigger className="flex items-center gap-3 rounded-full hover:bg-slate-50 p-1.5 transition-colors outline-none focus:ring-2 focus:ring-[#0d5a94]">
+            <Avatar className="h-8 w-8 border border-slate-200">
+              <AvatarFallback className="bg-[#0d5a94] text-white text-xs font-semibold">
+                SJ
+              </AvatarFallback>
+            </Avatar>
+            <div className="hidden md:block text-left mr-1">
+              <p className="text-sm font-bold text-slate-700 leading-none">Dr. Sarah Jenkins</p>
+              <p className="text-[10px] text-slate-500 mt-1 font-medium">Administrator</p>
+            </div>
+            <ChevronDown className="hidden md:block h-4 w-4 text-slate-400" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuLabel className="text-xs text-slate-500 font-normal">Masuk sebagai</DropdownMenuLabel>

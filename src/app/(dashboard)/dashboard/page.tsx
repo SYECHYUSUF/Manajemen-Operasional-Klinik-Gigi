@@ -59,7 +59,7 @@ export default function DashboardPage() {
               </span>
             </div>
             <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">Total Patients</p>
-            <h3 className="text-3xl font-extrabold text-[#0D5A94]">{mockStats.totalPatients.toLocaleString()}</h3>
+            <h3 className="text-3xl font-extrabold text-[#0D5A94]">{mockStats.totalPatients.toLocaleString("id-ID")}</h3>
             <p className="text-xs text-slate-400 mt-2">Active records updated daily</p>
           </CardContent>
         </Card>

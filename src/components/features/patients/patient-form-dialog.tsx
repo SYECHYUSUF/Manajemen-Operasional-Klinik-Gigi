@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { supabase } from "@/lib/supabase";
 
 // Zod schema for patient validation
 const patientSchema = z.object({
@@ -55,12 +56,34 @@ export function PatientFormDialog({ open, onOpenChange }: PatientFormDialogProps
 
   const onSubmit = async (data: PatientFormValues) => {
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log("New Patient Data:", data);
-    setIsSubmitting(false);
-    reset();
-    onOpenChange(false);
+    try {
+      // Create a unique patient code
+      const patientCode = `PAT-${Math.floor(10000 + Math.random() * 90000)}`;
+      
+      const { error } = await supabase.from('patients').insert({
+        patient_code: patientCode,
+        full_name: data.fullName,
+        nik: data.nik,
+        date_of_birth: data.dateOfBirth,
+        phone: data.phone,
+        email: data.email || null,
+        address: data.address,
+        is_active: true
+      });
+
+      if (error) throw error;
+      
+      console.log("New Patient Data Saved!");
+      reset();
+      onOpenChange(false);
+      
+      // In a real app, you would refresh the table data here, e.g. router.refresh()
+    } catch (error) {
+      console.error("Error saving patient:", error);
+      alert("Gagal menyimpan data pasien. Silakan coba lagi.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
