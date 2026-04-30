@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Filter, Download, Plus, MoreVertical, ChevronLeft, ChevronRight, Check, Users, TrendingUp, Hourglass, CheckCircle2, BriefcaseMedical } from "lucide-react";
+import { Search, Filter, Download, Plus, MoreVertical, ChevronLeft, ChevronRight, Check, Users, TrendingUp, Hourglass, CheckCircle2, BriefcaseMedical, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,8 +14,11 @@ import { useTable } from "@/hooks/use-table";
 import { supabase } from "@/lib/supabase";
 import { useEffect, useState as useReactState } from "react";
 import { PatientFormDialog } from "@/components/features/patients/patient-form-dialog";
+import { useRouter } from "next/navigation";
 
 export default function PatientsPage() {
+  const router = useRouter();
+  const [showCampaignModal, setShowCampaignModal] = useState(false);
   const [dbPatients, setDbPatients] = useReactState<Patient[]>([]);
   const [isLoading, setIsLoading] = useReactState(true);
 
@@ -198,6 +201,23 @@ export default function PatientsPage() {
       </Card>
 
       {/* ── Promo Area ── */}
+      {showCampaignModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4" onClick={() => setShowCampaignModal(false)}>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md border border-slate-100 dark:border-slate-800 p-8 text-center" onClick={e => e.stopPropagation()}>
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Users className="h-8 w-8 text-[#0D5A94]" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Mulai Kampanye Pengingat</h3>
+            <p className="text-sm text-slate-500 mb-6">Sistem akan mengirim pengingat otomatis via WhatsApp/Email ke {dbPatients.length > 0 ? dbPatients.length : "semua"} pasien yang belum berkunjung lebih dari 6 bulan.</p>
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={() => setShowCampaignModal(false)} className="flex-1">Batal</Button>
+              <Button className="flex-1 bg-[#0D5A94] hover:bg-[#004271] text-white font-bold" onClick={() => { setShowCampaignModal(false); alert("Kampanye berhasil dijadwalkan! Pengingat akan dikirim dalam 24 jam."); }}>
+                Konfirmasi
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="relative overflow-hidden rounded-2xl bg-[#0D5A94] p-8 text-white flex flex-col justify-center min-h-[200px]">
           <div className="relative z-10">
@@ -205,7 +225,9 @@ export default function PatientsPage() {
             <p className="text-sm text-blue-100 mb-6 leading-relaxed">
               Jadwalkan pengingat pembersihan karang gigi otomatis untuk pasien yang belum berkunjung lebih dari 6 bulan.
             </p>
-            <Button className="bg-white text-[#0D5A94] hover:bg-slate-50 font-bold">Mulai Kampanye</Button>
+            <Button onClick={() => setShowCampaignModal(true)} className="bg-white text-[#0D5A94] hover:bg-slate-50 font-bold">
+              Mulai Kampanye
+            </Button>
           </div>
         </div>
         <div className="bg-white rounded-2xl p-8 border border-slate-100 flex flex-col justify-center min-h-[200px]">
@@ -213,9 +235,9 @@ export default function PatientsPage() {
           <p className="text-sm text-slate-500 mb-6 leading-relaxed">
             Alat diagnostik AI baru kami dapat membantu menganalisis X-ray digital untuk menemukan karies tahap awal dengan akurasi 98%.
           </p>
-          <a href="#" className="text-[#0D5A94] font-bold text-sm hover:underline inline-flex items-center gap-1">
+          <button onClick={() => router.push("/help")} className="text-[#0D5A94] font-bold text-sm hover:underline inline-flex items-center gap-1">
             Pelajari fitur AI <ChevronRight className="h-4 w-4" />
-          </a>
+          </button>
         </div>
       </div>
 

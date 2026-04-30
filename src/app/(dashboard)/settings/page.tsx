@@ -1,39 +1,123 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { PlusCircle, Activity, TrendingUp, Grid, Clock, Filter, Download, Edit, Trash2, Upload, Percent, RefreshCw, BarChart2, Blocks, Shapes, Search } from "lucide-react";
+import { PlusCircle, Activity, TrendingUp, Clock, Download, Edit, Trash2, Upload, Percent, RefreshCw, BarChart2, Shapes, Search, X, Save, ShieldAlert, Filter } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
-import { Service, ServiceCategory } from "@/types";
+import { ServiceCategory } from "@/types";
+import { useRole } from "@/contexts/role-context";
+import { useRouter } from "next/navigation";
+
+// ─── AddServiceForm ───────────────────────────────────────────────────────
+function AddServiceForm({ initial, categories, onSave, onClose }: {
+  initial?: any;
+  categories: ServiceCategory[];
+  onSave: (data: any) => Promise<void>;
+  onClose: () => void;
+}) {
+  const [form, setForm] = useState({
+    name: initial?.name || "",
+    code: initial?.code || "",
+    description: initial?.description || "",
+    base_price: initial?.base_price?.toString() || "",
+    category_id: initial?.category_id || "",
+  });
+  const [saving, setSaving] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleSave = async () => {
+    if (!form.name || !form.code) return;
+    setSaving(true);
+    await onSave({ ...form, base_price: Number(form.base_price) || 0 });
+    setSaving(false);
+    setSuccess(true);
+    setTimeout(() => setSuccess(false), 1000);
+  };
+
+  return (
+    <>
+      <div className="p-6 space-y-4">
+        {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm px-4 py-2.5 rounded-lg font-semibold text-center">✓ Berhasil disimpan!</div>}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="col-span-2">
+            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Nama Layanan *</label>
+            <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="cth: Scaling & Root Planing" className="h-10 rounded-xl" />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Kode *</label>
+            <Input value={form.code} onChange={e => setForm(p => ({ ...p, code: e.target.value }))} placeholder="SRP-001" className="h-10 rounded-xl" />
+          </div>
+          <div>
+            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Kategori</label>
+            <select value={form.category_id} onChange={e => setForm(p => ({ ...p, category_id: e.target.value }))} className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm outline-none focus:ring-2 focus:ring-[#0D5A94]/30">
+              <option value="">Pilih Kategori</option>
+              {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          </div>
+          <div className="col-span-2">
+            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Harga Dasar (Rp)</label>
+            <Input type="number" value={form.base_price} onChange={e => setForm(p => ({ ...p, base_price: e.target.value }))} placeholder="350000" className="h-10 rounded-xl" />
+          </div>
+          <div className="col-span-2">
+            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Deskripsi</label>
+            <textarea value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} rows={2} placeholder="Deskripsi prosedur..." className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm outline-none focus:ring-2 focus:ring-[#0D5A94]/30 resize-none" />
+          </div>
+        </div>
+      </div>
+      <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
+        <Button variant="outline" onClick={onClose}>Batal</Button>
+        <Button onClick={handleSave} disabled={saving || !form.name || !form.code} className="bg-[#0D5A94] hover:bg-[#004271] text-white font-bold gap-2 px-6">
+          <Save className="h-4 w-4" />{saving ? "Menyimpan..." : "Simpan"}
+        </Button>
+      </div>
+    </>
+  );
+}
+
+
+
 
 export default function SettingsPage() {
+  const { isAdmin, isLoading: roleLoading } = useRole();
+  const router = useRouter();
   const [activeCategory, setActiveCategory] = useState("Semua Layanan");
   const [searchQuery, setSearchQuery] = useState("");
-  
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [editService, setEditService] = useState<any>(null);
   const [services, setServices] = useState<any[]>([]);
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // RBAC guard — redirect non-admin
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const { data: catData } = await supabase.from('service_categories').select('*');
-        if (catData) setCategories(catData as ServiceCategory[]);
-        
-        const { data: svcData } = await supabase.from('services').select('*, service_categories(name)');
-        if (svcData) setServices(svcData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+    if (!roleLoading && !isAdmin) {
+      router.replace("/dashboard");
+    }
+  }, [roleLoading, isAdmin, router]);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const { data: catData } = await supabase.from("service_categories").select("*");
+      if (catData) setCategories(catData as ServiceCategory[]);
+      const { data: svcData } = await supabase.from("services").select("*, service_categories(name)");
+      if (svcData) setServices(svcData);
+    } catch (err) { console.error(err); } finally { setIsLoading(false); }
+  };
+
+  useEffect(() => { fetchData(); }, []);
+
+  if (roleLoading) return <div className="flex items-center justify-center h-64 text-slate-400">Memuat...</div>;
+  if (!isAdmin) return (
+    <div className="flex flex-col items-center justify-center h-64 gap-4 text-slate-500">
+      <ShieldAlert className="h-12 w-12 text-red-400" />
+      <p className="font-semibold">Akses ditolak. Halaman ini hanya untuk Admin.</p>
+    </div>
+  );
+
 
   const categoryNames = ["Semua Layanan", ...categories.map(c => c.name)];
 
@@ -49,13 +133,41 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-500 max-w-7xl mx-auto">
+      {/* ── Add Service Modal ── */}
+      {(showAddModal || editService) && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4" onClick={() => { setShowAddModal(false); setEditService(null); }}>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg border border-slate-100 dark:border-slate-800" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">{editService ? "Edit Layanan" : "Tambah Layanan Baru"}</h2>
+              <button onClick={() => { setShowAddModal(false); setEditService(null); }} className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"><X className="h-4 w-4 text-slate-400" /></button>
+            </div>
+            <AddServiceForm
+              initial={editService}
+              categories={categories}
+              onSave={async (data) => {
+                try {
+                  if (editService) {
+                    await supabase.from("services").update(data).eq("id", editService.id);
+                  } else {
+                    await supabase.from("services").insert({ ...data, is_active: true });
+                  }
+                  await fetchData();
+                } catch (err) { console.error(err); }
+                setShowAddModal(false); setEditService(null);
+              }}
+              onClose={() => { setShowAddModal(false); setEditService(null); }}
+            />
+          </div>
+        </div>
+      )}
+
       {/* ── Page Actions Header ── */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <h2 className="text-3xl font-extrabold text-[#0D5A94]">Master Data Layanan</h2>
           <p className="text-slate-500 mt-1">Kelola daftar layanan klinik, strategi harga, dan deskripsi prosedur.</p>
         </div>
-        <Button className="bg-[#0D5A94] hover:bg-[#004271] text-white font-bold shadow-lg shadow-blue-900/10 gap-2 h-11 px-6">
+        <Button onClick={() => setShowAddModal(true)} className="bg-[#0D5A94] hover:bg-[#004271] text-white font-bold shadow-lg shadow-blue-900/10 gap-2 h-11 px-6">
           <PlusCircle className="h-5 w-5" /> Layanan Baru
         </Button>
       </div>
@@ -180,8 +292,13 @@ export default function SettingsPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94]"><Edit className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-600"><Trash2 className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94]" onClick={() => setEditService(service)}><Edit className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-600" onClick={async () => {
+                          if (confirm(`Hapus layanan "${service.name}"?`)) {
+                            await supabase.from("services").delete().eq("id", service.id);
+                            await fetchData();
+                          }
+                        }}><Trash2 className="h-4 w-4" /></Button>
                       </div>
                     </td>
                   </tr>
@@ -190,13 +307,15 @@ export default function SettingsPage() {
             </tbody>
           </table>
         </div>
-        <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
+        <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <p className="text-xs text-slate-500 font-medium">Menampilkan {filteredServices.length} dari {services.length} layanan</p>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="h-8 text-xs font-semibold" disabled>Sebelumnya</Button>
-            <Button className="h-8 w-8 bg-[#0D5A94] hover:bg-[#0D5A94] text-white text-xs font-bold p-0">1</Button>
-            <Button variant="outline" size="sm" className="h-8 text-xs font-semibold" disabled={filteredServices.length < 10}>Selanjutnya</Button>
-          </div>
+          {filteredServices.length > 10 && (
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" className="h-8 text-xs font-semibold">Sebelumnya</Button>
+              <Button className="h-8 w-8 bg-[#0D5A94] text-white text-xs font-bold p-0">1</Button>
+              <Button variant="outline" size="sm" className="h-8 text-xs font-semibold">Selanjutnya</Button>
+            </div>
+          )}
         </div>
       </Card>
 

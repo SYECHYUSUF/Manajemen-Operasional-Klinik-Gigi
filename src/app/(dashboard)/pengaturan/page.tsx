@@ -1,13 +1,20 @@
 "use client";
 
-import { useState } from "react";
-import { Building2, Palette, Clock, Link as LinkIcon, Save, Upload, MapPin, Phone, Mail, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Building2, Palette, Clock, Link as LinkIcon, Save, Upload, MapPin, Phone, Mail, Loader2, Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export default function PengaturanAplikasiPage() {
   const [activeTab, setActiveTab] = useState("profil");
   const [isSaving, setIsSaving] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const tabs = [
     { id: "profil", label: "Profil Klinik", icon: Building2 },
@@ -108,20 +115,34 @@ export default function PengaturanAplikasiPage() {
             </div>
           )}
 
-          {activeTab === "tampilan" && (
+          {activeTab === "tampilan" && mounted && (
             <div className="space-y-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-300">
-              <h3 className="font-bold text-slate-800 border-b border-slate-100 pb-3">Tema Aplikasi</h3>
+              <h3 className="font-bold text-slate-800 dark:text-slate-200 border-b border-slate-100 dark:border-slate-800 pb-3">Tema Aplikasi</h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {/* Theme cards */}
-                {['Royal Maritime (Aktif)', 'Emerald Health', 'Midnight Dark', 'Clean Minimal'].map((theme, i) => (
-                  <div key={i} className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${i === 0 ? 'border-[#0d5a94] bg-blue-50/50' : 'border-slate-100 hover:border-slate-200'}`}>
-                    <div className="h-20 rounded-lg bg-slate-100 mb-3 overflow-hidden flex shadow-inner">
-                       <div className={`w-1/3 h-full ${i === 0 ? 'bg-[#0d5a94]' : i === 1 ? 'bg-[#006b57]' : i === 2 ? 'bg-slate-900' : 'bg-slate-200'}`}></div>
-                       <div className={`w-2/3 h-full ${i === 2 ? 'bg-slate-800' : 'bg-white'}`}></div>
-                    </div>
-                    <p className={`text-xs font-bold text-center ${i === 0 ? 'text-[#0d5a94]' : 'text-slate-600'}`}>{theme}</p>
+                <div onClick={() => setTheme('light')} className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${theme !== 'dark' ? 'border-[#0d5a94] bg-blue-50/50 dark:bg-blue-900/20' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700'}`}>
+                  <div className="h-20 rounded-lg bg-slate-100 dark:bg-slate-800 mb-3 overflow-hidden flex shadow-inner">
+                     <div className="w-1/3 h-full bg-[#0d5a94]"></div>
+                     <div className="w-2/3 h-full bg-white dark:bg-slate-900"></div>
                   </div>
-                ))}
+                  <p className={`text-xs font-bold text-center ${theme !== 'dark' ? 'text-[#0d5a94] dark:text-blue-400' : 'text-slate-600 dark:text-slate-400'}`}>Terang (Light)</p>
+                </div>
+                
+                <div onClick={() => setTheme('dark')} className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${theme === 'dark' ? 'border-[#0d5a94] bg-blue-50/50 dark:bg-blue-900/20' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700'}`}>
+                  <div className="h-20 rounded-lg bg-slate-800 mb-3 overflow-hidden flex shadow-inner">
+                     <div className="w-1/3 h-full bg-slate-900"></div>
+                     <div className="w-2/3 h-full bg-slate-800"></div>
+                  </div>
+                  <p className={`text-xs font-bold text-center ${theme === 'dark' ? 'text-[#0d5a94] dark:text-blue-400' : 'text-slate-600 dark:text-slate-400'}`}>Gelap (Dark)</p>
+                </div>
+                
+                <div onClick={() => setTheme('system')} className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${theme === 'system' ? 'border-[#0d5a94] bg-blue-50/50 dark:bg-blue-900/20' : 'border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700'}`}>
+                  <div className="h-20 rounded-lg bg-gradient-to-r from-slate-100 to-slate-800 mb-3 overflow-hidden flex shadow-inner">
+                     <div className="w-1/3 h-full bg-[#0d5a94]"></div>
+                     <div className="w-2/3 h-full bg-gradient-to-r from-white to-slate-800"></div>
+                  </div>
+                  <p className={`text-xs font-bold text-center ${theme === 'system' ? 'text-[#0d5a94] dark:text-blue-400' : 'text-slate-600 dark:text-slate-400'}`}>Sistem</p>
+                </div>
               </div>
             </div>
           )}

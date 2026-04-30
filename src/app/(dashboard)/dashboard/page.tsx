@@ -9,8 +9,10 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { formatTime, getInitials, formatCurrency } from "@/lib/utils";
 import { APPOINTMENT_STATUS_MAP } from "@/constants";
 import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [stats, setStats] = useState({
     todayAppointments: 5,
     totalPatients: 0,
@@ -60,13 +62,25 @@ export default function DashboardPage() {
           <p className="text-slate-500 text-lg">Welcome back. Here is what is happening at DentalCloud today.</p>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
-          <Button variant="outline" className="flex-1 sm:flex-none border-slate-200 text-slate-600 font-semibold gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              const csv = "Laporan Dashboard DentalCloud\n" + new Date().toLocaleDateString("id-ID");
+              const blob = new Blob([csv], { type: "text/plain" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a"); a.href = url; a.download = "laporan-dashboard.txt"; a.click();
+            }}
+            className="flex-1 sm:flex-none border-slate-200 text-slate-600 font-semibold gap-2"
+          >
             <Download className="h-4 w-4" />
-            Export Report
+            Ekspor Laporan
           </Button>
-          <Button className="flex-1 sm:flex-none bg-[#0D5A94] hover:bg-[#004271] text-white font-semibold gap-2">
+          <Button
+            onClick={() => router.push("/appointments")}
+            className="flex-1 sm:flex-none bg-[#0D5A94] hover:bg-[#004271] text-white font-semibold gap-2"
+          >
             <CalendarIcon className="h-4 w-4" />
-            Manage Calendar
+            Kelola Kalender
           </Button>
         </div>
       </div>
@@ -247,13 +261,21 @@ export default function DashboardPage() {
                       <p className="text-sm font-bold text-slate-700">{item.name}</p>
                       <p className="text-xs text-slate-500">{item.qty} {item.unit}</p>
                     </div>
-                    <Button variant="ghost" className="text-[#0D5A94] text-[12px] font-bold hover:bg-white px-2 py-1 h-auto transition-colors">
-                      Order
-                    </Button>
+               <Button
+                 variant="ghost"
+                 onClick={() => router.push("/inventory")}
+                 className="text-[#0D5A94] text-[12px] font-bold hover:bg-white px-2 py-1 h-auto transition-colors"
+               >
+                 Pesan
+               </Button>
                  </div>
                ))}
-               <Button variant="outline" className="w-full mt-4 border-[#0D5A94] text-[#0D5A94] hover:bg-[#0D5A94] hover:text-white transition-all font-bold">
-                 Manage Inventory
+               <Button
+                 onClick={() => router.push("/inventory")}
+                 variant="outline"
+                 className="w-full mt-4 border-[#0D5A94] text-[#0D5A94] hover:bg-[#0D5A94] hover:text-white transition-all font-bold"
+               >
+                 Kelola Inventaris
                </Button>
             </CardContent>
           </Card>

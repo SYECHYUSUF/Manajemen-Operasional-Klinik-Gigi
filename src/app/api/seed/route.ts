@@ -1,69 +1,95 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server';
+
+// Gunakan service role key (server-side only, tidak terekspos ke client)
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  }
+);
+
+const DEMO_USERS = [
+  {
+    email: 'admin@dentalcloud.id',
+    password: 'Admin@1234',
+    user_metadata: { full_name: 'drg. Sarah Amelia, Sp.Ort', role: 'admin' },
+  },
+  {
+    email: 'dokter@dentalcloud.id',
+    password: 'Dokter@1234',
+    user_metadata: { full_name: 'drg. Bima Pratama, Sp.BM', role: 'doctor' },
+  },
+  {
+    email: 'kasir@dentalcloud.id',
+    password: 'Kasir@1234',
+    user_metadata: { full_name: 'Rina Kusuma', role: 'cashier' },
+  },
+];
 
 export async function GET() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-  const supabaseKey =
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
-    "";
-
-  if (!supabaseUrl || !supabaseKey) {
-    return NextResponse.json({ error: "Supabase belum dikonfigurasi di .env.local" }, { status: 500 });
+  // Guard: hanya bisa diakses jika service role key ada
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return NextResponse.json(
+      { error: 'SUPABASE_SERVICE_ROLE_KEY belum diset di .env.local' },
+      { status: 500 }
+    );
   }
 
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  const results: { email: string; status: string; error?: string }[] = [];
 
-  const accounts = [
-    {
-      email: "admin@dentalcloud.id",
-      password: "Admin@1234",
-      full_name: "drg. Sarah Amelia, Sp.Ort",
-      role: "admin",
-    },
-    {
-      email: "dokter@dentalcloud.id",
-      password: "Dokter@1234",
-      full_name: "drg. Bima Pratama, Sp.BM",
-      role: "doctor",
-    },
-    {
-      email: "kasir@dentalcloud.id",
-      password: "Kasir@1234",
-      full_name: "Rina Kusuma",
-      role: "cashier",
-    },
-  ];
+  for (const user of DEMO_USERS) {
+    // Cek apakah user sudah ada
+    const { data: existing } = await supabaseAdmin.auth.admin.listUsers();
+    const alreadyExists = existing?.users?.find((u) => u.email === user.email);
 
-  const results = [];
-
-  for (const account of accounts) {
-    const { data, error } = await supabase.auth.signUp({
-      email: account.email,
-      password: account.password,
-      options: {
-        data: {
-          full_name: account.full_name,
-          role: account.role,
-        },
-      },
-    });
-
-    results.push({
-      email: account.email,
-      password: account.password,
-      status: error ? "❌ Gagal" : "✅ Berhasil",
-      error: error?.message ?? null,
-      userId: data?.user?.id ?? null,
-    });
+    if (alreadyExists) {
+      // Update password & metadata jika sudah ada (fix akun corrupt)
+      const { error: updateErr } = await supabaseAdmin.auth.admin.updateUserById(
+        alreadyExists.id,
+        {
+          password: user.password,
+          user_metadata: user.user_metadata,
+          email_confirm: true,
+        }
+      );
+      results.push({
+        email: user.email,
+        status: updateErr ? 'update_failed' : 'updated',
+        error: updateErr?.message,
+      });
+    } else {
+      // Buat user baru via Admin API
+      const { error: createErr } = await supabaseAdmin.auth.admin.createUser({
+        email: user.email,
+        password: user.password,
+        user_metadata: user.user_metadata,
+        email_confirm: true, // langsung terverifikasi, tidak perlu email konfirmasi
+      });
+      results.push({
+        email: user.email,
+        status: createErr ? 'create_failed' : 'created',
+        error: createErr?.message,
+      });
+    }
   }
 
-  return NextResponse.json(
-    {
-      message: "Seeder selesai dijalankan!",
-      note: "Cek email konfirmasi jika Supabase Email Confirmation aktif. Atau disable di Supabase > Auth > Settings > Email Confirmations.",
-      accounts: results,
-    },
-    { status: 200 }
-  );
+  const hasErrors = results.some((r) => r.status.includes('failed'));
+
+  return NextResponse.json({
+    success: !hasErrors,
+    message: hasErrors
+      ? 'Beberapa akun gagal dibuat. Lihat detail di bawah.'
+      : '✅ Semua akun demo berhasil dibuat/diperbarui!',
+    results,
+    accounts: DEMO_USERS.map((u) => ({
+      email: u.email,
+      password: u.password,
+      role: u.user_metadata.role,
+    })),
+  });
 }

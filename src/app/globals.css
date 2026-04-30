@@ -2,6 +2,8 @@
 
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 /* ─── Design Tokens (Clinical Precision) ─────────────────────────────────── */
 @theme {
   --font-sans: "Inter", sans-serif;
@@ -64,6 +66,50 @@
   --radius-xl:   0.75rem;
   --radius-2xl:  1rem;
   --radius-full: 9999px;
+}
+
+/* ─── Dark Mode Overrides ────────────────────────────────────────────────── */
+.dark {
+  --color-surface:                    #0f172a;
+  --color-surface-dim:                #1e293b;
+  --color-surface-bright:             #334155;
+  --color-surface-container-lowest:   #020617;
+  --color-surface-container-low:      #0f172a;
+  --color-surface-container:          #1e293b;
+  --color-surface-container-high:     #334155;
+  --color-surface-container-highest:  #475569;
+  --color-on-surface:                 #f8fafc;
+  --color-on-surface-variant:         #cbd5e1;
+  --color-inverse-surface:            #f8fafc;
+  --color-inverse-on-surface:         #0f172a;
+  --color-outline:                    #475569;
+  --color-outline-variant:            #334155;
+}
+
+.dark [data-slot="card"] {
+  background-color: var(--color-surface-container);
+  box-shadow: 0 2px 16px 0 rgba(0, 0, 0, 0.4), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark textarea,
+.dark select {
+  background-color: var(--color-surface-container-highest);
+  color: var(--color-on-surface);
+  box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.2), 0 0 0 1.5px rgba(255, 255, 255, 0.05);
+}
+
+.dark input:not([type="checkbox"]):not([type="radio"]):focus,
+.dark textarea:focus,
+.dark select:focus {
+  background-color: var(--color-surface-container-low);
+  box-shadow: 0 0 0 3px rgba(13, 90, 148, 0.5), 0 1px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.dark .nav-item-active {
+  background-color: rgba(13, 90, 148, 0.2) !important;
+  color: var(--color-primary-fixed-dim) !important;
+  border-left: 3px solid var(--color-primary-fixed-dim) !important;
 }
 
 /* ─── Base reset ─────────────────────────────────────────────────────────── */
