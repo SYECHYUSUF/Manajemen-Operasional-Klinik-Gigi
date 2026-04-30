@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff, Stethoscope, Mail, Lock, Loader2, ShieldCheck } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { supabase, supabaseIsConfigured } from "@/lib/supabase";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,6 +15,10 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!supabaseIsConfigured) {
+      setError("⚠️ Supabase belum dikonfigurasi. Isi kredensial di .env.local lalu restart server.");
+      return;
+    }
     setIsLoading(true);
     setError("");
     try {
@@ -43,7 +47,7 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-[#004271]/40 mix-blend-multiply z-10"></div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent z-10"></div>
         <div className="relative z-20 flex flex-col justify-end p-12 lg:p-16 w-full h-full">
-          <div className="max-w-md">
+          <div className="">
             <div className="flex items-center gap-3 mb-8">
               <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
                 <Stethoscope className="h-5 w-5 text-white" />

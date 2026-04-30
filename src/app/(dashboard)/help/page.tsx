@@ -70,7 +70,7 @@ export default function HelpPage() {
           <LifeBuoy className="h-8 w-8 opacity-80" />
           <h3 className="text-2xl font-extrabold">Butuh Bantuan Lebih Lanjut?</h3>
         </div>
-        <p className="text-blue-100 mb-6 leading-relaxed ">
+        <p className="text-blue-100 mb-6 leading-relaxed">
           Tim support kami siap membantu Anda 24/7. Hubungi kami melalui email atau telepon.
         </p>
         <div className="flex flex-wrap gap-4">

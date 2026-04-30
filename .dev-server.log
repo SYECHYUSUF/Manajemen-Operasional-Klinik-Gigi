@@ -1466,3 +1466,216 @@ https://react.dev/link/hydration-mismatch
  GET /inventory 200 in 29ms (next.js: 1336µs, application-code: 27ms)
  GET /inventory 200 in 17ms (next.js: 1567µs, application-code: 16ms)
 ✓ Compiled in 109ms
+ GET /medical-records 200 in 51ms (next.js: 31ms, application-code: 20ms)
+ GET /patients 200 in 43ms (next.js: 25ms, application-code: 18ms)
+ GET /dashboard 200 in 44ms (next.js: 27ms, application-code: 17ms)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0-sah.-._.js:13472:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0-sah.-._.js:13486:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0wl8igd._.js:670:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+[browser] Error fetching patients: {
+  code: [32m''[39m,
+  details: [32m'TypeError: Failed to fetch\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0-sah.-._.js:13472:23\n'[39m +
+    [32m'    at http://localhost:3000/_next/static/chunks/0yo._0-sah.-._.js:13486:16\n'[39m +
+    [32m'    at async executeWithRetry (http://localhost:3000/_next/static/chunks/0yo._%40supabase_postgrest-js_dist_index_mjs_0bfvd4j._.js:271:29)\n'[39m +
+    [32m'    at async fetchPatients (http://localhost:3000/_next/static/chunks/Downloads_Manajemen%20Klinik_klinik-gigi-app_src_0wl8igd._.js:670:37)'[39m,
+  hint: [32m''[39m,
+  message: [32m'TypeError: Failed to fetch'[39m
+} 
+    at fetchPatients (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)/patients/page.tsx:33:15)
+  31 |       if (data) setDbPatients(data as Patient[]);
+  32 |     } catch (error) {
+> 33 |       console.error("Error fetching patients:", error);
+     |               ^
+  34 |     } finally {
+  35 |       setIsLoading(false);
+  36 |     } (../../Manajemen Klinik/klinik-gigi-app/src/app/(dashboard)
+ GET /login 200 in 266ms (next.js: 256ms, application-code: 10ms)
+✓ Compiled in 23ms
+ GET /register 200 in 210ms (next.js: 199ms, application-code: 10ms)
+✓ Compiled in 28ms
+ GET /register 200 in 18ms (next.js: 3ms, application-code: 14ms)
+[browser] ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(auth)/register/page.tsx:90:2
+Unexpected token. Did you mean `{'>'}` or `&gt;`?
+  88 |         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-tr...
+  89 |         <div className="relative z-20 flex flex-col justify-end p-12 lg:p-16 w-full h-full">
+> 90 | ">
+     |  ^
+  91 |             <div className="flex items-center gap-3 mb-8">
+  92 |               <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items...
+  93 |                 <Stethoscope className="h-5 w-5 text-white" />
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(auth)/register/page.tsx [Client Component Browser]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(auth)/register/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(auth)/register/page.tsx [Client Component SSR]
+    ./Downloads/Manajemen Klinik/klinik-gigi-app/src/app/(auth)/register/page.tsx [Server Component] 
+ GET /register 200 in 127ms (next.js: 3ms, application-code: 124ms)
+ GET /login 200 in 27ms (next.js: 7ms, application-code: 21ms)
+[browser] TypeError: Failed to fetch
+    at handleSubmit (../../Manajemen Klinik/klinik-gigi-app/src/app/(auth)/login/page.tsx:21:45)
+  19 |     setError("");
+  20 |     try {
+> 21 |       const { error } = await supabase.auth.signInWithPassword({
+     |                                             ^
+  22 |         email: form.email,
+  23 |         password: form.password,
+  24 |       }); (../../Manajemen Klinik/klinik-gigi-app/src/app/(auth)
+ GET /register 200 in 24ms (next.js: 4ms, application-code: 20ms)
+[browser] TypeError: Failed to fetch
+    at handleSubmit (../../Manajemen Klinik/klinik-gigi-app/src/app/(auth)/register/page.tsx:39:45)
+  37 |     setError("");
+  38 |     try {
+> 39 |       const { error } = await supabase.auth.signUp({
+     |                                             ^
+  40 |         email: form.email,
+  41 |         password: form.password,
+  42 |         options: { (../../Manajemen Klinik/klinik-gigi-app/src/app/(auth)
+[browser] TypeError: Failed to fetch
+    at handleSubmit (../../Manajemen Klinik/klinik-gigi-app/src/app/(auth)/register/page.tsx:39:45)
+  37 |     setError("");
+  38 |     try {
+> 39 |       const { error } = await supabase.auth.signUp({
+     |                                             ^
+  40 |         email: form.email,
+  41 |         password: form.password,
+  42 |         options: { (../../Manajemen Klinik/klinik-gigi-app/src/app/(auth)
+[browser] TypeError: Failed to fetch
+    at handleSubmit (../../Manajemen Klinik/klinik-gigi-app/src/app/(auth)/register/page.tsx:39:45)
+  37 |     setError("");
+  38 |     try {
+> 39 |       const { error } = await supabase.auth.signUp({
+     |                                             ^
+  40 |         email: form.email,
+  41 |         password: form.password,
+  42 |         options: { (../../Manajemen Klinik/klinik-gigi-app/src/app/(auth)
+[browser] TypeError: Failed to fetch
+    at handleSubmit (../../Manajemen Klinik/klinik-gigi-app/src/app/(auth)/register/page.tsx:39:45)
+  37 |     setError("");
+  38 |     try {
+> 39 |       const { error } = await supabase.auth.signUp({
+     |                                             ^
+  40 |         email: form.email,
+  41 |         password: form.password,
+  42 |         options: { (../../Manajemen Klinik/klinik-gigi-app/src/app/(auth)
+ GET /register 200 in 29ms (next.js: 8ms, application-code: 22ms)
+ GET /login 200 in 33ms (next.js: 5ms, application-code: 28ms)
+ GET /register 200 in 29ms (next.js: 4ms, application-code: 25ms)
+ GET /login 200 in 23ms (next.js: 3ms, application-code: 20ms)
+  Reload env: .env.local
+✓ Compiled in 135ms
+ GET /login 200 in 149ms (next.js: 118ms, application-code: 30ms)
+⚠ Fast Refresh had to perform a full reload when ./Downloads/Manajemen Klinik/klinik-gigi-app/src/lib/supabase.ts changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+Warning: Supabase URL or Anon Key is missing. Check your .env file.
+⨯ Error: supabaseKey is required.
+    at Module.eval (src/lib/supabase.ts:11:37)
+    at module evaluation (src/app/(auth)/login/page.tsx:7:1)
+   9 |
+  10 | // Create a single supabase client for interacting with your database
+> 11 | export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+     |                                     ^
+  12 | {
+  digest: '4045394751'
+}
+✓ Compiled in 0ms
+ GET /login 500 in 391ms (next.js: 939µs, application-code: 390ms)
+[browser] Warning: Supabase URL or Anon Key is missing. Check your .env file. (../../Manajemen Klinik/klinik-gigi-app/src/lib/supabase.ts:7:11)
+[browser] Uncaught Error: supabaseKey is required.
+    at module evaluation (../../Manajemen Klinik/klinik-gigi-app/src/lib/supabase.ts:11:37)
+    at module evaluation (../../Manajemen Klinik/klinik-gigi-app/src/app/(auth)/register/page.tsx:6:1)
+   9 |
+  10 | // Create a single supabase client for interacting with your database
+> 11 | export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+     |                                     ^
+  12 |
+[browser] Warning: Supabase URL or Anon Key is missing. Check your .env file. (../../Manajemen Klinik/klinik-gigi-app/src/lib/supabase.ts:7:11)
+[browser] Uncaught Error: supabaseKey is required.
+    at module evaluation (../../Manajemen Klinik/klinik-gigi-app/src/lib/supabase.ts:11:37)
+    at module evaluation (../../Manajemen Klinik/klinik-gigi-app/src/app/(auth)/login/page.tsx:7:1)
+   9 |
+  10 | // Create a single supabase client for interacting with your database
+> 11 | export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+     |                                     ^
+  12 |
+⨯ Error: supabaseKey is required.
+    at Module.eval (src/lib/supabase.ts:11:37)
+    at module evaluation (src/app/(auth)/login/page.tsx:7:1)
+   9 |
+  10 | // Create a single supabase client for interacting with your database
+> 11 | export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+     |                                     ^
+  12 | {
+  digest: '4045394751'
+}
+ GET /login 500 in 162ms (next.js: 5ms, application-code: 157ms)
+[browser] Warning: Supabase URL or Anon Key is missing. Check your .env file. (../../Manajemen Klinik/klinik-gigi-app/src/lib/supabase.ts:7:11)
+[browser] Uncaught Error: supabaseKey is required.
+    at module evaluation (../../Manajemen Klinik/klinik-gigi-app/src/lib/supabase.ts:11:37)
+    at module evaluation (../../Manajemen Klinik/klinik-gigi-app/src/app/(auth)/login/page.tsx:7:1)
+   9 |
+  10 | // Create a single supabase client for interacting with your database
+> 11 | export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+     |                                     ^
+  12 |
+⨯ Error: supabaseKey is required.
+    at Module.eval (src/lib/supabase.ts:11:37)
+    at module evaluation (src/app/(auth)/login/page.tsx:7:1)
+   9 |
+  10 | // Create a single supabase client for interacting with your database
+> 11 | export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+     |                                     ^
+  12 | {
+  digest: '4045394751'
+}
+ GET /login 500 in 157ms (next.js: 3ms, application-code: 154ms)
+[browser] Warning: Supabase URL or Anon Key is missing. Check your .env file. (../../Manajemen Klinik/klinik-gigi-app/src/lib/supabase.ts:7:11)
+[browser] Uncaught Error: supabaseKey is required.
+    at module evaluation (../../Manajemen Klinik/klinik-gigi-app/src/lib/supabase.ts:11:37)
+    at module evaluation (../../Manajemen Klinik/klinik-gigi-app/src/app/(auth)/login/page.tsx:7:1)
+   9 |
+  10 | // Create a single supabase client for interacting with your database
+> 11 | export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+     |                                     ^
+  12 |
+⨯ Error: supabaseKey is required.
+    at Module.eval (src/lib/supabase.ts:11:37)
+    at module evaluation (src/app/(auth)/login/page.tsx:7:1)
+   9 |
+  10 | // Create a single supabase client for interacting with your database
+> 11 | export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+     |                                     ^
+  12 | {
+  digest: '4045394751'
+}
+ GET /login? 500 in 136ms (next.js: 3ms, application-code: 133ms)
+[browser] Warning: Supabase URL or Anon Key is missing. Check your .env file. (../../Manajemen Klinik/klinik-gigi-app/src/lib/supabase.ts:7:11)
+[browser] Uncaught Error: supabaseKey is required.
+    at module evaluation (../../Manajemen Klinik/klinik-gigi-app/src/lib/supabase.ts:11:37)
+    at module evaluation (../../Manajemen Klinik/klinik-gigi-app/src/app/(auth)/login/page.tsx:7:1)
+   9 |
+  10 | // Create a single supabase client for interacting with your database
+> 11 | export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+     |                                     ^
+  12 |
+[browser] Warning: Supabase URL or Anon Key is missing. Check your .env file. (../../Manajemen Klinik/klinik-gigi-app/src/lib/supabase.ts:7:11)
+[?25h
