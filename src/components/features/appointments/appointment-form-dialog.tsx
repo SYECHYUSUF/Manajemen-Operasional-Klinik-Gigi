@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -14,8 +14,8 @@ import { CalendarClock, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 const appointmentSchema = z.object({
-  patientName: z.string().min(3, "Nama pasien minimal 3 karakter"),
-  doctorName: z.string().min(3, "Nama dokter wajib diisi"),
+  patient_id: z.string().min(1, "Pasien wajib dipilih"),
+  doctor_id: z.string().min(1, "Dokter wajib dipilih"),
   scheduledAt: z.string().min(1, "Tanggal dan waktu wajib diisi"),
   chiefComplaint: z.string().min(5, "Keluhan wajib diisi minimal 5 karakter"),
   notes: z.string().optional(),
@@ -30,6 +30,19 @@ interface AppointmentFormDialogProps {
 
 export function AppointmentFormDialog({ open, onOpenChange }: AppointmentFormDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [patients, setPatients] = useState<{id:string, full_name:string}[]>([]);
+  const [doctors, setDoctors] = useState<{id:string, full_name:string}[]>([]);
+
+  useEffect(() => {
+    if (open) {
+      supabase.from("patients").select("id, full_name").then(({ data }) => {
+        if (data) setPatients(data);
+      });
+      supabase.from("doctors").select("id, full_name").then(({ data }) => {
+        if (data) setDoctors(data);
+      });
+    }
+  }, [open]);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<AppointmentFormValues>({
     resolver: zodResolver(appointmentSchema),
@@ -41,16 +54,16 @@ export function AppointmentFormDialog({ open, onOpenChange }: AppointmentFormDia
       const appointmentCode = `APT-${Date.now()}`;
       const { error } = await supabase.from("appointments").insert({
         appointment_code: appointmentCode,
+        patient_id: data.patient_id,
+        doctor_id: data.doctor_id,
         chief_complaint: data.chiefComplaint,
         notes: data.notes || null,
         scheduled_at: new Date(data.scheduledAt).toISOString(),
         status: "scheduled",
       });
       if (error) {
-        // if Supabase not fully configured, just show success UX
-        console.warn("Supabase insert error (expected if not configured):", error.message);
+        console.warn("Supabase insert error:", error.message);
       }
-      console.log("Appointment created:", data);
       reset();
       onOpenChange(false);
     } catch (err) {
@@ -71,21 +84,27 @@ export function AppointmentFormDialog({ open, onOpenChange }: AppointmentFormDia
             </DialogHeader>
           </div>
           <DialogDescription className="text-blue-100 opacity-90 text-sm mt-1">
-            Isi detail jadwal konsultasi pasien berikut ini.
+            Isi detail jadwal konsultasi pasien berikut ini. Data akan langsung tersimpan ke Supabase.
           </DialogDescription>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="patientName" className="text-slate-700 font-semibold text-xs uppercase tracking-wider">Nama Pasien</Label>
-              <Input id="patientName" {...register("patientName")} placeholder="Cth: Budi Santoso" className={errors.patientName ? "border-red-400" : ""} />
-              {errors.patientName && <p className="text-xs text-red-500">{errors.patientName.message}</p>}
+              <Label htmlFor="patient_id" className="text-slate-700 font-semibold text-xs uppercase tracking-wider">Pasien</Label>
+              <select id="patient_id" {...register("patient_id")} className={`flex h-9 w-full rounded-md border border-slate-200 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 ${errors.patient_id ? "border-red-400" : ""}`}>
+                <option value="">Pilih Pasien...</option>
+                {patients.map(p => <option key={p.id} value={p.id}>{p.full_name}</option>)}
+              </select>
+              {errors.patient_id && <p className="text-xs text-red-500">{errors.patient_id.message}</p>}
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="doctorName" className="text-slate-700 font-semibold text-xs uppercase tracking-wider">Nama Dokter</Label>
-              <Input id="doctorName" {...register("doctorName")} placeholder="drg. Sarah Amelia" className={errors.doctorName ? "border-red-400" : ""} />
-              {errors.doctorName && <p className="text-xs text-red-500">{errors.doctorName.message}</p>}
+              <Label htmlFor="doctor_id" className="text-slate-700 font-semibold text-xs uppercase tracking-wider">Dokter</Label>
+              <select id="doctor_id" {...register("doctor_id")} className={`flex h-9 w-full rounded-md border border-slate-200 bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-slate-950 disabled:cursor-not-allowed disabled:opacity-50 ${errors.doctor_id ? "border-red-400" : ""}`}>
+                <option value="">Pilih Dokter...</option>
+                {doctors.map(d => <option key={d.id} value={d.id}>{d.full_name}</option>)}
+              </select>
+              {errors.doctor_id && <p className="text-xs text-red-500">{errors.doctor_id.message}</p>}
             </div>
           </div>
 

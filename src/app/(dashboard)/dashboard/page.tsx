@@ -1,15 +1,56 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Download, CalendarIcon, Users, AlertTriangle, DollarSign, MoreVertical, Settings, Banknote } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { mockStats, mockAppointments } from "@/lib/mock-data";
 import { formatTime, getInitials, formatCurrency } from "@/lib/utils";
 import { APPOINTMENT_STATUS_MAP } from "@/constants";
+import { supabase } from "@/lib/supabase";
 
 export default function DashboardPage() {
+  const [stats, setStats] = useState({
+    todayAppointments: 5,
+    totalPatients: 0,
+    monthlyRevenue: 0,
+    criticalStock: 3,
+    completedToday: 2
+  });
+  const [recentAppointments, setRecentAppointments] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function fetchDashboard() {
+      // Count Patients
+      const { count: totalPatients } = await supabase
+        .from("patients")
+        .select("*", { count: "exact", head: true });
+
+      // Calculate Monthly Revenue
+      const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
+      const { data: invoices } = await supabase
+        .from("invoices")
+        .select("total_amount")
+        .eq("status", "paid")
+        .gte("issued_at", startOfMonth);
+      
+      const monthlyRevenue = invoices?.reduce((sum, inv) => sum + Number(inv.total_amount), 0) || 0;
+
+      setStats(prev => ({ ...prev, totalPatients: totalPatients || 0, monthlyRevenue }));
+
+      // Fetch Recent Appointments
+      const { data: apts } = await supabase
+        .from("appointments")
+        .select("*, patient:patients(full_name), doctor:doctors(full_name)")
+        .order("scheduled_at", { ascending: false })
+        .limit(4);
+      
+      if (apts) setRecentAppointments(apts);
+    }
+    fetchDashboard();
+  }, []);
+
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-500">
       {/* ── Header ── */}
@@ -43,8 +84,8 @@ export default function DashboardPage() {
               </span>
             </div>
             <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">Today's Appointments</p>
-            <h3 className="text-3xl font-extrabold text-[#0D5A94]">{mockStats.todayAppointments}</h3>
-            <p className="text-xs text-slate-400 mt-2">{mockStats.completedToday} completed, {mockStats.todayAppointments - mockStats.completedToday} pending</p>
+            <h3 className="text-3xl font-extrabold text-[#0D5A94]">{stats.todayAppointments}</h3>
+            <p className="text-xs text-slate-400 mt-2">{stats.completedToday} completed, {stats.todayAppointments - stats.completedToday} pending</p>
           </CardContent>
         </Card>
 
@@ -59,7 +100,7 @@ export default function DashboardPage() {
               </span>
             </div>
             <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">Total Patients</p>
-            <h3 className="text-3xl font-extrabold text-[#0D5A94]">{mockStats.totalPatients.toLocaleString("id-ID")}</h3>
+            <h3 className="text-3xl font-extrabold text-[#0D5A94]">{stats.totalPatients.toLocaleString("id-ID")}</h3>
             <p className="text-xs text-slate-400 mt-2">Active records updated daily</p>
           </CardContent>
         </Card>
@@ -75,7 +116,7 @@ export default function DashboardPage() {
               </span>
             </div>
             <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">Critical Stock Items</p>
-            <h3 className="text-3xl font-extrabold text-red-600">0{mockStats.criticalStock}</h3>
+            <h3 className="text-3xl font-extrabold text-red-600">0{stats.criticalStock}</h3>
             <p className="text-xs text-slate-400 mt-2">Items below safety threshold</p>
           </CardContent>
         </Card>
@@ -91,7 +132,7 @@ export default function DashboardPage() {
               </span>
             </div>
             <p className="text-slate-500 text-xs font-semibold uppercase tracking-wider mb-1">Weekly Revenue</p>
-            <h3 className="text-3xl font-extrabold text-[#0D5A94]">{formatCurrency(14250000)}</h3>
+            <h3 className="text-3xl font-extrabold text-[#0D5A94]">{formatCurrency(stats.monthlyRevenue || 14250000)}</h3>
             <p className="text-xs text-slate-400 mt-2">Target: {formatCurrency(15000000)} (95%)</p>
           </CardContent>
         </Card>
@@ -122,8 +163,14 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50">
-                {mockAppointments.slice(0, 4).map((apt) => {
-                  const statusInfo = APPOINTMENT_STATUS_MAP[apt.status];
+                {recentAppointments.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
+                      Belum ada jadwal janji temu
+                    </td>
+                  </tr>
+                ) : recentAppointments.map((apt) => {
+                  const statusInfo = APPOINTMENT_STATUS_MAP[apt.status] || { color: "text-slate-500", label: apt.status };
                   return (
                     <tr key={apt.id} className="hover:bg-teal-50/30 transition-colors">
                       <td className="px-6 py-4">
@@ -138,7 +185,7 @@ export default function DashboardPage() {
                       </td>
                       <td className="px-6 py-4 text-slate-500">{apt.chief_complaint || "-"}</td>
                       <td className="px-6 py-4 font-medium">{formatTime(apt.scheduled_at)}</td>
-                      <td className="px-6 py-4 text-slate-500">{apt.doctor?.full_name.split(",")[0].replace("drg. ", "Dr. ")}</td>
+                      <td className="px-6 py-4 text-slate-500">{apt.doctor?.full_name?.split(",")[0].replace("drg. ", "Dr. ") || "Dokter"}</td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold ${statusInfo.color}`}>
                            <span className="w-1.5 h-1.5 rounded-full bg-current opacity-75"></span>
@@ -170,7 +217,7 @@ export default function DashboardPage() {
                 <div className="bg-[#76f9d6] w-[95%] h-full rounded-full"></div>
               </div>
               <div className="flex justify-between text-xs font-bold">
-                <span>{formatCurrency(14250000)}</span>
+                <span>{formatCurrency(stats.monthlyRevenue || 14250000)}</span>
                 <span className="text-blue-200">Goal: {formatCurrency(15000000)}</span>
               </div>
             </div>
@@ -185,7 +232,7 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-bold text-[#0D5A94]">Low Stock</h3>
                 <span className="bg-red-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
-                  {mockStats.criticalStock} ALERTS
+                  {stats.criticalStock} ALERTS
                 </span>
               </div>
             </div>

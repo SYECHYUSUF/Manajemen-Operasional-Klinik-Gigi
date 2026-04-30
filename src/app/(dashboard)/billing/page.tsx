@@ -1,34 +1,66 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { CreditCard, Download, FileText, Filter, PlusCircle, Search, DollarSign, ArrowUpRight, ArrowDownRight, Clock, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatCurrency } from "@/lib/utils";
-
-const MOCK_INVOICES = [
-  { id: "INV-20231001", patient: "Budi Santoso", treatment: "Pembersihan Karang Gigi", date: "10 Okt 2023", total: 350000, status: "Lunas" },
-  { id: "INV-20231002", patient: "Siti Rahayu", treatment: "Perawatan Saluran Akar", date: "10 Okt 2023", total: 1250000, status: "Pending" },
-  { id: "INV-20230945", patient: "Ahmad Fauzi", treatment: "Ekstraksi Gigi", date: "08 Okt 2023", total: 450000, status: "Lunas" },
-  { id: "INV-20230946", patient: "Dian Sastro", treatment: "Pemasangan Kawat Gigi", date: "09 Okt 2023", total: 6500000, status: "Pending" },
-  { id: "INV-20230947", patient: "Rina Kusuma", treatment: "Tambal Gigi Komposit", date: "11 Okt 2023", total: 400000, status: "Lunas" },
-  { id: "INV-20230948", patient: "Joko Anwar", treatment: "Rontgen Digital", date: "12 Okt 2023", total: 250000, status: "Lunas" },
-];
+import { formatCurrency, formatDateShort } from "@/lib/utils";
+import { supabase } from "@/lib/supabase";
+import { Invoice } from "@/types";
 
 export default function BillingPage() {
   const [activeStatus, setActiveStatus] = useState("Semua");
   const [searchQuery, setSearchQuery] = useState("");
+  
+  const [invoices, setInvoices] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchInvoices = async () => {
+      setIsLoading(true);
+      try {
+        const { data } = await supabase
+          .from('invoices')
+          .select('*, patients(full_name)');
+        if (data) setInvoices(data);
+      } catch (error) {
+        console.error("Error fetching invoices:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchInvoices();
+  }, []);
 
   const filteredInvoices = useMemo(() => {
-    return MOCK_INVOICES.filter(inv => {
-      const matchStatus = activeStatus === "Semua" || inv.status === activeStatus;
-      const matchSearch = inv.patient.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          inv.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          inv.treatment.toLowerCase().includes(searchQuery.toLowerCase());
+    return invoices.filter(inv => {
+      const displayStatus = inv.status === 'paid' ? 'Lunas' : 'Pending';
+      const patientName = inv.patients?.full_name || '';
+      
+      const matchStatus = activeStatus === "Semua" || displayStatus === activeStatus;
+      const matchSearch = patientName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          inv.invoice_number.toLowerCase().includes(searchQuery.toLowerCase());
       return matchStatus && matchSearch;
     });
-  }, [activeStatus, searchQuery]);
+  }, [invoices, activeStatus, searchQuery]);
+
+  const stats = useMemo(() => {
+    let revenue = 0;
+    let outstanding = 0;
+    let successfulCount = 0;
+    
+    invoices.forEach(inv => {
+      if (inv.status === 'paid') {
+        revenue += Number(inv.total_amount || 0);
+        successfulCount++;
+      } else {
+        outstanding += Number(inv.total_amount || 0);
+      }
+    });
+
+    return { revenue, outstanding, successfulCount };
+  }, [invoices]);
 
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-500 max-w-[1440px] mx-auto">
@@ -51,13 +83,13 @@ export default function BillingPage() {
             <div className="flex justify-between items-start mb-4">
               <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center text-white">
                 <DollarSign className="h-5 w-5" />
-              </div>
-              <span className="text-[10px] font-bold text-white bg-[#76f9d6]/20 px-2 py-1 rounded flex items-center gap-1">
+              </div>  
+              <span className="text-[10px] font-bold text-black bg-[#76f9d6]/20 px-2 py-1 rounded flex items-center gap-1">
                 <ArrowUpRight className="h-3 w-3" /> 12.5%
               </span>
             </div>
             <p className="text-blue-200 text-xs font-bold uppercase tracking-wider">Pendapatan (Bulan Ini)</p>
-            <h3 className="text-3xl font-black mt-1">{formatCurrency(124500000)}</h3>
+            <h3 className="text-3xl font-black mt-1">{formatCurrency(stats.revenue)}</h3>
           </CardContent>
           <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
         </Card>
@@ -71,8 +103,8 @@ export default function BillingPage() {
               </div>
             </div>
             <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Belum Dibayar</p>
-            <h3 className="text-3xl font-extrabold text-slate-900 mt-1">{formatCurrency(18250000)}</h3>
-            <p className="text-[10px] text-slate-400 mt-2 font-medium">Dari 15 tagihan aktif</p>
+            <h3 className="text-3xl font-extrabold text-slate-900 mt-1">{formatCurrency(stats.outstanding)}</h3>
+            <p className="text-[10px] text-slate-400 mt-2 font-medium">Dari {invoices.length - stats.successfulCount} tagihan aktif</p>
           </CardContent>
         </Card>
 
@@ -85,8 +117,8 @@ export default function BillingPage() {
               </div>
             </div>
             <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Transaksi Berhasil</p>
-            <h3 className="text-3xl font-extrabold text-slate-900 mt-1">142</h3>
-            <p className="text-[10px] text-slate-400 mt-2 font-medium">Pasien dalam 30 hari terakhir</p>
+            <h3 className="text-3xl font-extrabold text-slate-900 mt-1">{stats.successfulCount}</h3>
+            <p className="text-[10px] text-slate-400 mt-2 font-medium">Transaksi lunas</p>
           </CardContent>
         </Card>
 
@@ -162,50 +194,61 @@ export default function BillingPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {filteredInvoices.length === 0 ? (
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
+                    Memuat data tagihan...
+                  </td>
+                </tr>
+              ) : filteredInvoices.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
                     Tidak ada tagihan yang sesuai.
                   </td>
                 </tr>
               ) : (
-                filteredInvoices.map(inv => (
-                  <tr key={inv.id} className="hover:bg-blue-50/30 transition-colors group">
-                    <td className="px-6 py-4">
-                      <div className="font-bold text-slate-900 font-mono">{inv.id}</div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="font-bold text-slate-900">{inv.patient}</p>
-                      <p className="text-[10px] text-slate-400">{inv.treatment}</p>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-slate-600 font-medium text-xs">{inv.date}</span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <p className="font-bold text-slate-900">{formatCurrency(inv.total)}</p>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase ${
-                        inv.status === "Lunas" ? "bg-[#76f9d6]/20 text-[#00725d]" : "bg-amber-100 text-amber-700"
-                      }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${inv.status === "Lunas" ? "bg-[#006b57]" : "bg-amber-500"}`}></span> 
-                        {inv.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94]"><FileText className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94]"><Download className="h-4 w-4" /></Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                filteredInvoices.map(inv => {
+                  const isPaid = inv.status === 'paid';
+                  const displayStatus = isPaid ? 'Lunas' : 'Pending';
+                  
+                  return (
+                    <tr key={inv.id} className="hover:bg-blue-50/30 transition-colors group">
+                      <td className="px-6 py-4">
+                        <div className="font-bold text-slate-900 font-mono">{inv.invoice_number}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="font-bold text-slate-900">{inv.patients?.full_name || "Pasien Tidak Diketahui"}</p>
+                        <p className="text-[10px] text-slate-400">Tindakan Medis</p>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="text-slate-600 font-medium text-xs">{formatDateShort(inv.issued_at)}</span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <p className="font-bold text-slate-900">{formatCurrency(inv.total_amount)}</p>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase ${
+                          isPaid ? "bg-[#76f9d6]/20 text-[#00725d]" : "bg-amber-100 text-amber-700"
+                        }`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${isPaid ? "bg-[#006b57]" : "bg-amber-500"}`}></span> 
+                          {displayStatus}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94]"><FileText className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94]"><Download className="h-4 w-4" /></Button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
         </div>
         <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
-          <p className="text-xs text-slate-500 font-medium">Menampilkan {filteredInvoices.length} dari {MOCK_INVOICES.length} tagihan</p>
+          <p className="text-xs text-slate-500 font-medium">Menampilkan {filteredInvoices.length} dari {invoices.length} tagihan</p>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" className="h-8 text-xs font-semibold" disabled>Sebelumnya</Button>
             <Button className="h-8 w-8 bg-[#0D5A94] hover:bg-[#0D5A94] text-white text-xs font-bold p-0">1</Button>

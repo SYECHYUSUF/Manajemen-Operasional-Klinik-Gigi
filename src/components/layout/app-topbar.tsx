@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Bell, Search, Settings, ChevronDown, Check, AlertCircle, CalendarClock, PhoneCall, Cake, ServerCog, X, LogOut, User } from "lucide-react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -28,6 +28,18 @@ export function AppTopbar() {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const unreadCount = mockNotifications.filter((n) => !n.is_read).length;
+
+  const [userRole, setUserRole] = useState("admin");
+  const [userName, setUserName] = useState("Loading...");
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      const role = data.session?.user?.user_metadata?.role || "admin";
+      const name = data.session?.user?.user_metadata?.full_name || data.session?.user?.email || "User";
+      setUserRole(role);
+      setUserName(name);
+    });
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -105,13 +117,15 @@ export function AppTopbar() {
           </DropdownMenu>
 
           {/* Settings shortcut → App Settings */}
-          <Link
-            href="/pengaturan"
-            className="rounded-full p-2 text-slate-500 hover:bg-slate-100 transition-colors hidden sm:flex"
-            title="Pengaturan Aplikasi"
-          >
-            <Settings className="h-5 w-5" />
-          </Link>
+          {userRole === "admin" && (
+            <Link
+              href="/pengaturan"
+              className="rounded-full p-2 text-slate-500 hover:bg-slate-100 transition-colors hidden sm:flex"
+              title="Pengaturan Aplikasi"
+            >
+              <Settings className="h-5 w-5" />
+            </Link>
+          )}
 
           {/* Divider */}
           <div className="mx-1 h-7 w-px bg-slate-200 hidden sm:block" />
@@ -120,13 +134,13 @@ export function AppTopbar() {
           <DropdownMenu>
             <DropdownMenuTrigger className="flex items-center gap-2 rounded-full hover:bg-slate-50 p-1.5 transition-colors outline-none focus:ring-2 focus:ring-[#0d5a94]">
               <Avatar className="h-8 w-8 border border-slate-200">
-                <AvatarFallback className="bg-[#0d5a94] text-white text-xs font-semibold">
-                  SA
+                <AvatarFallback className="bg-[#0d5a94] text-white text-xs font-semibold uppercase">
+                  {userName.substring(0, 2)}
                 </AvatarFallback>
               </Avatar>
               <div className="hidden md:block text-left mr-1">
-                <p className="text-sm font-bold text-slate-700 leading-none">drg. Sarah Amelia</p>
-                <p className="text-[10px] text-slate-500 mt-1 font-medium">Administrator</p>
+                <p className="text-sm font-bold text-slate-700 leading-none truncate max-w-[120px]">{userName}</p>
+                <p className="text-[10px] text-slate-500 mt-1 font-medium capitalize">{userRole}</p>
               </div>
               <ChevronDown className="hidden md:block h-4 w-4 text-slate-400" />
             </DropdownMenuTrigger>
@@ -134,16 +148,18 @@ export function AppTopbar() {
               <DropdownMenuGroup>
               <DropdownMenuLabel className="text-xs text-slate-500 font-normal">Masuk sebagai</DropdownMenuLabel>
               <DropdownMenuItem disabled className="font-bold text-[#0d5a94] text-sm">
-                drg. Sarah Amelia
+                {userName}
               </DropdownMenuItem>
             </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/profile")}>
                 <User className="h-4 w-4 text-slate-400 mr-2" /> Profil Saya
               </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/pengaturan")}>
-                <Settings className="h-4 w-4 text-slate-400 mr-2" /> Pengaturan
-              </DropdownMenuItem>
+              {userRole === "admin" && (
+                <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/pengaturan")}>
+                  <Settings className="h-4 w-4 text-slate-400 mr-2" /> Pengaturan
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="text-red-500 focus:text-red-500 focus:bg-red-50 cursor-pointer"

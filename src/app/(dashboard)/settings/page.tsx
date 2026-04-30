@@ -1,35 +1,51 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { PlusCircle, Activity, TrendingUp, Grid, Clock, Filter, Download, Edit, Trash2, Upload, Percent, RefreshCw, BarChart2, Blocks, Shapes, Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/lib/utils";
-
-const MOCK_SERVICES = [
-  { id: "CNS-001", name: "Konsultasi Awal", category: "Diagnostik", desc: "Pemeriksaan rongga mulut secara menyeluruh termasuk ulasan riwayat kesehatan.", price: 150000, status: "AKTIF" },
-  { id: "RAD-012", name: "Rontgen Digital (Full Mouth)", category: "Radiologi", desc: "Satu set radiografi digital penuh untuk diagnosis detail struktur gigi yang tersembunyi.", price: 250000, status: "AKTIF" },
-  { id: "PRV-005", name: "Scaling Profesional", category: "Preventif", desc: "Pembersihan karang gigi, plak, dan noda dari permukaan gigi.", price: 300000, status: "AKTIF" },
-  { id: "SUR-009", name: "Ekstraksi Gigi Bungsu", category: "Bedah", desc: "Pencabutan bedah gigi bungsu yang impaksi di bawah anestesi lokal.", price: 1500000, status: "NONAKTIF" },
-  { id: "END-003", name: "Perawatan Saluran Akar", category: "Endodontik", desc: "Perawatan infeksi pulpa gigi untuk menyelamatkan gigi asli.", price: 1200000, status: "AKTIF" },
-  { id: "ORT-001", name: "Pemasangan Kawat Gigi (Metal)", category: "Ortodonsi", desc: "Pemasangan behel metal standar untuk merapikan gigi.", price: 6500000, status: "AKTIF" },
-];
-
-const CATEGORIES = ["Semua Layanan", "Diagnostik", "Preventif", "Bedah", "Radiologi", "Endodontik", "Ortodonsi"];
+import { supabase } from "@/lib/supabase";
+import { Service, ServiceCategory } from "@/types";
 
 export default function SettingsPage() {
   const [activeCategory, setActiveCategory] = useState("Semua Layanan");
   const [searchQuery, setSearchQuery] = useState("");
+  
+  const [services, setServices] = useState<any[]>([]);
+  const [categories, setCategories] = useState<ServiceCategory[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const { data: catData } = await supabase.from('service_categories').select('*');
+        if (catData) setCategories(catData as ServiceCategory[]);
+        
+        const { data: svcData } = await supabase.from('services').select('*, service_categories(name)');
+        if (svcData) setServices(svcData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const categoryNames = ["Semua Layanan", ...categories.map(c => c.name)];
 
   const filteredServices = useMemo(() => {
-    return MOCK_SERVICES.filter(service => {
-      const matchCategory = activeCategory === "Semua Layanan" || service.category === activeCategory;
+    return services.filter(service => {
+      const catName = service.service_categories?.name || "Lainnya";
+      const matchCategory = activeCategory === "Semua Layanan" || catName === activeCategory;
       const matchSearch = service.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          service.id.toLowerCase().includes(searchQuery.toLowerCase());
+                          service.code.toLowerCase().includes(searchQuery.toLowerCase());
       return matchCategory && matchSearch;
     });
-  }, [activeCategory, searchQuery]);
+  }, [services, activeCategory, searchQuery]);
 
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-500 max-w-7xl mx-auto">
@@ -52,7 +68,7 @@ export default function SettingsPage() {
               <Activity className="h-5 w-5" />
             </div>
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Layanan</p>
-            <p className="text-3xl font-extrabold text-slate-900 mt-1">{MOCK_SERVICES.length}</p>
+            <p className="text-3xl font-extrabold text-slate-900 mt-1">{services.length}</p>
           </CardContent>
         </Card>
         
@@ -72,7 +88,7 @@ export default function SettingsPage() {
               <Shapes className="h-5 w-5" />
             </div>
             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Kategori</p>
-            <p className="text-3xl font-extrabold text-slate-900 mt-1">{CATEGORIES.length - 1}</p>
+            <p className="text-3xl font-extrabold text-slate-900 mt-1">{categories.length}</p>
           </CardContent>
         </Card>
 
@@ -91,7 +107,7 @@ export default function SettingsPage() {
       <Card className="border-slate-100 shadow-sm overflow-hidden flex flex-col">
         <div className="px-6 py-4 border-b border-slate-100 flex flex-col md:flex-row items-center justify-between bg-slate-50/50 gap-4">
           <div className="flex gap-4 overflow-x-auto w-full md:w-auto hide-scrollbar pb-2 md:pb-0">
-            {CATEGORIES.map(cat => (
+            {categoryNames.map(cat => (
               <button 
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
@@ -129,7 +145,13 @@ export default function SettingsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {filteredServices.length === 0 ? (
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
+                    Memuat data...
+                  </td>
+                </tr>
+              ) : filteredServices.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
                     Tidak ada layanan yang sesuai dengan filter.
@@ -140,18 +162,20 @@ export default function SettingsPage() {
                   <tr key={service.id} className="hover:bg-blue-50/30 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="font-bold text-slate-800">{service.name}</div>
-                      <div className="text-[10px] text-[#0D5A94] font-bold mt-0.5">KODE: {service.id}</div>
+                      <div className="text-[10px] text-[#0D5A94] font-bold mt-0.5">KODE: {service.code}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="px-3 py-1 bg-blue-50 text-[#0D5A94] text-xs font-bold rounded-full">{service.category}</span>
+                      <span className="px-3 py-1 bg-blue-50 text-[#0D5A94] text-xs font-bold rounded-full">
+                        {service.service_categories?.name || "Lainnya"}
+                      </span>
                     </td>
                     <td className="px-6 py-4 max-w-xs">
-                      <p className="text-xs text-slate-600 line-clamp-1">{service.desc}</p>
+                      <p className="text-xs text-slate-600 line-clamp-1">{service.description || "-"}</p>
                     </td>
-                    <td className="px-6 py-4 font-bold text-slate-900">{formatCurrency(service.price)}</td>
+                    <td className="px-6 py-4 font-bold text-slate-900">{formatCurrency(service.base_price)}</td>
                     <td className="px-6 py-4 text-center">
-                      <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full border ${service.status === "AKTIF" ? "bg-green-50 text-[#006b57] border-green-100" : "bg-slate-100 text-slate-600 border-slate-200"}`}>
-                        {service.status}
+                      <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full border ${service.is_active ? "bg-green-50 text-[#006b57] border-green-100" : "bg-slate-100 text-slate-600 border-slate-200"}`}>
+                        {service.is_active ? "AKTIF" : "NONAKTIF"}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
@@ -167,7 +191,7 @@ export default function SettingsPage() {
           </table>
         </div>
         <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
-          <p className="text-xs text-slate-500 font-medium">Menampilkan {filteredServices.length} dari {MOCK_SERVICES.length} layanan</p>
+          <p className="text-xs text-slate-500 font-medium">Menampilkan {filteredServices.length} dari {services.length} layanan</p>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" className="h-8 text-xs font-semibold" disabled>Sebelumnya</Button>
             <Button className="h-8 w-8 bg-[#0D5A94] hover:bg-[#0D5A94] text-white text-xs font-bold p-0">1</Button>

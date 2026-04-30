@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -14,14 +14,14 @@ import { AppointmentFormDialog } from "@/components/features/appointments/appoin
 import { supabase } from "@/lib/supabase";
 
 const NAV_ITEMS = [
-  { label: "Dashboard",       href: "/dashboard",       icon: LayoutDashboard },
-  { label: "Pasien",          href: "/patients",        icon: Users },
-  { label: "Jadwal",          href: "/appointments",    icon: CalendarDays },
-  { label: "Rekam Medis",     href: "/medical-records", icon: FileText },
-  { label: "Inventaris",      href: "/inventory",       icon: Package },
-  { label: "Kasir & Billing", href: "/billing",         icon: Receipt },
-  { label: "Laporan",         href: "/reports",         icon: BarChart3 },
-  { label: "Master Data",     href: "/settings",        icon: Database },
+  { label: "Dashboard",       href: "/dashboard",       icon: LayoutDashboard, roles: ["admin", "doctor", "cashier"] },
+  { label: "Pasien",          href: "/patients",        icon: Users,           roles: ["admin", "doctor", "cashier"] },
+  { label: "Jadwal",          href: "/appointments",    icon: CalendarDays,    roles: ["admin", "doctor", "cashier"] },
+  { label: "Rekam Medis",     href: "/medical-records", icon: FileText,        roles: ["admin", "doctor"] },
+  { label: "Inventaris",      href: "/inventory",       icon: Package,         roles: ["admin", "doctor"] },
+  { label: "Kasir & Billing", href: "/billing",         icon: Receipt,         roles: ["admin", "cashier"] },
+  { label: "Laporan",         href: "/reports",         icon: BarChart3,       roles: ["admin"] },
+  { label: "Master Data",     href: "/settings",        icon: Database,        roles: ["admin"] },
 ];
 
 export function AppSidebar() {
@@ -29,6 +29,14 @@ export function AppSidebar() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
+  const [userRole, setUserRole] = useState<string>("admin"); // default to admin
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      const role = data.session?.user?.user_metadata?.role || "admin";
+      setUserRole(role);
+    });
+  }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -62,7 +70,7 @@ export function AppSidebar() {
       {/* ── Navigation ── */}
       <ScrollArea className="flex-1 py-4">
         <nav className="flex flex-col gap-1 px-3">
-          {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
+          {NAV_ITEMS.filter(item => item.roles.includes(userRole)).map(({ label, href, icon: Icon }) => {
             const active = pathname === href || pathname.startsWith(href + "/");
             return (
               <Link
