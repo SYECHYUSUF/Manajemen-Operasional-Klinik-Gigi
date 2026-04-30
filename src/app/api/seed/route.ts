@@ -1,17 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 
-// Gunakan service role key (server-side only, tidak terekspos ke client)
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  }
-);
+// Paksa route ini selalu server-rendered (tidak di-prerender saat build)
+export const dynamic = 'force-dynamic';
+
 
 const DEMO_USERS = [
   {
@@ -32,13 +24,20 @@ const DEMO_USERS = [
 ];
 
 export async function GET() {
-  // Guard: hanya bisa diakses jika service role key ada
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+  if (!serviceKey || !supabaseUrl) {
     return NextResponse.json(
-      { error: 'SUPABASE_SERVICE_ROLE_KEY belum diset di .env.local' },
+      { error: 'SUPABASE_SERVICE_ROLE_KEY atau NEXT_PUBLIC_SUPABASE_URL belum diset di .env.local' },
       { status: 500 }
     );
   }
+
+  // Inisialisasi admin client di dalam handler (runtime only, bukan build time)
+  const supabaseAdmin = createClient(supabaseUrl, serviceKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+  });
 
   const results: { email: string; status: string; error?: string }[] = [];
 

@@ -223,7 +223,7 @@ export function AppTopbar() {
           onClick={() => { setShowSearchModal(false); setSearch(""); }}
         >
           <div
-            className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden border border-slate-100 dark:border-slate-800"
+            className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full  overflow-hidden border border-slate-100 dark:border-slate-800"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Search Input */}
