@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🦷 DentalCloud Pro - Sistem Manajemen Klinik Gigi
 
-## Getting Started
+DentalCloud Pro adalah aplikasi manajemen klinik gigi modern berbasis web yang dibangun dengan Next.js dan Supabase. Sistem ini dilengkapi dengan Role-Based Access Control (RBAC), modul keuangan (billing), rekam medis, penjadwalan, dan inventaris.
 
-First, run the development server:
+## 👥 Tugas Kelompok
+Proyek ini diajukan untuk memenuhi tugas matakuliah **Pemrograman Web Lanjutan**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**Kelompok 12**
+- MOCH SYECH YUSUF M
+- AKHMAD HIDYAT
+- MUHAMMAD FADHIL MULYADI
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Teknologi yang Digunakan
+- **Frontend:** Next.js 14 (App Router), React, Tailwind CSS, Shadcn UI
+- **Backend/Database:** Supabase (PostgreSQL, Authentication)
+- **Icons:** Lucide React
+- **Theming:** next-themes (Dark/Light mode)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔑 Fitur Utama
+1. **Role-Based Access Control (RBAC)**
+   - **Admin:** Akses penuh ke dasbor, laporan keuangan, manajemen pengguna (CRUD, Ban, Suspend), dan master data.
+   - **Dokter:** Akses khusus ke jadwal, rekam medis pasien (resep, riwayat), dan inventaris klinis.
+   - **Kasir:** Akses khusus ke modul penagihan (billing) dan invoice.
 
-## Learn More
+2. **Manajemen Pasien & Rekam Medis**
+   - Pendaftaran pasien baru.
+   - Pencatatan rekam medis terpadu (diagnosa, resep obat, jadwal selanjutnya).
 
-To learn more about Next.js, take a look at the following resources:
+3. **Manajemen Jadwal**
+   - Tampilan kalender interaktif (Hari/Minggu/Bulan).
+   - Penambahan janji temu dan konfirmasi kehadiran.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. **Keuangan & Kasir**
+   - Pembuatan tagihan (invoice) otomatis.
+   - Cetak struk pembayaran.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+5. **Laporan & Dasbor**
+   - Grafik pendapatan dan statistik harian.
 
-## Deploy on Vercel
+## 🚀 Cara Menjalankan Aplikasi Lokal
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Clone repository ini**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Konfigurasi Environment Variables**
+   Buat file `.env.local` di root folder dan masukkan:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+   ```
+
+4. **Jalankan Development Server:**
+   ```bash
+   npm run dev
+   ```
+
+5. **Buka di Browser:**
+   Akses `http://localhost:3000`
+
+## 👤 Akun Demo
+- **Admin:** `admin@dentalcloud.id` (Pass: `Admin@1234`)
+- **Dokter:** `dokter@dentalcloud.id` (Pass: `Dokter@1234`)
+- **Kasir:** `kasir@dentalcloud.id` (Pass: `Kasir@1234`)
