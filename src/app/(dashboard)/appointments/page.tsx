@@ -38,7 +38,7 @@ const MOCK_APPOINTMENTS = [
 ];
 
 const STATUS_STYLE: Record<string, string> = {
-  confirmed: "bg-blue-50 border-blue-500 text-blue-900",
+  confirmed: "bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-900",
   completed:  "bg-emerald-50 border-emerald-500 text-emerald-900",
   cancelled:  "bg-rose-50 border-rose-500 text-rose-900",
 };
@@ -84,8 +84,8 @@ export default function AppointmentsPage() {
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-extrabold text-[#0D5A94]">Jadwal & Janji Temu</h2>
-          <p className="text-slate-500 text-lg">Kelola prosedur dan konsultasi harian dokter.</p>
+          <h2 className="text-3xl font-extrabold text-[#0D5A94] dark:text-blue-400">Jadwal & Janji Temu</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-lg">Kelola prosedur dan konsultasi harian dokter.</p>
         </div>
         <div className="flex items-center gap-2 bg-white dark:bg-slate-900 p-1 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
           {(["Harian","Mingguan","Bulanan"] as const).map(v => (
@@ -96,7 +96,7 @@ export default function AppointmentsPage() {
               className={`px-4 py-2 h-auto text-sm font-semibold rounded transition-colors ${
                 view === v
                   ? "bg-[#0D5A94] text-white hover:bg-[#004271] hover:text-white"
-                  : "text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800"
+                  : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-800"
               }`}
             >
               {v}
@@ -110,23 +110,23 @@ export default function AppointmentsPage() {
         <div className="col-span-1 lg:col-span-3 space-y-6">
 
           {/* Mini Calendar — dynamic */}
-          <Card className="border-slate-200 shadow-sm shadow-blue-900/5">
+          <Card className="border-slate-200 dark:border-slate-700 shadow-sm shadow-blue-900/5">
             <div className="p-6">
               <div className="flex items-center justify-between mb-5">
                 <button
                   onClick={prevMonth}
-                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  className="p-1 rounded-lg hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition-colors"
                 >
-                  <ChevronLeft className="h-4 w-4 text-slate-500" />
+                  <ChevronLeft className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 </button>
-                <span className="font-bold text-[#0D5A94] text-sm">
+                <span className="font-bold text-[#0D5A94] dark:text-blue-400 text-sm">
                   {MONTHS_ID[calMonth]} {calYear}
                 </span>
                 <button
                   onClick={nextMonth}
-                  className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  className="p-1 rounded-lg hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition-colors"
                 >
-                  <ChevronRight className="h-4 w-4 text-slate-500" />
+                  <ChevronRight className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 </button>
               </div>
               <div className="grid grid-cols-7 gap-y-2 text-center">
@@ -143,12 +143,12 @@ export default function AppointmentsPage() {
                       onClick={() => cell.current && setSelectedDay(cell.day)}
                       className={`w-7 h-7 mx-auto text-xs rounded-full flex items-center justify-center transition-colors font-medium ${
                         !cell.current
-                          ? "text-slate-200 dark:text-slate-700 cursor-default"
+                          ? "text-slate-200 dark:text-slate-700 dark:text-slate-300 cursor-default"
                           : isSelected
                             ? "bg-[#0D5A94] text-white font-bold"
                             : isTodayCell
-                              ? "bg-blue-100 text-[#0D5A94] font-bold"
-                              : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                              ? "bg-blue-100 text-[#0D5A94] dark:text-blue-400 font-bold"
+                              : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800"
                       }`}
                     >
                       {cell.day}
@@ -160,9 +160,9 @@ export default function AppointmentsPage() {
           </Card>
 
           {/* Doctors Available */}
-          <Card className="border-slate-200 shadow-sm shadow-blue-900/5 overflow-hidden">
+          <Card className="border-slate-200 dark:border-slate-700 shadow-sm shadow-blue-900/5 overflow-hidden">
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50">
-              <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Dokter Tersedia</h3>
+              <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Dokter Tersedia</h3>
             </div>
             <div className="p-2 space-y-1">
               {DOCTORS.map((doc) => (
@@ -171,19 +171,19 @@ export default function AppointmentsPage() {
                   className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors text-left ${
                     doc.active
                       ? "bg-blue-50 dark:bg-blue-900/20"
-                      : "hover:bg-slate-50 dark:hover:bg-slate-800"
+                      : "hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-800"
                   }`}
                 >
                   <Avatar className="h-10 w-10 rounded-lg">
-                    <AvatarFallback className={doc.active ? "bg-blue-200 text-blue-700" : "bg-slate-200 text-slate-600"}>
+                    <AvatarFallback className={doc.active ? "bg-blue-200 text-blue-700" : "bg-slate-200 text-slate-600 dark:text-slate-300"}>
                       {doc.initials}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className={`text-sm font-bold ${doc.active ? "text-[#0D5A94]" : "text-slate-700 dark:text-slate-200"}`}>{doc.name}</p>
+                    <p className={`text-sm font-bold ${doc.active ? "text-[#0D5A94] dark:text-blue-400" : "text-slate-700 dark:text-slate-200"}`}>{doc.name}</p>
                     {doc.active
                       ? <span className="text-[10px] text-[#00725d] bg-[#76f9d6]/30 px-1.5 py-0.5 rounded inline-block mt-0.5 font-semibold">{doc.spec}</span>
-                      : <p className="text-[10px] text-slate-500 mt-0.5 font-medium">{doc.spec}</p>
+                      : <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium">{doc.spec}</p>
                     }
                   </div>
                 </button>
@@ -202,24 +202,24 @@ export default function AppointmentsPage() {
 
         {/* ── Main Schedule ── */}
         <div className="col-span-1 lg:col-span-9">
-          <Card className="border-slate-200 shadow-sm shadow-blue-900/5 flex flex-col h-[calc(100vh-140px)] lg:h-[calc(100vh-200px)]">
+          <Card className="border-slate-200 dark:border-slate-700 shadow-sm shadow-blue-900/5 flex flex-col h-[calc(100vh-140px)] lg:h-[calc(100vh-200px)]">
             {/* Toolbar */}
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                  <ChevronLeft className="h-4 w-4 text-slate-500" />
+                <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition-colors">
+                  <ChevronLeft className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 </button>
-                <h3 className="text-xl font-bold text-[#0D5A94]">{dayLabel}</h3>
-                <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-                  <ChevronRight className="h-4 w-4 text-slate-500" />
+                <h3 className="text-xl font-bold text-[#0D5A94] dark:text-blue-400">{dayLabel}</h3>
+                <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition-colors">
+                  <ChevronRight className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 </button>
                 {isToday && (
-                  <span className="px-3 py-1 bg-green-50 text-green-700 text-[10px] font-bold rounded-full uppercase tracking-wider">Hari Ini</span>
+                  <span className="px-3 py-1 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 text-[10px] font-bold rounded-full uppercase tracking-wider">Hari Ini</span>
                 )}
               </div>
               <div className="flex items-center gap-3 w-full sm:w-auto">
-                <div className="flex items-center gap-3 flex-wrap text-[11px] text-slate-500 font-medium">
-                  {[["bg-blue-500","Dikonfirmasi"],["bg-emerald-500","Selesai"],["bg-rose-500","Batal"]].map(([c,l]) => (
+                <div className="flex items-center gap-3 flex-wrap text-[11px] text-slate-500 dark:text-slate-400 font-medium">
+                  {[["bg-blue-50 dark:bg-blue-900/200","Dikonfirmasi"],["bg-emerald-500","Selesai"],["bg-rose-500","Batal"]].map(([c,l]) => (
                     <div key={l} className="flex items-center gap-1.5">
                       <span className={`w-2 h-2 rounded-full ${c}`} />{l}
                     </div>
@@ -243,10 +243,10 @@ export default function AppointmentsPage() {
                         onClick={() => cell.current && setSelectedDay(cell.day)}
                         className={`min-h-[60px] p-2 rounded-lg text-sm text-left transition-colors border ${
                           !cell.current
-                            ? "text-slate-200 dark:text-slate-700 bg-slate-50 dark:bg-slate-900 border-transparent"
+                            ? "text-slate-200 dark:text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-900 border-transparent"
                             : cell.day === selectedDay
-                              ? "bg-blue-50 dark:bg-blue-900/20 border-[#0D5A94] text-[#0D5A94] font-bold"
-                              : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:bg-slate-50 text-slate-600 dark:text-slate-300"
+                              ? "bg-blue-50 dark:bg-blue-900/20 border-[#0D5A94] text-[#0D5A94] dark:text-blue-400 font-bold"
+                              : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
                         }`}
                       >
                         {cell.day}
@@ -267,9 +267,9 @@ export default function AppointmentsPage() {
                   <tbody>
                     {MOCK_APPOINTMENTS.map((apt, i) => {
                       if (apt.status === "break") return (
-                        <tr key={i} className="even:bg-slate-50 dark:even:bg-slate-800">
+                        <tr key={i} className="even:bg-slate-50 dark:bg-slate-800 dark:even:bg-slate-800">
                           <td className="p-4 border-b border-r border-slate-100 dark:border-slate-800 text-center align-top bg-slate-50 dark:bg-slate-800">
-                            <span className="text-xs font-bold text-slate-500">{apt.time}</span>
+                            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">{apt.time}</span>
                           </td>
                           <td className="p-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/50 text-center h-16">
                             <span className="text-xs text-slate-400 uppercase tracking-widest font-bold">Istirahat Siang</span>
@@ -278,16 +278,16 @@ export default function AppointmentsPage() {
                       );
 
                       if (apt.status === "empty") return (
-                        <tr key={i} className="even:bg-slate-50 dark:even:bg-slate-800">
+                        <tr key={i} className="even:bg-slate-50 dark:bg-slate-800 dark:even:bg-slate-800">
                           <td className="p-4 border-b border-r border-slate-100 dark:border-slate-800 text-center align-top bg-white dark:bg-slate-900">
                             <span className="text-xs font-bold text-slate-600 dark:text-slate-400">{apt.time}</span>
                           </td>
                           <td className="p-2 border-b border-slate-100 dark:border-slate-800 h-28 group bg-white dark:bg-slate-900">
                             <button
                               onClick={() => setIsFormOpen(true)}
-                              className="w-full h-full flex items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg group-hover:border-[#0D5A94] group-hover:bg-blue-50/50 dark:group-hover:bg-blue-900/10 cursor-pointer transition-all"
+                              className="w-full h-full flex items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg group-hover:border-[#0D5A94] group-hover:bg-blue-50 dark:bg-blue-900/20/50 dark:group-hover:bg-blue-900/10 cursor-pointer transition-all"
                             >
-                              <span className="text-slate-400 group-hover:text-[#0D5A94] text-sm font-semibold flex items-center gap-2">
+                              <span className="text-slate-400 group-hover:text-[#0D5A94] dark:text-blue-400 text-sm font-semibold flex items-center gap-2">
                                 <Plus className="h-4 w-4" /> Isi Slot Kosong
                               </span>
                             </button>
@@ -300,7 +300,7 @@ export default function AppointmentsPage() {
                       const Icon = apt.status === "completed" ? CheckCircle : apt.status === "cancelled" ? XCircle : AlertTriangle;
 
                       return (
-                        <tr key={i} className="even:bg-slate-50 dark:even:bg-slate-800">
+                        <tr key={i} className="even:bg-slate-50 dark:bg-slate-800 dark:even:bg-slate-800">
                           <td className="p-4 border-b border-r border-slate-100 dark:border-slate-800 text-center align-top bg-white dark:bg-slate-900">
                             <span className="text-xs font-bold text-slate-600 dark:text-slate-400">{apt.time}</span>
                           </td>

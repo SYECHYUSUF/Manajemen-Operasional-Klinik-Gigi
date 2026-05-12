@@ -11,9 +11,9 @@ import { supabase } from "@/lib/supabase";
 import { useRole } from "@/contexts/role-context";
 
 const ROLE_LABELS: Record<string, { label: string; color: string }> = {
-  admin:   { label: "Administrator", color: "text-[#006b57] bg-[#76f9d6]/20 border-[#76f9d6]/40" },
-  doctor:  { label: "Dokter",        color: "text-[#0D5A94] bg-blue-50 border-blue-200" },
-  cashier: { label: "Kasir",         color: "text-amber-700 bg-amber-50 border-amber-200" },
+  admin:   { label: "Administrator", color: "text-[#006b57] dark:text-green-400 bg-[#76f9d6]/20 border-[#76f9d6]/40" },
+  doctor:  { label: "Dokter",        color: "text-[#0D5A94] dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border-blue-200" },
+  cashier: { label: "Kasir",         color: "text-amber-700 bg-amber-50 dark:bg-amber-900/20 border-amber-200" },
 };
 
 export default function ProfilePage() {
@@ -135,8 +135,8 @@ export default function ProfilePage() {
         {bannerPreview
           ? <img src={bannerPreview} alt="banner" className="w-full h-full object-cover" />
           : <div className="w-full h-full transition-colors duration-300" style={{ background: `linear-gradient(135deg, ${bannerColor}, ${bannerColor}cc)` }}>
-              <div className="absolute top-4 right-16 w-40 h-40 rounded-full bg-white/10 blur-3xl" />
-              <div className="absolute bottom-0 left-24 w-56 h-28 rounded-full bg-white/5 blur-3xl" />
+              <div className="absolute top-4 right-16 w-40 h-40 rounded-full bg-white dark:bg-slate-900/10 blur-3xl" />
+              <div className="absolute bottom-0 left-24 w-56 h-28 rounded-full bg-white dark:bg-slate-900/5 blur-3xl" />
             </div>
         }
         {/* Banner edit button */}
@@ -199,12 +199,12 @@ export default function ProfilePage() {
           <h2 className="text-2xl font-black text-slate-900 dark:text-white">{form.fullName || "Nama Pengguna"}</h2>
           <div className="flex flex-wrap items-center gap-3 mt-1">
             {form.specialization && (
-              <span className="flex items-center gap-1.5 text-sm text-slate-500">
+              <span className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
                 <Stethoscope className="h-3.5 w-3.5 text-[#0d5a94]" /> {form.specialization}
               </span>
             )}
             {form.licenseNumber && (
-              <span className="flex items-center gap-1.5 text-sm text-slate-500">
+              <span className="flex items-center gap-1.5 text-sm text-slate-500 dark:text-slate-400">
                 <Award className="h-3.5 w-3.5 text-amber-500" /> {form.licenseNumber}
               </span>
             )}
@@ -226,7 +226,7 @@ export default function ProfilePage() {
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-150 ${
               activeTab === id
                 ? "bg-white dark:bg-slate-900 text-[#0d5a94] shadow-md"
-                : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300 dark:hover:text-slate-300"
             }`}
           >
             <Icon className="h-4 w-4" /> {label}
@@ -249,7 +249,7 @@ export default function ProfilePage() {
                     { label: "Spesialisasi", key: "specialization", icon: Stethoscope, type: "text" },
                   ].map(({ label, key, icon: Icon, type }) => (
                     <div key={key} className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{label}</label>
+                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{label}</label>
                       <div className="relative">
                         <Icon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
                         <input
@@ -264,7 +264,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Email</label>
+                  <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Email</label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
                     <input
@@ -283,7 +283,7 @@ export default function ProfilePage() {
                     { label: "No. SIP / Lisensi", key: "licenseNumber", icon: Award },
                   ].map(({ label, key, icon: Icon }) => (
                     <div key={key} className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{label}</label>
+                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{label}</label>
                       <div className="relative">
                         <Icon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
                         <input
@@ -298,7 +298,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Alamat</label>
+                  <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Alamat</label>
                   <div className="relative">
                     <MapPin className="absolute left-3 top-3.5 h-4 w-4 text-slate-300" />
                     <input
@@ -311,7 +311,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Bio</label>
+                  <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Bio</label>
                   <textarea
                     value={form.bio}
                     rows={3}
@@ -337,11 +337,11 @@ export default function ProfilePage() {
                 <div className="space-y-4">
                   {[
                     { label: "Pasien Ditangani", value: "248", color: "text-[#0d5a94]" },
-                    { label: "Janji Temu Bulan Ini", value: "32", color: "text-[#006b57]" },
-                    { label: "Rekam Medis Diupdate", value: "19", color: "text-purple-600" },
+                    { label: "Janji Temu Bulan Ini", value: "32", color: "text-[#006b57] dark:text-green-400" },
+                    { label: "Rekam Medis Diupdate", value: "19", color: "text-purple-600 dark:text-purple-400" },
                   ].map((stat, i) => (
                     <div key={i} className="flex items-center justify-between py-2.5 border-b border-slate-50 dark:border-slate-800 last:border-0">
-                      <span className="text-sm text-slate-500">{stat.label}</span>
+                      <span className="text-sm text-slate-500 dark:text-slate-400">{stat.label}</span>
                       <span className={`text-lg font-black ${stat.color}`}>{stat.value}</span>
                     </div>
                   ))}
@@ -357,7 +357,7 @@ export default function ProfilePage() {
                     <button
                       key={c}
                       onClick={() => { setBannerColor(c); setBannerPreview(null); }}
-                      className={`w-8 h-8 rounded-lg border-2 transition-transform hover:scale-110 ${bannerColor === c && !bannerPreview ? "border-[#0d5a94] scale-110 ring-2 ring-[#0d5a94]/30" : "border-slate-200"}`}
+                      className={`w-8 h-8 rounded-lg border-2 transition-transform hover:scale-110 ${bannerColor === c && !bannerPreview ? "border-[#0d5a94] scale-110 ring-2 ring-[#0d5a94]/30" : "border-slate-200 dark:border-slate-700"}`}
                       style={{ background: c }}
                     />
                   ))}
@@ -385,7 +385,7 @@ export default function ProfilePage() {
               { label: "Konfirmasi Password Baru", key: "confirm" },
             ].map(field => (
               <div key={field.key} className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">{field.label}</label>
+                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{field.label}</label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-300" />
                   <input
@@ -425,7 +425,7 @@ export default function ProfilePage() {
                   onClick={() => setNotifState(s => s.map((v, idx) => idx === i ? !v : v))}
                   className={`relative w-11 h-6 rounded-full transition-colors shrink-0 ${notifState[i] ? "bg-[#0d5a94]" : "bg-slate-200 dark:bg-slate-700"}`}
                 >
-                  <span className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow-sm transition-all ${notifState[i] ? "left-6" : "left-1"}`} />
+                  <span className={`absolute top-1 w-4 h-4 rounded-full bg-white dark:bg-slate-900 shadow-sm transition-all ${notifState[i] ? "left-6" : "left-1"}`} />
                 </button>
               </div>
             ))}

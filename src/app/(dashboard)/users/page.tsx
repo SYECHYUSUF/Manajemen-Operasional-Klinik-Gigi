@@ -34,9 +34,9 @@ interface LoginLog {
 }
 
 const ROLE_CONFIG = {
-  admin:   { label: "Admin",  icon: Crown,       color: "text-purple-600 bg-purple-50 border-purple-200" },
-  doctor:  { label: "Dokter", icon: Stethoscope,  color: "text-[#0D5A94] bg-blue-50 border-blue-200" },
-  cashier: { label: "Kasir",  icon: Receipt,      color: "text-amber-700 bg-amber-50 border-amber-200" },
+  admin:   { label: "Admin",  icon: Crown,       color: "text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 border-purple-200" },
+  doctor:  { label: "Dokter", icon: Stethoscope,  color: "text-[#0D5A94] dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border-blue-200" },
+  cashier: { label: "Kasir",  icon: Receipt,      color: "text-amber-700 bg-amber-50 dark:bg-amber-900/20 border-amber-200" },
 };
 
 function fmtDate(d: string | null) {
@@ -80,7 +80,7 @@ function EditRoleModal({ user, onClose, onSave }: { user: AppUser; onClose: () =
       <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-sm border border-slate-100 dark:border-slate-800" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
           <h2 className="font-bold text-slate-900 dark:text-white">Ubah Role Pengguna</h2>
-          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"><X className="h-4 w-4 text-slate-400" /></button>
+          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800"><X className="h-4 w-4 text-slate-400" /></button>
         </div>
         <div className="p-6 space-y-4">
           <div className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl">
@@ -89,7 +89,7 @@ function EditRoleModal({ user, onClose, onSave }: { user: AppUser; onClose: () =
             </div>
             <div>
               <p className="font-bold text-sm text-slate-900 dark:text-white">{user.full_name}</p>
-              <p className="text-xs text-slate-500">{user.email}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{user.email}</p>
             </div>
           </div>
           <div className="space-y-2">
@@ -99,12 +99,12 @@ function EditRoleModal({ user, onClose, onSave }: { user: AppUser; onClose: () =
                 <button
                   key={r}
                   onClick={() => setRole(r)}
-                  className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${role === r ? "border-[#0D5A94] bg-blue-50 dark:bg-blue-900/20" : "border-slate-100 dark:border-slate-700 hover:border-slate-200"}`}
+                  className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${role === r ? "border-[#0D5A94] bg-blue-50 dark:bg-blue-900/20" : "border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:border-slate-700"}`}
                 >
                   <span className={`px-2 py-1 text-xs font-bold rounded-lg border flex items-center gap-1.5 ${color}`}>
                     <Icon className="h-3.5 w-3.5" />{label}
                   </span>
-                  {role === r && <CheckCircle2 className="h-4 w-4 text-[#0D5A94] ml-auto" />}
+                  {role === r && <CheckCircle2 className="h-4 w-4 text-[#0D5A94] dark:text-blue-400 ml-auto" />}
                 </button>
               );
             })}
@@ -198,8 +198,8 @@ export default function UserManagementPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-extrabold text-[#0D5A94]">Manajemen Pengguna</h2>
-          <p className="text-slate-500 mt-1">Kelola akun, role, dan akses semua pengguna sistem.</p>
+          <h2 className="text-3xl font-extrabold text-[#0D5A94] dark:text-blue-400">Manajemen Pengguna</h2>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Kelola akun, role, dan akses semua pengguna sistem.</p>
         </div>
         <Button onClick={() => showToast("Fitur undang pengguna akan segera hadir.", true)} className="bg-[#0D5A94] hover:bg-[#004271] text-white font-bold gap-2">
           <Users className="h-4 w-4" /> Undang Pengguna
@@ -209,18 +209,18 @@ export default function UserManagementPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Total Pengguna", value: stats.total, icon: Users, color: "text-[#0D5A94] bg-blue-50" },
+          { label: "Total Pengguna", value: stats.total, icon: Users, color: "text-[#0D5A94] dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20" },
           { label: "Akun Aktif", value: stats.active, icon: UserCheck, color: "text-emerald-600 bg-emerald-50" },
           { label: "Akun Banned", value: stats.banned, icon: UserX, color: "text-red-600 bg-red-50" },
-          { label: "Login Hari Ini", value: stats.todayLogin, icon: Clock, color: "text-purple-600 bg-purple-50" },
+          { label: "Login Hari Ini", value: stats.todayLogin, icon: Clock, color: "text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20" },
         ].map((s, i) => (
-          <Card key={i} className="border-slate-100 shadow-sm">
+          <Card key={i} className="border-slate-100 dark:border-slate-800 shadow-sm">
             <CardContent className="p-5 flex items-center gap-4">
               <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${s.color}`}>
                 <s.icon className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">{s.label}</p>
+                <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">{s.label}</p>
                 <p className={`text-2xl font-extrabold ${s.color.split(" ")[0]}`}>{s.value}</p>
               </div>
             </CardContent>
@@ -231,7 +231,7 @@ export default function UserManagementPage() {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         {/* User Table */}
         <div className="xl:col-span-2">
-          <Card className="border-slate-100 shadow-sm overflow-hidden">
+          <Card className="border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex items-center justify-between gap-4">
               <h3 className="font-bold text-slate-800 dark:text-white">Daftar Pengguna</h3>
               <div className="relative w-56">
@@ -250,7 +250,7 @@ export default function UserManagementPage() {
                 const isBanned = user.banned_until && new Date(user.banned_until) > new Date();
                 const { label: roleLabel, icon: RoleIcon, color: roleColor } = ROLE_CONFIG[user.role] || ROLE_CONFIG.cashier;
                 return (
-                  <div key={user.id} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                  <div key={user.id} className="p-4 hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-800/50 transition-colors">
                     <div className="flex items-center gap-4">
                       {/* Avatar */}
                       <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold text-sm text-white shrink-0 ${isBanned ? "bg-red-400" : "bg-[#0D5A94]"}`}>
@@ -270,7 +270,7 @@ export default function UserManagementPage() {
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-slate-500 truncate">{user.email}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
                         <div className="flex items-center gap-3 mt-1.5 text-[11px] text-slate-400">
                           <span className="flex items-center gap-1"><Clock className="h-3 w-3" />Login: {timeAgo(user.last_sign_in_at)}</span>
                           <span>Daftar: {fmtDate(user.created_at).split(",")[0]}</span>
@@ -281,14 +281,14 @@ export default function UserManagementPage() {
                       <div className="relative shrink-0">
                         <button
                           onClick={() => setOpenMenu(openMenu === user.id ? null : user.id)}
-                          className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                          className="p-2 rounded-lg hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
                         >
                           <MoreVertical className="h-4 w-4 text-slate-400" />
                         </button>
                         {openMenu === user.id && (
                           <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-slate-900 rounded-xl shadow-xl border border-slate-100 dark:border-slate-800 z-20 py-1 overflow-hidden">
-                            <button onClick={() => { setEditUser(user); setOpenMenu(null); }} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800">
-                              <Shield className="h-4 w-4 text-[#0D5A94]" /> Ubah Role
+                            <button onClick={() => { setEditUser(user); setOpenMenu(null); }} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-800">
+                              <Shield className="h-4 w-4 text-[#0D5A94] dark:text-blue-400" /> Ubah Role
                             </button>
                             {isBanned ? (
                               <button onClick={() => handleUnban(user.id)} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-emerald-600 hover:bg-emerald-50">
@@ -296,7 +296,7 @@ export default function UserManagementPage() {
                               </button>
                             ) : (
                               <>
-                                <button onClick={() => handleSuspend(user.id)} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-amber-600 hover:bg-amber-50">
+                                <button onClick={() => handleSuspend(user.id)} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:bg-amber-900/20">
                                   <ShieldOff className="h-4 w-4" /> Suspend 24 Jam
                                 </button>
                                 <button onClick={() => handleBan(user.id)} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50">
@@ -320,7 +320,7 @@ export default function UserManagementPage() {
 
         {/* Login Activity Log */}
         <div>
-          <Card className="border-slate-100 shadow-sm overflow-hidden">
+          <Card className="border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden">
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 flex items-center justify-between">
               <h3 className="font-bold text-slate-800 dark:text-white text-sm">Log Aktivitas Login</h3>
               <div className="flex gap-1 bg-white dark:bg-slate-800 p-0.5 rounded-lg border border-slate-100 dark:border-slate-700">
@@ -328,7 +328,7 @@ export default function UserManagementPage() {
                   <button
                     key={f}
                     onClick={() => setLogFilter(f)}
-                    className={`px-2.5 py-1 text-[11px] font-bold rounded-md transition-colors ${logFilter === f ? "bg-[#0D5A94] text-white" : "text-slate-500 hover:bg-slate-50"}`}
+                    className={`px-2.5 py-1 text-[11px] font-bold rounded-md transition-colors ${logFilter === f ? "bg-[#0D5A94] text-white" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-800"}`}
                   >
                     {f === "today" ? "Hari Ini" : "Semua"}
                   </button>
@@ -341,7 +341,7 @@ export default function UserManagementPage() {
                 const isToday = new Date(log.logged_at).toDateString() === new Date().toDateString();
                 const { color: rc, icon: RIcon } = ROLE_CONFIG[log.role as keyof typeof ROLE_CONFIG] || ROLE_CONFIG.cashier;
                 return (
-                  <div key={log.id} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                  <div key={log.id} className="p-4 hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-800/50 transition-colors">
                     <div className="flex items-center gap-3">
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-xs shrink-0 ${isToday ? "bg-[#0D5A94]" : "bg-slate-400"}`}>
                         {log.name.split(" ").map((w: string) => w[0]).join("").slice(0, 2)}

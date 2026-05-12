@@ -73,9 +73,9 @@ function PaymentModal({ open, onClose, invoice, onSuccess }: {
         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800">
           <div>
             <h2 className="text-lg font-bold text-slate-900 dark:text-white">Proses Pembayaran</h2>
-            <p className="text-xs text-slate-500 mt-0.5">{invoice?.invoice_number}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{invoice?.invoice_number}</p>
           </div>
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition-colors">
             <X className="h-5 w-5 text-slate-400" />
           </button>
         </div>
@@ -141,7 +141,7 @@ function PaymentModal({ open, onClose, invoice, onSuccess }: {
               <button
                 key={amount}
                 onClick={() => setAmountPaid(amount.toString())}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 hover:border-[#0D5A94] transition-colors"
+                className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:bg-blue-900/20 dark:hover:bg-blue-900/20 hover:border-[#0D5A94] transition-colors"
               >
                 {formatCurrency(amount)}
               </button>
@@ -175,7 +175,7 @@ function PaymentModal({ open, onClose, invoice, onSuccess }: {
 // ─── Receipt Component ─────────────────────────────────────────────
 function ReceiptView({ invoice, items, payment }: { invoice: any; items: any[]; payment: any }) {
   return (
-    <div id="receipt-content" className="bg-white text-black p-6 w-[300px] mx-auto text-xs font-mono">
+    <div id="receipt-content" className="bg-white dark:bg-slate-900 text-black p-6 w-[300px] mx-auto text-xs font-mono">
       {/* Header */}
       <div className="text-center border-b border-dashed border-gray-400 pb-3 mb-3">
         <p className="text-base font-black tracking-wide">🦷 KLINIK GIGI</p>
@@ -295,7 +295,7 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
   if (!invoice) {
     return (
       <div className="text-center py-20">
-        <p className="text-slate-500 text-lg">Tagihan tidak ditemukan.</p>
+        <p className="text-slate-500 dark:text-slate-400 text-lg">Tagihan tidak ditemukan.</p>
         <Button variant="outline" className="mt-4" onClick={() => router.push("/billing")}>
           <ArrowLeft className="h-4 w-4 mr-2" /> Kembali
         </Button>
@@ -319,7 +319,7 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <button
             onClick={() => router.push("/billing")}
-            className="flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-[#0D5A94] transition-colors"
+            className="flex items-center gap-2 text-sm font-semibold text-slate-500 dark:text-slate-400 hover:text-[#0D5A94] dark:text-blue-400 transition-colors"
           >
             <ArrowLeft className="h-4 w-4" /> Kembali ke Daftar Tagihan
           </button>
@@ -351,7 +351,7 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
             </div>
             <div className="text-right">
               <span className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold uppercase shadow-sm ${
-                isPaid ? "bg-white text-emerald-700" : "bg-white text-[#0D5A94]"
+                isPaid ? "bg-white dark:bg-slate-900 text-emerald-700" : "bg-white dark:bg-slate-900 text-[#0D5A94] dark:text-blue-400"
               }`}>
                 {isPaid ? <CheckCircle className="h-4 w-4" /> : <Clock className="h-4 w-4" />}
                 {isPaid ? "LUNAS" : "BELUM DIBAYAR"}
@@ -364,16 +364,16 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
             <div>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Ditagihkan Kepada:</p>
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-1">{invoice.patients?.full_name || "—"}</h2>
-              <p className="text-sm text-slate-500 font-mono">ID: {invoice.patients?.patient_code}</p>
-              {invoice.patients?.phone && <p className="text-sm text-slate-500 mt-1">{invoice.patients.phone}</p>}
+              <p className="text-sm text-slate-500 dark:text-slate-400 font-mono">ID: {invoice.patients?.patient_code}</p>
+              {invoice.patients?.phone && <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{invoice.patients.phone}</p>}
             </div>
             <div className="sm:text-right">
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Informasi Tagihan:</p>
               <div className="space-y-1.5 text-sm">
-                <p><span className="text-slate-500 mr-2">Tanggal Terbit:</span> <span className="font-semibold text-slate-900 dark:text-white">{formatDateLong(invoice.issued_at)}</span></p>
-                <p><span className="text-slate-500 mr-2">Waktu:</span> <span className="font-semibold text-slate-900 dark:text-white">{formatTime(invoice.issued_at)}</span></p>
+                <p><span className="text-slate-500 dark:text-slate-400 mr-2">Tanggal Terbit:</span> <span className="font-semibold text-slate-900 dark:text-white">{formatDateLong(invoice.issued_at)}</span></p>
+                <p><span className="text-slate-500 dark:text-slate-400 mr-2">Waktu:</span> <span className="font-semibold text-slate-900 dark:text-white">{formatTime(invoice.issued_at)}</span></p>
                 {payment?.paid_at && (
-                  <p><span className="text-slate-500 mr-2">Dibayar Pada:</span> <span className="font-semibold text-emerald-600">{formatDateLong(payment.paid_at)}</span></p>
+                  <p><span className="text-slate-500 dark:text-slate-400 mr-2">Dibayar Pada:</span> <span className="font-semibold text-emerald-600">{formatDateLong(payment.paid_at)}</span></p>
                 )}
               </div>
             </div>
@@ -385,10 +385,10 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
               <table className="w-full text-sm">
                 <thead className="bg-slate-50 dark:bg-slate-800/50">
                   <tr>
-                    <th className="px-5 py-3 text-left text-[11px] font-black text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">Layanan & Deskripsi</th>
-                    <th className="px-5 py-3 text-center text-[11px] font-black text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800 w-24">Qty</th>
-                    <th className="px-5 py-3 text-right text-[11px] font-black text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800 w-36">Harga (Rp)</th>
-                    <th className="px-5 py-3 text-right text-[11px] font-black text-slate-500 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800 w-40">Subtotal (Rp)</th>
+                    <th className="px-5 py-3 text-left text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800">Layanan & Deskripsi</th>
+                    <th className="px-5 py-3 text-center text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800 w-24">Qty</th>
+                    <th className="px-5 py-3 text-right text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800 w-36">Harga (Rp)</th>
+                    <th className="px-5 py-3 text-right text-[11px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest border-b border-slate-100 dark:border-slate-800 w-40">Subtotal (Rp)</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -397,8 +397,8 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
                   ) : items.map((item, i) => (
                     <tr key={i} className="even:bg-slate-50/50 dark:even:bg-slate-800/30">
                       <td className="px-5 py-4 font-semibold text-slate-900 dark:text-white">{item.description}</td>
-                      <td className="px-5 py-4 text-center text-slate-600">{item.quantity}</td>
-                      <td className="px-5 py-4 text-right text-slate-600">{formatCurrency(item.unit_price)}</td>
+                      <td className="px-5 py-4 text-center text-slate-600 dark:text-slate-300">{item.quantity}</td>
+                      <td className="px-5 py-4 text-right text-slate-600 dark:text-slate-300">{formatCurrency(item.unit_price)}</td>
                       <td className="px-5 py-4 text-right font-bold text-slate-900 dark:text-white">{formatCurrency(item.quantity * item.unit_price)}</td>
                     </tr>
                   ))}
@@ -418,16 +418,16 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
                   </div>
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p className="text-xs text-slate-500 uppercase tracking-wider">Metode</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Metode</p>
                       <p className="font-semibold text-slate-900 dark:text-white uppercase mt-0.5">{payment.method}</p>
                     </div>
                     <div>
-                      <p className="text-xs text-slate-500 uppercase tracking-wider">No Referensi</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">No Referensi</p>
                       <p className="font-mono font-semibold text-slate-900 dark:text-white mt-0.5">{payment.payment_number}</p>
                     </div>
                     {payment.notes && (
                       <div className="col-span-2">
-                         <p className="text-xs text-slate-500 uppercase tracking-wider">Catatan Tambahan</p>
+                         <p className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">Catatan Tambahan</p>
                          <p className="font-semibold text-slate-900 dark:text-white mt-0.5">{payment.notes}</p>
                       </div>
                     )}
@@ -436,7 +436,7 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
               ) : invoice.notes ? (
                 <div>
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Catatan:</p>
-                  <p className="text-sm text-slate-600 bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-800">{invoice.notes}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 p-4 rounded-xl border border-slate-100 dark:border-slate-800">{invoice.notes}</p>
                 </div>
               ) : (
                 <div className="hidden md:block text-slate-400 italic text-sm pt-4">Terima kasih atas kunjungan Anda.</div>
@@ -445,7 +445,7 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
 
             {/* Pricing totals */}
             <div className="md:w-80 space-y-3 shrink-0 bg-slate-50 dark:bg-slate-800 p-5 rounded-xl border border-slate-100 dark:border-slate-700">
-              <div className="flex justify-between items-center text-sm font-medium text-slate-500">
+              <div className="flex justify-between items-center text-sm font-medium text-slate-500 dark:text-slate-400">
                 <span>Subtotal</span>
                 <span className="text-slate-900 dark:text-white font-semibold">{formatCurrency(invoice.subtotal || invoice.total_amount)}</span>
               </div>
@@ -458,7 +458,7 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
               )}
               
               {Number(invoice.tax_amount) > 0 && (
-                <div className="flex justify-between items-center text-sm font-medium text-slate-500">
+                <div className="flex justify-between items-center text-sm font-medium text-slate-500 dark:text-slate-400">
                   <span>Pajak (PPN)</span>
                   <span className="text-slate-900 dark:text-white font-semibold">{formatCurrency(invoice.tax_amount)}</span>
                 </div>
@@ -466,14 +466,14 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
               
               <div className="pt-3 mt-3 border-t border-slate-200 dark:border-slate-600 flex justify-between items-end">
                 <span className="font-black text-slate-900 dark:text-white">TOTAL</span>
-                <span className={`text-2xl font-black ${isPaid ? "text-emerald-600" : "text-[#0D5A94]"}`}>
+                <span className={`text-2xl font-black ${isPaid ? "text-emerald-600" : "text-[#0D5A94] dark:text-blue-400"}`}>
                   {formatCurrency(invoice.total_amount)}
                 </span>
               </div>
 
               {isPaid && (
                 <div className="pt-3 mt-3 border-t border-slate-200 dark:border-slate-600 flex justify-between items-center text-sm">
-                  <span className="font-bold text-slate-500">Total Dibayar</span>
+                  <span className="font-bold text-slate-500 dark:text-slate-400">Total Dibayar</span>
                   <span className="font-black text-emerald-600">{formatCurrency(payment?.amount || invoice.total_amount)}</span>
                 </div>
               )}
@@ -485,14 +485,14 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
       {/* Receipt (hidden, shown for print) */}
       {showReceipt && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 md:pl-[276px] print:bg-transparent print:backdrop-blur-none" onClick={() => setShowReceipt(false)}>
-          <div className="bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto print:shadow-none print:rounded-none" onClick={e => e.stopPropagation()}>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto print:shadow-none print:rounded-none" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-4 py-3 border-b print:hidden">
               <h3 className="font-bold text-sm">Preview Struk</h3>
               <div className="flex gap-2">
                 <Button size="sm" onClick={() => window.print()} className="bg-[#0D5A94] text-white gap-1.5 text-xs">
                   <Printer className="h-3.5 w-3.5" /> Print
                 </Button>
-                <button onClick={() => setShowReceipt(false)} className="p-1.5 rounded-lg hover:bg-slate-100">
+                <button onClick={() => setShowReceipt(false)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:bg-slate-800">
                   <X className="h-4 w-4" />
                 </button>
               </div>

@@ -124,7 +124,7 @@ export default function SettingsPage() {
 
   if (roleLoading) return <div className="flex items-center justify-center h-64 text-slate-400">Memuat...</div>;
   if (!isAdmin) return (
-    <div className="flex flex-col items-center justify-center h-64 gap-4 text-slate-500">
+    <div className="flex flex-col items-center justify-center h-64 gap-4 text-slate-500 dark:text-slate-400">
       <ShieldAlert className="h-12 w-12 text-red-400" />
       <p className="font-semibold">Akses ditolak. Halaman ini hanya untuk Admin.</p>
     </div>
@@ -139,7 +139,7 @@ export default function SettingsPage() {
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg border border-slate-100 dark:border-slate-800" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">{editService ? "Edit Layanan" : "Tambah Layanan Baru"}</h2>
-              <button onClick={() => { setShowAddModal(false); setEditService(null); }} className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"><X className="h-4 w-4 text-slate-400" /></button>
+              <button onClick={() => { setShowAddModal(false); setEditService(null); }} className="p-1.5 rounded-full hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800"><X className="h-4 w-4 text-slate-400" /></button>
             </div>
             <AddServiceForm
               initial={editService}
@@ -164,8 +164,8 @@ export default function SettingsPage() {
       {/* ── Page Actions Header ── */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-extrabold text-[#0D5A94]">Master Data Layanan</h2>
-          <p className="text-slate-500 mt-1">Kelola daftar layanan klinik, strategi harga, dan deskripsi prosedur.</p>
+          <h2 className="text-3xl font-extrabold text-[#0D5A94] dark:text-blue-400">Master Data Layanan</h2>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Kelola daftar layanan klinik, strategi harga, dan deskripsi prosedur.</p>
         </div>
         <Button onClick={() => setShowAddModal(true)} className="bg-[#0D5A94] hover:bg-[#004271] text-white font-bold shadow-lg shadow-blue-900/10 gap-2 h-11 px-6">
           <PlusCircle className="h-5 w-5" /> Layanan Baru
@@ -174,56 +174,56 @@ export default function SettingsPage() {
 
       {/* ── Dashboard Stats Summary ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="border-slate-100 shadow-sm">
+        <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
           <CardContent className="p-6">
-            <div className="w-10 h-10 bg-blue-50 text-[#0D5A94] rounded-lg flex items-center justify-center mb-4">
+            <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 text-[#0D5A94] dark:text-blue-400 rounded-lg flex items-center justify-center mb-4">
               <Activity className="h-5 w-5" />
             </div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Layanan</p>
-            <p className="text-3xl font-extrabold text-slate-900 mt-1">{services.length}</p>
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Layanan</p>
+            <p className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{services.length}</p>
           </CardContent>
         </Card>
         
-        <Card className="border-slate-100 shadow-sm">
+        <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
           <CardContent className="p-6">
-            <div className="w-10 h-10 bg-green-50 text-[#006b57] rounded-lg flex items-center justify-center mb-4">
+            <div className="w-10 h-10 bg-green-50 dark:bg-green-900/20 text-[#006b57] dark:text-green-400 rounded-lg flex items-center justify-center mb-4">
               <TrendingUp className="h-5 w-5" />
             </div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Rata-rata Tarif</p>
-            <p className="text-3xl font-extrabold text-slate-900 mt-1">Rp 350K</p>
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Rata-rata Tarif</p>
+            <p className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">Rp 350K</p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-100 shadow-sm">
+        <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
           <CardContent className="p-6">
-            <div className="w-10 h-10 bg-purple-50 text-purple-600 rounded-lg flex items-center justify-center mb-4">
+            <div className="w-10 h-10 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-lg flex items-center justify-center mb-4">
               <Shapes className="h-5 w-5" />
             </div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Kategori</p>
-            <p className="text-3xl font-extrabold text-slate-900 mt-1">{categories.length}</p>
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Kategori</p>
+            <p className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{categories.length}</p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-100 shadow-sm">
+        <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
           <CardContent className="p-6">
-            <div className="w-10 h-10 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center mb-4">
+            <div className="w-10 h-10 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 rounded-lg flex items-center justify-center mb-4">
               <Clock className="h-5 w-5" />
             </div>
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Terakhir Diperbarui</p>
-            <p className="text-3xl font-extrabold text-slate-900 mt-1">Hari Ini</p>
+            <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Terakhir Diperbarui</p>
+            <p className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">Hari Ini</p>
           </CardContent>
         </Card>
       </div>
 
       {/* ── Main Data Table Container ── */}
-      <Card className="border-slate-100 shadow-sm overflow-hidden flex flex-col">
-        <div className="px-6 py-4 border-b border-slate-100 flex flex-col md:flex-row items-center justify-between bg-slate-50/50 gap-4">
+      <Card className="border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
+        <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row items-center justify-between bg-slate-50/50 gap-4">
           <div className="flex gap-4 overflow-x-auto w-full md:w-auto hide-scrollbar pb-2 md:pb-0">
             {categoryNames.map(cat => (
               <button 
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`text-sm whitespace-nowrap pb-1 px-1 transition-colors ${activeCategory === cat ? 'font-bold text-[#0D5A94] border-b-2 border-[#0D5A94]' : 'font-medium text-slate-500 hover:text-slate-700'}`}
+                className={`text-sm whitespace-nowrap pb-1 px-1 transition-colors ${activeCategory === cat ? 'font-bold text-[#0D5A94] dark:text-blue-400 border-b-2 border-[#0D5A94]' : 'font-medium text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300'}`}
               >
                 {cat}
               </button>
@@ -236,63 +236,63 @@ export default function SettingsPage() {
                  placeholder="Cari layanan, kode..." 
                  value={searchQuery}
                  onChange={(e) => setSearchQuery(e.target.value)}
-                 className="pl-9 h-9 text-sm rounded-full bg-white border-slate-200" 
+                 className="pl-9 h-9 text-sm rounded-full bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700" 
                />
             </div>
-            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-slate-600 hover:bg-slate-100"><Filter className="h-5 w-5" /></Button>
-            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-slate-600 hover:bg-slate-100"><Download className="h-5 w-5" /></Button>
+            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:bg-slate-800"><Filter className="h-5 w-5" /></Button>
+            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:bg-slate-800"><Download className="h-5 w-5" /></Button>
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-white border-b border-slate-100">
+            <thead className="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800">
               <tr>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Nama Layanan</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Kategori</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Deskripsi</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Harga Dasar</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">Status</th>
-                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-right">Aksi</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Nama Layanan</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Kategori</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Deskripsi</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Harga Dasar</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Status</th>
+                <th className="px-6 py-4 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
+                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                     Memuat data...
                   </td>
                 </tr>
               ) : filteredServices.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
+                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500 dark:text-slate-400">
                     Tidak ada layanan yang sesuai dengan filter.
                   </td>
                 </tr>
               ) : (
                 filteredServices.map(service => (
-                  <tr key={service.id} className="hover:bg-blue-50/30 transition-colors group even:bg-slate-50 dark:even:bg-slate-800">
+                  <tr key={service.id} className="hover:bg-blue-50/30 transition-colors group even:bg-slate-50 dark:bg-slate-800 dark:even:bg-slate-800">
                     <td className="px-6 py-4">
-                      <div className="font-bold text-slate-800">{service.name}</div>
-                      <div className="text-[10px] text-[#0D5A94] font-bold mt-0.5">KODE: {service.code}</div>
+                      <div className="font-bold text-slate-800 dark:text-white">{service.name}</div>
+                      <div className="text-[10px] text-[#0D5A94] dark:text-blue-400 font-bold mt-0.5">KODE: {service.code}</div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="px-3 py-1 bg-blue-50 text-[#0D5A94] text-xs font-bold rounded-full">
+                      <span className="px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-[#0D5A94] dark:text-blue-400 text-xs font-bold rounded-full">
                         {service.service_categories?.name || "Lainnya"}
                       </span>
                     </td>
                     <td className="px-6 py-4 max-w-xs">
-                      <p className="text-xs text-slate-600 line-clamp-1">{service.description || "-"}</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-1">{service.description || "-"}</p>
                     </td>
-                    <td className="px-6 py-4 font-bold text-slate-900">{formatCurrency(service.base_price)}</td>
+                    <td className="px-6 py-4 font-bold text-slate-900 dark:text-white">{formatCurrency(service.base_price)}</td>
                     <td className="px-6 py-4 text-center">
-                      <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full border ${service.is_active ? "bg-green-50 text-[#006b57] border-green-100" : "bg-slate-100 text-slate-600 border-slate-200"}`}>
+                      <span className={`px-2.5 py-1 text-[10px] font-bold rounded-full border ${service.is_active ? "bg-green-50 dark:bg-green-900/20 text-[#006b57] dark:text-green-400 border-green-100" : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700"}`}>
                         {service.is_active ? "AKTIF" : "NONAKTIF"}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94]" onClick={() => setEditService(service)}><Edit className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94] dark:text-blue-400" onClick={() => setEditService(service)}><Edit className="h-4 w-4" /></Button>
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-600" onClick={async () => {
                           if (confirm(`Hapus layanan "${service.name}"?`)) {
                             await supabase.from("services").delete().eq("id", service.id);
@@ -308,7 +308,7 @@ export default function SettingsPage() {
           </table>
         </div>
         <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-          <p className="text-xs text-slate-500 font-medium">Menampilkan {filteredServices.length} dari {services.length} layanan</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Menampilkan {filteredServices.length} dari {services.length} layanan</p>
           {filteredServices.length > 10 && (
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" className="h-8 text-xs font-semibold">Sebelumnya</Button>
@@ -328,8 +328,8 @@ export default function SettingsPage() {
               Tinjau bagaimana tarif layanan Anda dibandingkan dengan tolok ukur klinis sekitar dan optimalkan siklus pendapatan klinik Anda.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button className="bg-white text-[#0D5A94] hover:bg-blue-50 font-bold px-6">Lihat Laporan</Button>
-              <Button variant="outline" className="bg-white/10 text-white border-white/20 hover:bg-white/20 hover:text-white font-bold backdrop-blur-sm px-6">Benchmarks</Button>
+              <Button className="bg-white dark:bg-slate-900 text-[#0D5A94] dark:text-blue-400 hover:bg-blue-50 dark:bg-blue-900/20 font-bold px-6">Lihat Laporan</Button>
+              <Button variant="outline" className="bg-white dark:bg-slate-900/10 text-white border-white/20 hover:bg-white dark:bg-slate-900/20 hover:text-white font-bold backdrop-blur-sm px-6">Benchmarks</Button>
             </div>
           </div>
           <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-blue-400/20 rounded-full blur-3xl"></div>
@@ -338,36 +338,36 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        <Card className="border-slate-100 shadow-sm rounded-2xl">
+        <Card className="border-slate-100 dark:border-slate-800 shadow-sm rounded-2xl">
           <CardContent className="p-8">
-            <h4 className="text-lg font-bold text-slate-900 mb-6">Aksi Cepat</h4>
+            <h4 className="text-lg font-bold text-slate-900 dark:text-white mb-6">Aksi Cepat</h4>
             <div className="space-y-4">
-              <button className="w-full flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors border border-slate-100 group">
+              <button className="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-slate-100 dark:bg-slate-800 transition-colors border border-slate-100 dark:border-slate-800 group">
                 <div className="flex items-center gap-3">
-                  <Upload className="h-5 w-5 text-[#006b57]" />
-                  <span className="font-semibold text-slate-700 text-sm">Impor Layanan</span>
+                  <Upload className="h-5 w-5 text-[#006b57] dark:text-green-400" />
+                  <span className="font-semibold text-slate-700 dark:text-slate-300 text-sm">Impor Layanan</span>
                 </div>
-                <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:translate-x-1 transition-transform">
+                <div className="w-6 h-6 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center shadow-sm group-hover:translate-x-1 transition-transform">
                   <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 8.75L7.5 5L3.75 1.25" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </div>
               </button>
               
-              <button className="w-full flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors border border-slate-100 group">
+              <button className="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-slate-100 dark:bg-slate-800 transition-colors border border-slate-100 dark:border-slate-800 group">
                 <div className="flex items-center gap-3">
                   <Percent className="h-5 w-5 text-amber-500" />
-                  <span className="font-semibold text-slate-700 text-sm">Kelola Aturan Pajak</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-300 text-sm">Kelola Aturan Pajak</span>
                 </div>
-                <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:translate-x-1 transition-transform">
+                <div className="w-6 h-6 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center shadow-sm group-hover:translate-x-1 transition-transform">
                   <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 8.75L7.5 5L3.75 1.25" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </div>
               </button>
 
-              <button className="w-full flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors border border-slate-100 group">
+              <button className="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-slate-100 dark:bg-slate-800 transition-colors border border-slate-100 dark:border-slate-800 group">
                 <div className="flex items-center gap-3">
                   <RefreshCw className="h-5 w-5 text-purple-500" />
-                  <span className="font-semibold text-slate-700 text-sm">Pembaruan Harga Massal</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-300 text-sm">Pembaruan Harga Massal</span>
                 </div>
-                <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center shadow-sm group-hover:translate-x-1 transition-transform">
+                <div className="w-6 h-6 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center shadow-sm group-hover:translate-x-1 transition-transform">
                   <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.75 8.75L7.5 5L3.75 1.25" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </div>
               </button>

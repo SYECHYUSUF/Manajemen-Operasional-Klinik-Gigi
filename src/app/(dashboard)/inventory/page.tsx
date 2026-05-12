@@ -38,7 +38,7 @@ function AddProductModal({ open, onClose }: { open: boolean; onClose: () => void
       <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg border border-slate-100 dark:border-slate-800" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
           <h2 className="text-lg font-bold text-slate-900 dark:text-white">Tambah Produk Baru</h2>
-          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"><X className="h-4 w-4 text-slate-400" /></button>
+          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800"><X className="h-4 w-4 text-slate-400" /></button>
         </div>
         <div className="p-6 space-y-4">
           {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm px-4 py-2.5 rounded-lg font-semibold text-center">✓ Produk berhasil ditambahkan!</div>}
@@ -103,7 +103,7 @@ function RestockModal({ open, onClose, products }: { open: boolean; onClose: () 
       <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md border border-slate-100 dark:border-slate-800" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
           <h2 className="text-lg font-bold text-slate-900 dark:text-white">Restock Produk</h2>
-          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800"><X className="h-4 w-4 text-slate-400" /></button>
+          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800"><X className="h-4 w-4 text-slate-400" /></button>
         </div>
         <div className="p-6 space-y-4">
           {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm px-4 py-2.5 rounded-lg font-semibold text-center">✓ Restock berhasil dicatat!</div>}
@@ -173,10 +173,10 @@ export default function InventoryPage() {
       <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
         <div>
           <h2 className="text-3xl font-extrabold text-[#004271] dark:text-white">Manajemen Inventaris</h2>
-          <p className="text-slate-500 mt-1">Pantau stok bahan klinis dan farmasi secara real-time.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Pantau stok bahan klinis dan farmasi secara real-time.</p>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
-          <Button onClick={() => setShowRestock(true)} variant="outline" className="flex-1 md:flex-none border-2 border-[#006b57] text-[#006b57] font-bold hover:bg-[#006b57]/5 gap-2">
+          <Button onClick={() => setShowRestock(true)} variant="outline" className="flex-1 md:flex-none border-2 border-[#006b57] text-[#006b57] dark:text-green-400 font-bold hover:bg-[#006b57]/5 gap-2">
             <RefreshCw className="h-4 w-4" /> Restock
           </Button>
           <Button onClick={() => setShowAdd(true)} className="flex-1 md:flex-none bg-[#0D5A94] hover:bg-[#004271] text-white font-bold shadow-lg shadow-blue-900/20 gap-2">
@@ -187,41 +187,41 @@ export default function InventoryPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="border-slate-100 shadow-sm"><CardContent className="p-6">
-          <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-[#0D5A94] mb-4"><Package className="h-5 w-5" /></div>
-          <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Total Produk</p>
+        <Card className="border-slate-100 dark:border-slate-800 shadow-sm"><CardContent className="p-6">
+          <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-center text-[#0D5A94] dark:text-blue-400 mb-4"><Package className="h-5 w-5" /></div>
+          <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Total Produk</p>
           <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">{MOCK_PRODUCTS.length}</h3>
           <p className="text-[10px] text-slate-400 mt-2">Dari 3 kategori</p>
         </CardContent></Card>
-        <Card className="border-slate-100 shadow-sm"><CardContent className="p-6">
+        <Card className="border-slate-100 dark:border-slate-800 shadow-sm"><CardContent className="p-6">
           <div className="w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center text-orange-600 mb-4"><AlertTriangle className="h-5 w-5" /></div>
-          <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Stok Menipis</p>
+          <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Stok Menipis</p>
           <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">{MOCK_PRODUCTS.filter(p => p.status === "low").length}</h3>
           <p className="text-[10px] text-slate-400 mt-2">Perlu segera restock</p>
         </CardContent></Card>
-        <Card className="border-slate-100 shadow-sm"><CardContent className="p-6">
+        <Card className="border-slate-100 dark:border-slate-800 shadow-sm"><CardContent className="p-6">
           <div className="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center text-red-600 mb-4"><AlertCircle className="h-5 w-5" /></div>
-          <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Stok Habis</p>
+          <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Stok Habis</p>
           <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">{MOCK_PRODUCTS.filter(p => p.status === "empty").length}</h3>
           <p className="text-[10px] text-slate-400 mt-2">Perlu pengadaan segera</p>
         </CardContent></Card>
         <Card className="bg-[#0D5A94] border-transparent shadow-xl text-white"><CardContent className="p-6">
-          <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center text-white mb-4"><DollarSign className="h-5 w-5" /></div>
+          <div className="w-10 h-10 bg-white dark:bg-slate-900/10 rounded-lg flex items-center justify-center text-white mb-4"><DollarSign className="h-5 w-5" /></div>
           <p className="text-blue-200 text-xs font-bold uppercase tracking-wider">Nilai Inventaris</p>
           <h3 className="text-2xl font-black mt-1">{formatCurrency(425000000)}</h3>
-          <div className="w-full bg-white/20 h-1.5 rounded-full mt-4 overflow-hidden"><div className="bg-[#76f9d6] w-3/4 h-full rounded-full" /></div>
+          <div className="w-full bg-white dark:bg-slate-900/20 h-1.5 rounded-full mt-4 overflow-hidden"><div className="bg-[#76f9d6] w-3/4 h-full rounded-full" /></div>
         </CardContent></Card>
       </div>
 
       {/* Katalog Produk */}
-      <Card className="border-slate-100 shadow-sm overflow-hidden flex flex-col">
+      <Card className="border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between bg-slate-50/50 gap-4">
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
             <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider whitespace-nowrap">Katalog Produk</h3>
             <div className="flex border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-900">
               {["Semua", "Obat", "Alat"].map(cat => (
                 <Button key={cat} variant="ghost" onClick={() => { setActiveCategory(cat); setPage(1); }}
-                  className={`px-4 py-1.5 h-auto text-xs font-bold rounded-none ${activeCategory === cat ? "bg-[#0D5A94] text-white hover:bg-[#004271] hover:text-white" : "text-slate-500 hover:bg-slate-50 border-l border-slate-200 dark:border-slate-700"}`}>
+                  className={`px-4 py-1.5 h-auto text-xs font-bold rounded-none ${activeCategory === cat ? "bg-[#0D5A94] text-white hover:bg-[#004271] hover:text-white" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700"}`}>
                   {cat}
                 </Button>
               ))}
@@ -246,7 +246,7 @@ export default function InventoryPage() {
               {paged.length === 0 ? (
                 <tr><td colSpan={6} className="px-6 py-10 text-center text-slate-400">Tidak ada produk yang sesuai.</td></tr>
               ) : paged.map(item => (
-                <tr key={item.id} className="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors group even:bg-slate-50 dark:even:bg-slate-800">
+                <tr key={item.id} className="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors group even:bg-slate-50 dark:bg-slate-800 dark:even:bg-slate-800">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded bg-slate-100 dark:bg-slate-800 flex items-center justify-center shrink-0">
@@ -259,15 +259,15 @@ export default function InventoryPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase ${item.category === "Obat" ? "bg-purple-50 text-purple-600" : "bg-blue-50 text-blue-600"}`}>{item.category}</span>
+                    <span className={`px-2.5 py-1 rounded text-[10px] font-bold uppercase ${item.category === "Obat" ? "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400" : "bg-blue-50 dark:bg-blue-900/20 text-blue-600"}`}>{item.category}</span>
                   </td>
                   <td className="px-6 py-4 text-center font-black text-slate-900 dark:text-white">{item.stock}</td>
-                  <td className="px-6 py-4 text-slate-500 text-xs font-medium">{item.unit}</td>
+                  <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs font-medium">{item.unit}</td>
                   <td className="px-6 py-4">{statusBadge(item.status)}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-1">
-                      <Button onClick={() => setShowRestock(true)} variant="ghost" size="sm" className="h-7 text-xs text-[#006b57] hover:bg-emerald-50 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Restock</Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94]"><MoreVertical className="h-4 w-4" /></Button>
+                      <Button onClick={() => setShowRestock(true)} variant="ghost" size="sm" className="h-7 text-xs text-[#006b57] dark:text-green-400 hover:bg-emerald-50 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Restock</Button>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94] dark:text-blue-400"><MoreVertical className="h-4 w-4" /></Button>
                     </div>
                   </td>
                 </tr>
@@ -278,14 +278,14 @@ export default function InventoryPage() {
 
         {/* Pagination — hanya tampil jika > 1 halaman */}
         <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900">
-          <p className="text-xs text-slate-500 font-medium">
+          <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
             Menampilkan <span className="text-slate-900 dark:text-white font-bold">{Math.min((page - 1) * PER_PAGE + 1, filtered.length)}–{Math.min(page * PER_PAGE, filtered.length)}</span> dari {filtered.length} produk
           </p>
           {totalPages > 1 && (
             <div className="flex items-center gap-1">
               <Button variant="outline" size="icon" className="h-8 w-8" disabled={page === 1} onClick={() => setPage(p => p - 1)}><ChevronLeft className="h-4 w-4" /></Button>
               {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                <Button key={p} onClick={() => setPage(p)} className={`h-8 w-8 text-xs font-bold p-0 ${page === p ? "bg-[#0D5A94] text-white hover:bg-[#004271]" : "bg-white dark:bg-slate-900 text-slate-600 border border-slate-200"}`}>{p}</Button>
+                <Button key={p} onClick={() => setPage(p)} className={`h-8 w-8 text-xs font-bold p-0 ${page === p ? "bg-[#0D5A94] text-white hover:bg-[#004271]" : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"}`}>{p}</Button>
               ))}
               <Button variant="outline" size="icon" className="h-8 w-8" disabled={page === totalPages} onClick={() => setPage(p => p + 1)}><ChevronRight className="h-4 w-4" /></Button>
             </div>
@@ -295,23 +295,23 @@ export default function InventoryPage() {
 
       {/* Pergerakan Stok */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="border-slate-100 shadow-sm">
+        <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-6">
               <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Pergerakan Stok Terakhir</h4>
-              <Button variant="link" className="text-xs text-[#0D5A94] font-bold p-0 h-auto">Lihat Semua</Button>
+              <Button variant="link" className="text-xs text-[#0D5A94] dark:text-blue-400 font-bold p-0 h-auto">Lihat Semua</Button>
             </div>
             <div className="space-y-5">
               {[
-                { dot: "bg-green-500", title: "Stok Masuk: Amoxicillin 500mg", sub: "+200 Box oleh Admin Sarah", time: "2 jam lalu" },
+                { dot: "bg-green-50 dark:bg-green-900/200", title: "Stok Masuk: Amoxicillin 500mg", sub: "+200 Box oleh Admin Sarah", time: "2 jam lalu" },
                 { dot: "bg-red-500", title: "Stok Keluar: Sterile Latex Gloves", sub: "-5 Box untuk Ruang Operasi 4", time: "4 jam lalu" },
-                { dot: "bg-blue-500", title: "Audit Inventaris Selesai", sub: "Kategori: Obat - Tidak ada selisih", time: "Kemarin" },
+                { dot: "bg-blue-50 dark:bg-blue-900/200", title: "Audit Inventaris Selesai", sub: "Kategori: Obat - Tidak ada selisih", time: "Kemarin" },
               ].map((item, i) => (
                 <div key={i} className="flex items-start gap-4">
                   <div className={`w-1.5 h-1.5 rounded-full ${item.dot} mt-1.5 shrink-0`} />
                   <div className="flex-1">
                     <p className="text-xs font-bold text-slate-900 dark:text-white">{item.title}</p>
-                    <p className="text-[10px] text-slate-500 mt-0.5">{item.sub}</p>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{item.sub}</p>
                   </div>
                   <p className="text-[10px] font-bold text-slate-400 whitespace-nowrap">{item.time}</p>
                 </div>
@@ -320,10 +320,10 @@ export default function InventoryPage() {
           </CardContent>
         </Card>
 
-        <Card className="border-slate-100 shadow-sm">
+        <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
           <CardContent className="p-6">
             <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-2">Distribusi Vendor</h4>
-            <p className="text-xs text-slate-500 mb-6">Ringkasan sumber pasokan dan keandalan pengadaan.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">Ringkasan sumber pasokan dan keandalan pengadaan.</p>
             <div className="space-y-3">
               {[["Medline Industries", "bg-[#0D5A94]", "45%"], ["Patterson Dental", "bg-[#006b57]", "30%"], ["Lainnya", "bg-slate-200", "25%"]].map(([name, color, pct]) => (
                 <div key={name} className="flex items-center justify-between">
