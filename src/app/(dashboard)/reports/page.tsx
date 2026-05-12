@@ -274,7 +274,7 @@ export default function LaporanPage() {
             </thead>
             <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
               {TRANSAKSI_TERBARU.map((t, i) => (
-                <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                <tr key={i} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors even:bg-slate-50 dark:even:bg-slate-800">
                   <td className="px-5 py-3.5 font-mono text-xs font-bold text-[#0D5A94]">{t.id}</td>
                   <td className="px-5 py-3.5 font-semibold text-slate-800 dark:text-white">{t.pasien}</td>
                   <td className="px-5 py-3.5 text-slate-500">{t.layanan}</td>

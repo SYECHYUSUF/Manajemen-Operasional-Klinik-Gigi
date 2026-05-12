@@ -225,13 +225,6 @@ export default function AppointmentsPage() {
                     </div>
                   ))}
                 </div>
-                <Button
-                  onClick={() => setIsFormOpen(true)}
-                  size="sm"
-                  className="bg-[#0D5A94] hover:bg-[#004271] text-white font-bold gap-1.5 h-8 px-3 text-xs"
-                >
-                  <Plus className="h-3.5 w-3.5" /> Tambah
-                </Button>
               </div>
             </div>
 
@@ -274,7 +267,7 @@ export default function AppointmentsPage() {
                   <tbody>
                     {MOCK_APPOINTMENTS.map((apt, i) => {
                       if (apt.status === "break") return (
-                        <tr key={i}>
+                        <tr key={i} className="even:bg-slate-50 dark:even:bg-slate-800">
                           <td className="p-4 border-b border-r border-slate-100 dark:border-slate-800 text-center align-top bg-slate-50 dark:bg-slate-800">
                             <span className="text-xs font-bold text-slate-500">{apt.time}</span>
                           </td>
@@ -285,7 +278,7 @@ export default function AppointmentsPage() {
                       );
 
                       if (apt.status === "empty") return (
-                        <tr key={i}>
+                        <tr key={i} className="even:bg-slate-50 dark:even:bg-slate-800">
                           <td className="p-4 border-b border-r border-slate-100 dark:border-slate-800 text-center align-top bg-white dark:bg-slate-900">
                             <span className="text-xs font-bold text-slate-600 dark:text-slate-400">{apt.time}</span>
                           </td>
@@ -307,7 +300,7 @@ export default function AppointmentsPage() {
                       const Icon = apt.status === "completed" ? CheckCircle : apt.status === "cancelled" ? XCircle : AlertTriangle;
 
                       return (
-                        <tr key={i}>
+                        <tr key={i} className="even:bg-slate-50 dark:even:bg-slate-800">
                           <td className="p-4 border-b border-r border-slate-100 dark:border-slate-800 text-center align-top bg-white dark:bg-slate-900">
                             <span className="text-xs font-bold text-slate-600 dark:text-slate-400">{apt.time}</span>
                           </td>

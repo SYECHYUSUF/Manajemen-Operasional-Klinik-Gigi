@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRole } from "@/contexts/role-context";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Printer, Edit, AlertTriangle, Image as ImageIcon, FileText, LayoutGrid, Pill, X, Save, ShieldAlert } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { getInitials } from "@/lib/utils";
 
 // ─── Modal Edit Patient Details ────────────────────────────────────────────
 function EditDetailsModal({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -25,7 +26,7 @@ function EditDetailsModal({ open, onClose }: { open: boolean; onClose: () => voi
 
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 md:pl-[276px]" onClick={onClose}>
       <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full  border border-slate-100 dark:border-slate-800" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
           <h2 className="text-lg font-bold text-slate-900 dark:text-white">Edit Data Pasien</h2>
@@ -90,7 +91,7 @@ function PrescriptionModal({ open, onClose }: { open: boolean; onClose: () => vo
 
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 md:pl-[276px]" onClick={onClose}>
       <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full  border border-slate-100 dark:border-slate-800" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
           <h2 className="text-lg font-bold text-slate-900 dark:text-white">Resep Obat Baru</h2>
@@ -129,9 +130,14 @@ function PrescriptionModal({ open, onClose }: { open: boolean; onClose: () => vo
 }
 
 // ─── Halaman Utama ──────────────────────────────────────────────────────────
-export default function MedicalRecordsPage() {
+function MedicalRecordsContent() {
   const { isDoctor, isLoading: roleLoading } = useRole();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const patientId = searchParams.get('patient_id');
+  
+  const [patient, setPatient] = useState<any>(null);
+  const [loadingPatient, setLoadingPatient] = useState(true);
   const [showEdit, setShowEdit] = useState(false);
   const [showPrescription, setShowPrescription] = useState(false);
   const [showConfirmToast, setShowConfirmToast] = useState(false);
@@ -141,7 +147,21 @@ export default function MedicalRecordsPage() {
     if (!roleLoading && !isDoctor) router.replace("/dashboard");
   }, [roleLoading, isDoctor, router]);
 
-  if (roleLoading) return <div className="flex items-center justify-center h-64 text-slate-400">Memuat...</div>;
+  useEffect(() => {
+    async function load() {
+      if (!patientId) { setLoadingPatient(false); return; }
+      try {
+        const res = await fetch('/api/patients');
+        const data = await res.json();
+        const found = data.find((p:any) => p.id === patientId);
+        if (found) setPatient(found);
+      } catch (e) { console.error(e); }
+      setLoadingPatient(false);
+    }
+    load();
+  }, [patientId]);
+
+  if (roleLoading || loadingPatient) return <div className="flex items-center justify-center h-64 text-slate-400">Memuat data...</div>;
   if (!isDoctor) return (
     <div className="flex flex-col items-center justify-center h-64 gap-4 text-slate-500">
       <ShieldAlert className="h-12 w-12 text-red-400" />
@@ -180,7 +200,7 @@ export default function MedicalRecordsPage() {
         <div className="flex items-center gap-6">
           <div className="relative">
             <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-slate-200 dark:bg-slate-700 border-4 border-white dark:border-slate-900 shadow-md flex items-center justify-center">
-              <span className="text-2xl font-bold text-slate-400">EF</span>
+              <span className="text-2xl font-bold text-slate-400">{getInitials(patient?.full_name || "Eleanor Fitzgerald")}</span>
             </div>
             <div className="absolute -bottom-1 -right-1 bg-[#76f9d6] text-[#002019] px-2 py-0.5 rounded-full text-[10px] font-bold border-2 border-white dark:border-slate-900">
               AKTIF
@@ -188,13 +208,13 @@ export default function MedicalRecordsPage() {
           </div>
           <div>
             <div className="flex items-center gap-3 mb-1">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0D5A94]">Eleanor Fitzgerald</h2>
-              <span className="text-slate-400 text-sm font-medium">#PAT-99201</span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0D5A94]">{patient?.full_name || "Eleanor Fitzgerald"}</h2>
+              <span className="text-slate-400 text-sm font-medium">{patient?.patient_code || "#PAT-99201"}</span>
             </div>
             <div className="flex flex-wrap gap-4 text-slate-600 dark:text-slate-300 text-sm mt-2">
-              <span className="font-medium">34 tahun (12 Mei 1989)</span>
-              <span className="font-medium">Perempuan</span>
-              <span className="font-medium">+1 (555) 012-3456</span>
+              <span className="font-medium">{patient?.date_of_birth ? new Date().getFullYear() - new Date(patient.date_of_birth).getFullYear() + " tahun" : "34 tahun"}</span>
+              <span className="font-medium capitalize">{patient?.gender === 'male' ? 'Laki-laki' : patient?.gender === 'female' ? 'Perempuan' : 'Perempuan'}</span>
+              <span className="font-medium">{patient?.phone || "+1 (555) 012-3456"}</span>
             </div>
           </div>
         </div>
@@ -394,5 +414,13 @@ export default function MedicalRecordsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function MedicalRecordsPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-64 text-slate-400">Memuat...</div>}>
+      <MedicalRecordsContent />
+    </Suspense>
   );
 }

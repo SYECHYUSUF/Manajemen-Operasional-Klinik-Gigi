@@ -186,7 +186,7 @@ export default function DashboardPage() {
                 ) : recentAppointments.map((apt) => {
                   const statusInfo = APPOINTMENT_STATUS_MAP[apt.status as keyof typeof APPOINTMENT_STATUS_MAP] || { color: "text-slate-500", label: apt.status };
                   return (
-                    <tr key={apt.id} className="hover:bg-teal-50/30 transition-colors">
+                    <tr key={apt.id} className="hover:bg-teal-50/30 transition-colors even:bg-slate-50 dark:even:bg-slate-800">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <Avatar className="h-8 w-8 bg-blue-100 text-[#0D5A94]">

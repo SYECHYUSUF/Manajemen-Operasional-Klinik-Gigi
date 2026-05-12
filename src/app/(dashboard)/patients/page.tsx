@@ -14,6 +14,7 @@ import { useTable } from "@/hooks/use-table";
 import { supabase } from "@/lib/supabase";
 import { useEffect, useState as useReactState } from "react";
 import { PatientFormDialog } from "@/components/features/patients/patient-form-dialog";
+import { AppointmentFormDialog } from "@/components/features/appointments/appointment-form-dialog";
 import { useRouter } from "next/navigation";
 
 export default function PatientsPage() {
@@ -25,13 +26,10 @@ export default function PatientsPage() {
   const fetchPatients = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('patients')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      if (data) setDbPatients(data as Patient[]);
+      const res = await fetch('/api/patients');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setDbPatients(data as Patient[]);
     } catch (error) {
       console.error("Error fetching patients:", error);
     } finally {
@@ -54,6 +52,8 @@ export default function PatientsPage() {
   });
 
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
+  const [appointmentPatientId, setAppointmentPatientId] = useState<string>("");
 
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-500">
@@ -132,7 +132,7 @@ export default function PatientsPage() {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {patients.length > 0 ? patients.map((patient) => (
-                <tr key={patient.id} className="hover:bg-blue-50/30 transition-colors group">
+                <tr key={patient.id} className="hover:bg-blue-50/30 transition-colors group even:bg-slate-50 dark:even:bg-slate-800">
                   <td className="px-6 py-4 font-semibold text-[#0D5A94]">{patient.patient_code}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
@@ -156,15 +156,13 @@ export default function PatientsPage() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <DropdownMenu>
-                      <DropdownMenuTrigger>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 group-hover:text-[#0D5A94]">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
+                      <DropdownMenuTrigger className="h-8 w-8 flex items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-[#0D5A94] transition-colors outline-none">
+                        <MoreVertical className="h-4 w-4" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>Lihat Profil</DropdownMenuItem>
-                        <DropdownMenuItem>Rekam Medis</DropdownMenuItem>
-                        <DropdownMenuItem>Buat Janji Temu</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push(`/medical-records?patient_id=${patient.id}`)}>Lihat Profil</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push(`/medical-records?patient_id=${patient.id}`)}>Rekam Medis</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { setAppointmentPatientId(patient.id); setIsAppointmentOpen(true); }}>Buat Janji Temu</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </td>
@@ -202,7 +200,7 @@ export default function PatientsPage() {
 
       {/* ── Promo Area ── */}
       {showCampaignModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4" onClick={() => setShowCampaignModal(false)}>
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 md:pl-[276px]" onClick={() => setShowCampaignModal(false)}>
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md border border-slate-100 dark:border-slate-800 p-8 text-center" onClick={e => e.stopPropagation()}>
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Users className="h-8 w-8 text-[#0D5A94]" />
@@ -245,6 +243,12 @@ export default function PatientsPage() {
         setIsFormOpen(open);
         if (!open) fetchPatients(); // Refresh data when modal closes
       }} />
+
+      <AppointmentFormDialog 
+        open={isAppointmentOpen} 
+        onOpenChange={setIsAppointmentOpen} 
+        defaultPatientId={appointmentPatientId} 
+      />
     </div>
   );
 }

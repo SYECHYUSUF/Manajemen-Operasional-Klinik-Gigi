@@ -76,7 +76,7 @@ const MOCK_LOGS: LoginLog[] = [
 function EditRoleModal({ user, onClose, onSave }: { user: AppUser; onClose: () => void; onSave: (id: string, role: string) => void }) {
   const [role, setRole] = useState(user.role);
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 md:pl-[276px]" onClick={onClose}>
       <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-sm border border-slate-100 dark:border-slate-800" onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
           <h2 className="font-bold text-slate-900 dark:text-white">Ubah Role Pengguna</h2>

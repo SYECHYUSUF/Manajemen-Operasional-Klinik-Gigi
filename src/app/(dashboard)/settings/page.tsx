@@ -135,7 +135,7 @@ export default function SettingsPage() {
     <div className="space-y-8 animate-in fade-in-50 duration-500 max-w-7xl mx-auto">
       {/* ── Add Service Modal ── */}
       {(showAddModal || editService) && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4" onClick={() => { setShowAddModal(false); setEditService(null); }}>
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 md:pl-[276px]" onClick={() => { setShowAddModal(false); setEditService(null); }}>
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg border border-slate-100 dark:border-slate-800" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">{editService ? "Edit Layanan" : "Tambah Layanan Baru"}</h2>
@@ -271,7 +271,7 @@ export default function SettingsPage() {
                 </tr>
               ) : (
                 filteredServices.map(service => (
-                  <tr key={service.id} className="hover:bg-blue-50/30 transition-colors group">
+                  <tr key={service.id} className="hover:bg-blue-50/30 transition-colors group even:bg-slate-50 dark:even:bg-slate-800">
                     <td className="px-6 py-4">
                       <div className="font-bold text-slate-800">{service.name}</div>
                       <div className="text-[10px] text-[#0D5A94] font-bold mt-0.5">KODE: {service.code}</div>

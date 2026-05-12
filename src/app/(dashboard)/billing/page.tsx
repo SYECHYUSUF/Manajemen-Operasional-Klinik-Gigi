@@ -4,13 +4,14 @@ import { useState, useMemo, useEffect } from "react";
 import {
   CreditCard, Download, FileText, Filter, PlusCircle, Search,
   DollarSign, ArrowUpRight, ArrowDownRight, Clock, CheckCircle,
-  X, ChevronDown, User, Stethoscope, CheckSquare,
+  X, User, Stethoscope, CheckSquare, ChevronDown,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatCurrency, formatDateShort } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 // ─── Modal Buat Tagihan Baru ────────────────────────────────────────────────
 function CreateInvoiceModal({ open, onClose, onSuccess }: {
@@ -31,16 +32,19 @@ function CreateInvoiceModal({ open, onClose, onSuccess }: {
 
   useEffect(() => {
     if (!open) return;
-    supabase.from("patients").select("id, full_name, patient_code").order("full_name").then(({ data }) => {
-      if (data) setPatients(data);
-    });
-    supabase.from("services").select("id, name, base_price, code").eq("is_active", true).order("name").then(({ data }) => {
-      if (data) setServices(data);
-    });
+    fetch('/api/patients')
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setPatients(data); });
+    fetch('/api/services')
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setServices(data); });
   }, [open]);
 
+  const [discount, setDiscount] = useState(0);
+
   const selectedServices = services.filter(s => form.service_ids.includes(s.id));
-  const totalAmount = selectedServices.reduce((sum, s) => sum + Number(s.base_price), 0);
+  const subtotal = selectedServices.reduce((sum, s) => sum + Number(s.base_price), 0);
+  const totalAmount = Math.max(0, subtotal - discount);
 
   const toggleService = (id: string) => {
     setForm(prev => ({
@@ -56,18 +60,38 @@ function CreateInvoiceModal({ open, onClose, onSuccess }: {
     if (form.service_ids.length === 0) { setToast("Pilih minimal 1 layanan!"); return; }
     setIsSaving(true);
     try {
-      const invoiceNumber = `INV-${Date.now()}`;
-      const { error } = await supabase.from("invoices").insert({
-        invoice_number: invoiceNumber,
-        patient_id: form.patient_id,
-        total_amount: totalAmount,
-        status: "pending",
-        issued_at: new Date().toISOString(),
-        notes: form.notes || null,
+      const now = new Date();
+      const invoiceNumber = `INV-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,"0")}${String(now.getDate()).padStart(2,"0")}-${Date.now().toString().slice(-4)}`;
+      const res = await fetch('/api/invoices', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          invoice: {
+            invoice_number: invoiceNumber,
+            patient_id: form.patient_id,
+            subtotal: subtotal,
+            discount_amount: discount,
+            tax_amount: 0,
+            total_amount: totalAmount,
+            status: "issued",
+            issued_at: now.toISOString(),
+            notes: form.notes || null,
+          },
+          items: selectedServices.map(s => ({
+            item_type: "service",
+            service_id: s.id,
+            description: s.name,
+            quantity: 1,
+            unit_price: Number(s.base_price),
+          })),
+        }),
       });
-      if (error) throw error;
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || 'Gagal menyimpan tagihan');
       onSuccess();
       onClose();
+      setForm({ patient_id: "", service_ids: [], payment_method: "tunai", notes: "" });
+      setDiscount(0);
     } catch (err: any) {
       setToast(err.message || "Gagal menyimpan tagihan.");
     } finally {
@@ -75,17 +99,34 @@ function CreateInvoiceModal({ open, onClose, onSuccess }: {
     }
   };
 
+  const [patientSearch, setPatientSearch] = useState("");
+  const [serviceSearch, setServiceSearch] = useState("");
+
+  const filteredPatients = useMemo(() =>
+    patients.filter(p =>
+      (p.full_name || "").toLowerCase().includes(patientSearch.toLowerCase()) ||
+      (p.patient_code || "").toLowerCase().includes(patientSearch.toLowerCase())
+    ), [patients, patientSearch]);
+
+  const filteredServices = useMemo(() =>
+    services.filter(s =>
+      (s.name || "").toLowerCase().includes(serviceSearch.toLowerCase()) ||
+      (s.code || "").toLowerCase().includes(serviceSearch.toLowerCase())
+    ), [services, serviceSearch]);
+
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 md:pl-[276px]"
+      onClick={onClose}
+    >
       <div
-
-        className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-slate-100 dark:border-slate-800"
+        className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-slate-100 dark:border-slate-800"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800 shrink-0">
           <div>
             <h2 className="text-xl font-bold text-slate-900 dark:text-white">Buat Tagihan Baru</h2>
             <p className="text-xs text-slate-500 mt-0.5">Isi data pasien dan layanan yang diberikan</p>
@@ -95,7 +136,7 @@ function CreateInvoiceModal({ open, onClose, onSuccess }: {
           </button>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="overflow-y-auto flex-1 p-6 space-y-5">
           {toast && (
             <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-2.5 rounded-lg flex items-center justify-between">
               {toast}
@@ -108,106 +149,147 @@ function CreateInvoiceModal({ open, onClose, onSuccess }: {
             <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
               <User className="inline h-3.5 w-3.5 mr-1" /> Pasien
             </label>
-            <select
-              value={form.patient_id}
-              onChange={e => setForm(p => ({ ...p, patient_id: e.target.value }))}
-              className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#0D5A94]/30"
-            >
-              <option value="">-- Pilih Pasien --</option>
-              {patients.map(p => (
-                <option key={p.id} value={p.id}>{p.full_name} ({p.patient_code})</option>
-              ))}
-            </select>
+            <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+              {/* Search pasien */}
+              <div className="relative border-b border-slate-100 dark:border-slate-800">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                <input
+                  value={patientSearch}
+                  onChange={e => setPatientSearch(e.target.value)}
+                  placeholder="Cari nama atau ID pasien..."
+                  className="w-full pl-8 pr-3 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white outline-none"
+                />
+              </div>
+              {/* Selected display */}
+              {form.patient_id && (() => {
+                const sel = patients.find(p => p.id === form.patient_id);
+                return sel ? (
+                  <div className="flex items-center justify-between px-4 py-2.5 bg-blue-50 dark:bg-blue-900/20 text-sm">
+                    <span className="font-semibold text-[#0D5A94]">{sel.full_name} <span className="text-xs font-normal text-slate-400">({sel.patient_code})</span></span>
+                    <button onClick={() => setForm(p => ({ ...p, patient_id: "" }))} className="text-slate-400 hover:text-red-500 transition-colors">
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ) : null;
+              })()}
+              {/* List */}
+              <div className="max-h-40 overflow-y-auto">
+                {filteredPatients.length === 0 ? (
+                  <p className="text-xs text-slate-400 text-center py-4">Pasien tidak ditemukan</p>
+                ) : filteredPatients.map(p => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => { setForm(prev => ({ ...prev, patient_id: p.id })); setPatientSearch(""); }}
+                    className={`w-full flex items-center justify-between px-4 py-2.5 transition-colors text-left border-b border-slate-50 dark:border-slate-800 last:border-0 ${
+                      form.patient_id === p.id ? "bg-blue-50 dark:bg-blue-900/20" : "hover:bg-slate-50 dark:hover:bg-slate-800"
+                    }`}
+                  >
+                    <span className="text-sm font-medium text-slate-800 dark:text-slate-200">{p.full_name}</span>
+                    <span className="text-[10px] font-mono text-slate-400">{p.patient_code}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Pilih Layanan */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-              <Stethoscope className="inline h-3.5 w-3.5 mr-1" /> Layanan Diberikan
-            </label>
-            <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden max-h-52 overflow-y-auto">
-              {services.length === 0 ? (
-                <p className="text-xs text-slate-400 text-center py-4">Memuat layanan...</p>
-              ) : services.map(s => (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => toggleService(s.id)}
-                  className={`w-full flex items-center justify-between px-4 py-3 transition-colors text-left border-b border-slate-100 dark:border-slate-800 last:border-0 ${
-                    form.service_ids.includes(s.id)
-                      ? "bg-blue-50 dark:bg-blue-900/20"
-                      : "hover:bg-slate-50 dark:hover:bg-slate-800"
-                  }`}
-                >
-                  <div>
-                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{s.name}</p>
-                    <p className="text-xs text-slate-400">{s.code}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold text-[#0D5A94]">{formatCurrency(s.base_price)}</span>
-                    {form.service_ids.includes(s.id) && (
-                      <CheckSquare className="h-4 w-4 text-[#0D5A94]" />
-                    )}
-                  </div>
-                </button>
-              ))}
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                <Stethoscope className="inline h-3.5 w-3.5 mr-1" /> Layanan
+              </label>
+              {form.service_ids.length > 0 && (
+                <span className="bg-[#0D5A94] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                  {form.service_ids.length} dipilih
+                </span>
+              )}
+            </div>
+            <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+              {/* Search layanan */}
+              <div className="relative border-b border-slate-100 dark:border-slate-800">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                <input
+                  value={serviceSearch}
+                  onChange={e => setServiceSearch(e.target.value)}
+                  placeholder="Cari layanan..."
+                  className="w-full pl-8 pr-3 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white outline-none"
+                />
+              </div>
+              <div className="max-h-52 overflow-y-auto">
+                {filteredServices.length === 0 ? (
+                  <p className="text-xs text-slate-400 text-center py-4">Memuat layanan...</p>
+                ) : filteredServices.map(s => (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => toggleService(s.id)}
+                    className={`w-full flex items-center justify-between px-4 py-3 transition-colors text-left border-b border-slate-100 dark:border-slate-800 last:border-0 ${
+                      form.service_ids.includes(s.id)
+                        ? "bg-blue-50 dark:bg-blue-900/20"
+                        : "hover:bg-slate-50 dark:hover:bg-slate-800"
+                    }`}
+                  >
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{s.name}</p>
+                      <p className="text-xs text-slate-400">{s.code}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-sm font-bold text-[#0D5A94]">{formatCurrency(s.base_price)}</span>
+                      <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
+                        form.service_ids.includes(s.id)
+                          ? "bg-[#0D5A94] border-[#0D5A94]"
+                          : "border-slate-300 dark:border-slate-600"
+                      }`}>
+                        {form.service_ids.includes(s.id) && (
+                          <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Metode Pembayaran */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-              Metode Pembayaran
-            </label>
-            <div className="flex gap-2">
-              {["tunai", "transfer", "kartu"].map(m => (
-                <button
-                  key={m}
-                  type="button"
-                  onClick={() => setForm(p => ({ ...p, payment_method: m }))}
-                  className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition-colors capitalize ${
-                    form.payment_method === m
-                      ? "bg-[#0D5A94] text-white border-[#0D5A94]"
-                      : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-[#0D5A94]"
-                  }`}
-                >
-                  {m}
-                </button>
-              ))}
+          {/* Diskon + Catatan */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Diskon (Rp)</label>
+              <Input
+                type="number"
+                min={0}
+                value={discount || ""}
+                onChange={e => setDiscount(Number(e.target.value) || 0)}
+                placeholder="0"
+                className="rounded-xl border-slate-200 dark:border-slate-700"
+              />
             </div>
-          </div>
-
-          {/* Catatan */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-              Catatan (opsional)
-            </label>
-            <textarea
-              value={form.notes}
-              onChange={e => setForm(p => ({ ...p, notes: e.target.value }))}
-              rows={2}
-              placeholder="Tambahkan catatan untuk tagihan ini..."
-              className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#0D5A94]/30 resize-none"
-            />
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">Catatan (Opsional)</label>
+              <textarea
+                value={form.notes}
+                onChange={e => setForm(p => ({ ...p, notes: e.target.value }))}
+                rows={1}
+                placeholder="Tambahkan catatan..."
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#0D5A94]/30 resize-none"
+              />
+            </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/30">
+        <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-800/30 shrink-0 rounded-b-2xl">
           <div>
-            <p className="text-xs text-slate-500 uppercase tracking-wider font-bold">Total</p>
+            {discount > 0 && <p className="text-xs text-red-500 font-medium">Diskon: -{formatCurrency(discount)}</p>}
+            <p className="text-xs text-slate-400">{form.service_ids.length} layanan • Subtotal {formatCurrency(subtotal)}</p>
             <p className="text-2xl font-black text-[#0D5A94]">{formatCurrency(totalAmount)}</p>
-            <p className="text-[10px] text-slate-400">{form.service_ids.length} layanan dipilih</p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" onClick={onClose} className="border-slate-200 text-slate-600">
-              Batal
-            </Button>
-            <Button
-              onClick={handleSubmit}
-              disabled={isSaving}
-              className="bg-[#0D5A94] hover:bg-[#004271] text-white font-bold px-6"
-            >
+            <Button variant="outline" onClick={onClose} className="border-slate-200 text-slate-600">Batal</Button>
+            <Button onClick={handleSubmit} disabled={isSaving} className="bg-[#0D5A94] hover:bg-[#004271] text-white font-bold px-6">
               {isSaving ? "Menyimpan..." : "Simpan Tagihan"}
             </Button>
           </div>
@@ -225,16 +307,17 @@ export default function BillingPage() {
   const [invoices, setInvoices] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [successToast, setSuccessToast] = useState("");
   const PER_PAGE = 10;
+
+  const router = useRouter();
 
   const fetchInvoices = async () => {
     setIsLoading(true);
     try {
-      const { data } = await supabase
-        .from("invoices")
-        .select("*, patients(full_name)")
-        .order("issued_at", { ascending: false });
-      if (data) setInvoices(data);
+      const res = await fetch('/api/invoices');
+      const data = await res.json();
+      if (res.ok && Array.isArray(data)) setInvoices(data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -246,7 +329,7 @@ export default function BillingPage() {
 
   const filteredInvoices = useMemo(() => {
     return invoices.filter(inv => {
-      const displayStatus = inv.status === "paid" ? "Lunas" : "Pending";
+      const displayStatus = inv.status === "paid" ? "Lunas" : inv.status === "cancelled" ? "Batal" : "Pending";
       const name = inv.patients?.full_name || "";
       const matchStatus = activeStatus === "Semua" || displayStatus === activeStatus;
       const matchSearch =
@@ -273,8 +356,16 @@ export default function BillingPage() {
       <CreateInvoiceModal
         open={showModal}
         onClose={() => setShowModal(false)}
-        onSuccess={fetchInvoices}
+        onSuccess={() => { fetchInvoices(); setSuccessToast("Tagihan berhasil dibuat!"); setTimeout(() => setSuccessToast(""), 3000); }}
       />
+
+      {/* Success Toast */}
+      {successToast && (
+        <div className="fixed bottom-6 right-6 z-50 bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-xl shadow-emerald-600/30 flex items-center gap-2 text-sm font-semibold animate-in slide-in-from-bottom-5 duration-300">
+          <CheckCircle className="h-4 w-4" />
+          {successToast}
+        </div>
+      )}
 
       {/* ── Header ── */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -292,20 +383,19 @@ export default function BillingPage() {
 
       {/* ── Stats ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="bg-[#0D5A94] border-transparent shadow-xl shadow-blue-900/10 text-white relative overflow-hidden">
+        <Card className="border-slate-100 shadow-sm relative overflow-hidden">
           <CardContent className="p-6 relative z-10">
             <div className="flex justify-between items-start mb-4">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-500">
-                <DollarSign className="h-5 w-5" />
+              <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                <DollarSign className="h-5 w-5 text-slate-700" />
               </div>
-              <span className="text-[10px] font-bold text-emerald-300 bg-white/10 px-2 py-1 rounded flex items-center gap-1">
-                <ArrowUpRight className="h-3 w-3" /> 12.5%
+              <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded flex items-center gap-1">
+                <ArrowUpRight className="h-3 w-3" /> Bulan Ini
               </span>
             </div>
-            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Pendapatan (Bulan Ini)</p>
-            <h3 className="text-3xl font-black text-black mt-1">{formatCurrency(stats.revenue)}</h3>
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Pendapatan</p>
+            <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">{formatCurrency(stats.revenue)}</h3>
           </CardContent>
-          <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/5 rounded-full blur-2xl" />
         </Card>
 
         <Card className="border-slate-100 shadow-sm">
@@ -332,12 +422,12 @@ export default function BillingPage() {
 
         <Card className="border-slate-100 shadow-sm">
           <CardContent className="p-6">
-            <div className="w-10 h-10 bg-red-50 text-red-600 rounded-lg flex items-center justify-center mb-4">
+            <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center mb-4">
               <CreditCard className="h-5 w-5" />
             </div>
-            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Pengeluaran Operasional</p>
-            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{formatCurrency(32100000)}</h3>
-            <p className="text-[10px] text-slate-400 mt-2 font-medium">Pembelian inventaris & gaji</p>
+            <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Total Tagihan</p>
+            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{invoices.length}</h3>
+            <p className="text-[10px] text-slate-400 mt-2 font-medium">Semua tagihan terdaftar</p>
           </CardContent>
         </Card>
       </div>
@@ -406,13 +496,32 @@ export default function BillingPage() {
             </thead>
             <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
               {isLoading ? (
-                <tr><td colSpan={6} className="px-6 py-10 text-center text-slate-400">Memuat data tagihan...</td></tr>
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="px-6 py-4"><div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-28" /></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-32" /></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-20" /></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-24" /></td>
+                    <td className="px-6 py-4 text-center"><div className="h-5 bg-slate-200 dark:bg-slate-700 rounded-full w-16 mx-auto" /></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-16 ml-auto" /></td>
+                  </tr>
+                ))
               ) : pagedInvoices.length === 0 ? (
-                <tr><td colSpan={6} className="px-6 py-10 text-center text-slate-400">Tidak ada tagihan yang sesuai.</td></tr>
+                <tr>
+                  <td colSpan={6} className="px-6 py-16 text-center">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
+                        <FileText className="h-7 w-7 text-slate-400" />
+                      </div>
+                      <p className="text-slate-500 font-semibold">Belum ada tagihan</p>
+                      <p className="text-xs text-slate-400 max-w-xs">Buat tagihan baru dengan menekan tombol &quot;Buat Tagihan Baru&quot; di atas.</p>
+                    </div>
+                  </td>
+                </tr>
               ) : pagedInvoices.map(inv => {
                 const isPaid = inv.status === "paid";
                 return (
-                  <tr key={inv.id} className="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors group">
+                  <tr key={inv.id} className="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors group cursor-pointer even:bg-slate-50 dark:even:bg-slate-800" onClick={() => router.push(`/billing/${inv.id}`)}>
                     <td className="px-6 py-4 font-bold text-slate-900 dark:text-white font-mono text-xs">{inv.invoice_number}</td>
                     <td className="px-6 py-4">
                       <p className="font-bold text-slate-900 dark:text-white">{inv.patients?.full_name || "—"}</p>
@@ -430,10 +539,10 @@ export default function BillingPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94]">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94]" onClick={() => router.push(`/billing/${inv.id}`)} title="Lihat Detail">
                           <FileText className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94]">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94]" onClick={() => router.push(`/billing/${inv.id}?print=1`)} title="Cetak Struk">
                           <Download className="h-4 w-4" />
                         </Button>
                       </div>
