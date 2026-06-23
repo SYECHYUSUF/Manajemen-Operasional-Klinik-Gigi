@@ -33,6 +33,14 @@ export function RoleProvider({ children }: { children: ReactNode }) {
     const r = getRoleFromToken() as Role;
     setRole(r);
     setIsLoading(false);
+
+    // Auto-set cookie jika belum ada (handle token lama sebelum cookie diterapkan)
+    if (r && typeof document !== "undefined") {
+      const hasCookie = document.cookie.includes("user_role=");
+      if (!hasCookie) {
+        document.cookie = `user_role=${r}; path=/; max-age=${8 * 60 * 60}; SameSite=Lax`;
+      }
+    }
   };
 
   useEffect(() => {
