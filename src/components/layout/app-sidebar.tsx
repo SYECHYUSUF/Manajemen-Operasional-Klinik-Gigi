@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Users, CalendarDays, FileText,
   Package, Receipt, BarChart3, Database,
@@ -11,7 +11,6 @@ import {
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { AppointmentFormDialog } from "@/components/features/appointments/appointment-form-dialog";
-import { supabase } from "@/lib/supabase";
 import { useRole } from "@/contexts/role-context";
 
 const NAV_ITEMS = [
@@ -36,15 +35,13 @@ const NAV_ITEMS = [
 
 export function AppSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isAppointmentOpen, setIsAppointmentOpen] = useState(false);
-  const { role } = useRole();
+  const { role, logout } = useRole();
   const userRole = role || "cashier"; // fallback paling terbatas
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
+  const handleLogout = () => {
+    logout();
   };
 
   const visibleItems = NAV_ITEMS.filter(item => item.roles.includes(userRole));

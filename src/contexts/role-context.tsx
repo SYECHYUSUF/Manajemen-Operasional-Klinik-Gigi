@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { supabase } from "@/lib/supabase";
+import { getRoleFromToken, clearToken } from "@/lib/api-client";
+import { useRouter } from "next/navigation";
 
 type Role = "admin" | "doctor" | "cashier" | null;
 
@@ -11,6 +12,7 @@ interface RoleContextType {
   isAdmin: boolean;
   isDoctor: boolean;
   isCashier: boolean;
+  logout: () => void;
 }
 
 const RoleContext = createContext<RoleContextType>({
@@ -19,29 +21,37 @@ const RoleContext = createContext<RoleContextType>({
   isAdmin: false,
   isDoctor: false,
   isCashier: false,
+  logout: () => {},
 });
 
 export function RoleProvider({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<Role>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+
+  const loadRole = () => {
+    const r = getRoleFromToken() as Role;
+    setRole(r);
+    setIsLoading(false);
+  };
 
   useEffect(() => {
-    const loadRole = async () => {
-      const { data } = await supabase.auth.getSession();
-      const r = (data.session?.user?.user_metadata?.role as Role) || null;
-      setRole(r);
-      setIsLoading(false);
-    };
+    // Baca role pertama kali
     loadRole();
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      const r = (session?.user?.user_metadata?.role as Role) || null;
-      setRole(r);
-      setIsLoading(false);
-    });
-
-    return () => sub.subscription.unsubscribe();
+    // Reactive saat token berubah (misal: logout di tab lain)
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key === "access_token") loadRole();
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
+
+  const logout = () => {
+    clearToken();
+    setRole(null);
+    router.push("/login");
+  };
 
   return (
     <RoleContext.Provider value={{
@@ -50,6 +60,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
       isAdmin: role === "admin",
       isDoctor: role === "doctor",
       isCashier: role === "cashier",
+      logout,
     }}>
       {children}
     </RoleContext.Provider>

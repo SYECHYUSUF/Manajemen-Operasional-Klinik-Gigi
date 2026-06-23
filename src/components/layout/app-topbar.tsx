@@ -14,7 +14,7 @@ import { mockNotifications } from "@/lib/mock-data";
 import { formatRelative } from "@/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { getRoleFromToken, decodeJwtPayload, clearToken } from "@/lib/api-client";
 
 const NOTIFICATION_TYPE_ICON: Record<string, React.ReactNode> = {
   stock_alert:           <AlertCircle className="h-4 w-4 text-red-500" />,
@@ -47,24 +47,27 @@ export function AppTopbar() {
 
   useEffect(() => {
     setMounted(true);
-    supabase.auth.getSession().then(({ data }) => {
-      const role = data.session?.user?.user_metadata?.role || "admin";
-      const name = data.session?.user?.user_metadata?.full_name || data.session?.user?.email || "User";
-      setUserRole(role);
-      setUserName(name);
-    });
+    // Baca role dan nama dari JWT localStorage (bukan Supabase session)
+    const role = getRoleFromToken() || "admin";
+    setUserRole(role);
+
+    // Coba ambil nama dari payload JWT (field "sub" adalah user_id, "email" kadang ada)
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      const payload = decodeJwtPayload(token);
+      const email = (payload?.email as string) || "";
+      // Tampilkan email sebelum @ sebagai nama, atau fallback ke role
+      setUserName(email ? email.split("@")[0] : role);
+    } else {
+      setUserName(role);
+    }
   }, []);
 
-  useEffect(() => {
-    if (showSearchModal) {
-      setTimeout(() => searchInputRef.current?.focus(), 100);
-    }
-  }, [showSearchModal]);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = () => {
+    clearToken();
     router.push("/login");
   };
+
 
   const filteredSuggestions = SEARCH_SUGGESTIONS.filter(s =>
     search === "" || s.label.toLowerCase().includes(search.toLowerCase()) || s.desc.toLowerCase().includes(search.toLowerCase())
