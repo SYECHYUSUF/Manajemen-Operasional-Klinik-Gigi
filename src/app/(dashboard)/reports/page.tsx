@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   TrendingUp, TrendingDown, DollarSign, Users, CalendarCheck,
   Package, Download, ChevronDown, BarChart3, Activity,
@@ -8,42 +8,16 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
-// ─── Data Demo ────────────────────────────────────────────────────────────────
-const MONTHLY = [
-  { bulan: "Nov", pendapatan: 18200000, pasien: 42, janji: 38 },
-  { bulan: "Des", pendapatan: 21500000, pasien: 51, janji: 47 },
-  { bulan: "Jan", pendapatan: 19800000, pasien: 45, janji: 41 },
-  { bulan: "Feb", pendapatan: 24100000, pasien: 58, janji: 54 },
-  { bulan: "Mar", pendapatan: 22700000, pasien: 53, janji: 49 },
-  { bulan: "Apr", pendapatan: 27350000, pasien: 64, janji: 60 },
-];
-
-const LAYANAN_TERATAS = [
-  { nama: "Behel / Ortodonsi", jumlah: 38, pendapatan: 11400000, tren: "naik" },
-  { nama: "Scaling & Polishing", jumlah: 52, pendapatan: 7800000, tren: "naik" },
-  { nama: "Tambal Gigi",         jumlah: 41, pendapatan: 4100000, tren: "turun" },
-  { nama: "Cabut Gigi",          jumlah: 29, pendapatan: 2900000, tren: "naik" },
-  { nama: "Pemutihan Gigi",      jumlah: 17, pendapatan: 5100000, tren: "turun" },
-];
-
-const TRANSAKSI_TERBARU = [
-  { id: "INV-0061", pasien: "Budi Santoso",    layanan: "Behel",   jumlah: 3500000,  status: "lunas",   tgl: "01 Mei 2026" },
-  { id: "INV-0060", pasien: "Siti Rahayu",     layanan: "Scaling", jumlah: 150000,   status: "lunas",   tgl: "01 Mei 2026" },
-  { id: "INV-0059", pasien: "Ahmad Fauzi",     layanan: "Tambal",  jumlah: 200000,   status: "pending", tgl: "30 Apr 2026" },
-  { id: "INV-0058", pasien: "Dewi Lestari",    layanan: "Cabut",   jumlah: 100000,   status: "lunas",   tgl: "30 Apr 2026" },
-  { id: "INV-0057", pasien: "Rizky Pratama",   layanan: "Bleach",  jumlah: 1500000,  status: "lunas",   tgl: "29 Apr 2026" },
-];
+import { apiFetch } from "@/lib/api-client";
 
 function formatRupiah(n: number) {
   return "Rp " + n.toLocaleString("id-ID");
 }
 
 // ─── Bar Chart sederhana (SVG) ────────────────────────────────────────────────
-function BarChart({ data }: { data: typeof MONTHLY }) {
-  const max = Math.max(...data.map(d => d.pendapatan));
+function BarChart({ data }: { data: { bulan: string; pendapatan: number }[] }) {
+  const max = Math.max(...data.map(d => d.pendapatan), 1);
   const H = 120;
-  const W = 100 / data.length;
   return (
     <div className="flex items-end gap-1 h-32 w-full px-2">
       {data.map((d, i) => {
@@ -82,20 +56,90 @@ function SparkLine({ data, color = "#0D5A94" }: { data: number[]; color?: string
 
 // ─── Halaman Utama ────────────────────────────────────────────────────────────
 const PERIODE = ["Bulan Ini", "3 Bulan", "6 Bulan", "Tahun Ini"];
+const BULAN_ID = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+
+type Invoice = { id: string; invoice_number: string; patient_id: string; status: string; total_amount: string; issued_at: string; items: { description: string }[] };
+type Appointment = { id: string; status: string; service?: { name: string } | null; patient?: { full_name: string } | null };
 
 export default function LaporanPage() {
   const [periode, setPeriode] = useState("Bulan Ini");
   const [showPeriode, setShowPeriode] = useState(false);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
 
-  const bulan = MONTHLY[MONTHLY.length - 1];
-  const bulanLalu = MONTHLY[MONTHLY.length - 2];
-  const selisihPendapatan = ((bulan.pendapatan - bulanLalu.pendapatan) / bulanLalu.pendapatan * 100).toFixed(1);
+  useEffect(() => {
+    apiFetch<Invoice[]>("/invoices").then(setInvoices).catch(() => {});
+    apiFetch<Appointment[]>("/appointments").then(setAppointments).catch(() => {});
+  }, []);
+
+  // ── Hitung MONTHLY dari invoices yang paid ──────────────────────────────
+  const MONTHLY = useMemo(() => {
+    const now = new Date();
+    const months: { bulan: string; pendapatan: number; pasien: Set<string>; janji: number }[] = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      months.push({ bulan: BULAN_ID[d.getMonth()], pendapatan: 0, pasien: new Set(), janji: 0 });
+    }
+    invoices.filter(inv => inv.status === "paid").forEach(inv => {
+      const d = new Date(inv.issued_at);
+      const idx = months.findIndex(m => m.bulan === BULAN_ID[d.getMonth()]);
+      if (idx !== -1) {
+        months[idx].pendapatan += Number(inv.total_amount);
+        months[idx].pasien.add(inv.patient_id);
+      }
+    });
+    appointments.filter(a => a.status === "completed").forEach(a => {
+      months[months.length - 1].janji++;
+    });
+    return months.map(m => ({ bulan: m.bulan, pendapatan: m.pendapatan, pasien: m.pasien.size, janji: m.janji }));
+  }, [invoices, appointments]);
+
+  // ── Layanan terpopuler ──────────────────────────────────────────────────
+  const LAYANAN_TERATAS = useMemo(() => {
+    const map: Record<string, { jumlah: number; pendapatan: number }> = {};
+    appointments.filter(a => a.service?.name).forEach(a => {
+      const name = a.service!.name;
+      if (!map[name]) map[name] = { jumlah: 0, pendapatan: 0 };
+      map[name].jumlah++;
+    });
+    invoices.filter(i => i.status === "paid").forEach(inv => {
+      inv.items?.forEach((item: { description: string }) => {
+        if (map[item.description]) map[item.description].pendapatan += Number((inv as any).total_amount) / (inv.items?.length || 1);
+      });
+    });
+    return Object.entries(map)
+      .map(([nama, d]) => ({ nama, ...d, tren: d.jumlah > 3 ? "naik" : "turun" }))
+      .sort((a, b) => b.jumlah - a.jumlah)
+      .slice(0, 5);
+  }, [appointments, invoices]);
+
+  // ── Transaksi terbaru ───────────────────────────────────────────────────
+  const TRANSAKSI_TERBARU = useMemo(() => {
+    return invoices
+      .sort((a, b) => new Date(b.issued_at).getTime() - new Date(a.issued_at).getTime())
+      .slice(0, 5)
+      .map(inv => ({
+        id: inv.invoice_number,
+        pasien: inv.patient_id.slice(0, 8) + "...",
+        layanan: inv.items?.[0]?.description || "-",
+        jumlah: Number(inv.total_amount),
+        status: inv.status === "paid" ? "lunas" : "pending",
+        tgl: new Date(inv.issued_at).toLocaleDateString("id-ID", { day: "2-digit", month: "short", year: "numeric" }),
+      }));
+  }, [invoices]);
+
+  const bulan = MONTHLY[MONTHLY.length - 1] || { pendapatan: 0, pasien: 0, janji: 0 };
+  const bulanLalu = MONTHLY[MONTHLY.length - 2] || { pendapatan: 0, pasien: 0, janji: 0 };
+  const selisihPendapatan = bulanLalu.pendapatan > 0
+    ? ((bulan.pendapatan - bulanLalu.pendapatan) / bulanLalu.pendapatan * 100).toFixed(1)
+    : "0.0";
   const selisihPasien = bulan.pasien - bulanLalu.pasien;
+  const pendingCount = invoices.filter(i => i.status === "issued" || i.status === "draft").length;
 
   const handleEkspor = () => {
     const rows = [
-      ["No. Invoice", "Pasien", "Layanan", "Jumlah", "Status", "Tanggal"],
-      ...TRANSAKSI_TERBARU.map(t => [t.id, t.pasien, t.layanan, t.jumlah, t.status, t.tgl]),
+      ["No. Invoice", "Layanan", "Jumlah", "Status", "Tanggal"],
+      ...TRANSAKSI_TERBARU.map(t => [t.id, t.layanan, t.jumlah, t.status, t.tgl]),
     ];
     const csv = rows.map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -104,6 +148,7 @@ export default function LaporanPage() {
     a.download = `laporan-klinik-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
   };
+
 
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-500 max-w-7xl mx-auto">
@@ -161,10 +206,10 @@ export default function LaporanPage() {
             spark: MONTHLY.map(m => m.janji),
           },
           {
-            judul: "Tagihan Pending", nilai: "3",
+            judul: "Tagihan Pending", nilai: pendingCount.toString(),
             naik: false, selisih: "Perlu ditindak",
             icon: AlertTriangle, warna: "text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20",
-            spark: [5, 3, 7, 4, 6, 3],
+            spark: MONTHLY.map(m => m.pendapatan > 0 ? Math.round(m.pendapatan / 1000000) : 0),
           },
         ].map((s, i) => (
           <Card key={i} className="border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow">

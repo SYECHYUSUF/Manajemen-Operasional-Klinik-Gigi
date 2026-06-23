@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   ChevronLeft, ChevronRight, Filter, MoreVertical, Clock,
   CheckCircle, XCircle, AlertTriangle, Plus, CalendarPlus, X
@@ -9,8 +9,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { AppointmentFormDialog } from "@/components/features/appointments/appointment-form-dialog";
+import { apiFetch } from "@/lib/api-client";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────
 const MONTHS_ID = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 const DAYS_ID   = ["Min","Sen","Sel","Rab","Kam","Jum","Sab"];
 const DAY_HEADER = ["M","S","S","R","K","J","S"];
@@ -28,31 +28,25 @@ function buildCalendar(year: number, month: number) {
   return cells;
 }
 
-const MOCK_APPOINTMENTS = [
-  { time: "08:00", patient: "Budi Santoso", procedure: "Pemeriksaan Rutin & Pembersihan Karang", status: "confirmed", duration: "08:00 - 08:45 WIB" },
-  { time: "09:00", patient: "Siti Rahayu",  procedure: "Perawatan Saluran Akar (Sesi 2)", status: "completed", duration: "09:00 - 10:00 WIB" },
-  { time: "10:00", patient: null, procedure: "", status: "empty", duration: "" },
-  { time: "11:00", patient: "Dewi Permata", procedure: "Penyesuaian Kawat Gigi", status: "cancelled", duration: "11:00 - 11:30 WIB" },
-  { time: "12:00", patient: null, procedure: "Istirahat Siang", status: "break", duration: "" },
-  { time: "13:00", patient: "Ahmad Fauzi",  procedure: "Ekstraksi Gigi Bungsu", status: "confirmed", duration: "13:00 - 14:30 WIB • Bedah" },
-];
-
 const STATUS_STYLE: Record<string, string> = {
-  confirmed: "bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-900",
-  completed:  "bg-emerald-50 border-emerald-500 text-emerald-900",
-  cancelled:  "bg-rose-50 border-rose-500 text-rose-900",
+  confirmed:   "bg-blue-50 dark:bg-blue-900/20 border-blue-500 text-blue-900",
+  completed:   "bg-emerald-50 border-emerald-500 text-emerald-900",
+  cancelled:   "bg-rose-50 border-rose-500 text-rose-900",
+  scheduled:   "bg-amber-50 border-amber-400 text-amber-900",
+  in_progress: "bg-purple-50 border-purple-500 text-purple-900",
+  checked_in:  "bg-teal-50 border-teal-500 text-teal-900",
 };
 const STATUS_LABEL: Record<string, { label: string; class: string }> = {
-  confirmed: { label: "Dikonfirmasi", class: "text-blue-600 bg-blue-100" },
-  completed:  { label: "Selesai",       class: "text-emerald-600 bg-emerald-100" },
-  cancelled:  { label: "Batal",         class: "text-rose-600 bg-rose-100" },
+  confirmed:   { label: "Dikonfirmasi", class: "text-blue-600 bg-blue-100" },
+  completed:   { label: "Selesai",      class: "text-emerald-600 bg-emerald-100" },
+  cancelled:   { label: "Batal",        class: "text-rose-600 bg-rose-100" },
+  scheduled:   { label: "Terjadwal",   class: "text-amber-600 bg-amber-100" },
+  in_progress: { label: "Berlangsung", class: "text-purple-600 bg-purple-100" },
+  checked_in:  { label: "Check-In",    class: "text-teal-600 bg-teal-100" },
 };
 
-const DOCTORS = [
-  { name: "drg. Sarah Wilson",   spec: "Ortodonti",          initials: "SW", active: true },
-  { name: "drg. Bima Pratama",   spec: "Bedah Mulut",        initials: "BP", active: false },
-  { name: "drg. Emily Chen",     spec: "Konservasi Gigi",    initials: "EC", active: false },
-];
+type DoctorItem = { id: string; full_name: string; specialization?: { name: string } | null; is_active: boolean };
+type AptItem = { id: string; scheduled_at: string; status: string; chief_complaint?: string; patient?: { full_name: string }; doctor?: { full_name: string } };
 
 export default function AppointmentsPage() {
   const today = new Date();
@@ -61,6 +55,24 @@ export default function AppointmentsPage() {
   const [calMonth, setCalMonth] = useState(today.getMonth());
   const [selectedDay, setSelectedDay] = useState(today.getDate());
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [doctors, setDoctors] = useState<DoctorItem[]>([]);
+  const [allAppointments, setAllAppointments] = useState<AptItem[]>([]);
+
+  useEffect(() => {
+    apiFetch<DoctorItem[]>('/doctors').then(setDoctors).catch(() => {});
+    apiFetch<AptItem[]>('/appointments').then(setAllAppointments).catch(() => {});
+  }, []);
+
+  // Filter appointments untuk hari yang dipilih
+  const dayAppointments = useMemo(() => {
+    const selDate = new Date(calYear, calMonth, selectedDay);
+    return allAppointments.filter(apt => {
+      const aptDate = new Date(apt.scheduled_at);
+      return aptDate.getFullYear() === selDate.getFullYear() &&
+             aptDate.getMonth() === selDate.getMonth() &&
+             aptDate.getDate() === selDate.getDate();
+    }).sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime());
+  }, [allAppointments, calYear, calMonth, selectedDay]);
 
   const calCells = useMemo(() => buildCalendar(calYear, calMonth), [calYear, calMonth]);
 
@@ -165,29 +177,35 @@ export default function AppointmentsPage() {
               <h3 className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Dokter Tersedia</h3>
             </div>
             <div className="p-2 space-y-1">
-              {DOCTORS.map((doc) => (
-                <button
-                  key={doc.name}
-                  className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors text-left ${
-                    doc.active
-                      ? "bg-blue-50 dark:bg-blue-900/20"
-                      : "hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-800"
-                  }`}
-                >
-                  <Avatar className="h-10 w-10 rounded-lg">
-                    <AvatarFallback className={doc.active ? "bg-blue-200 text-blue-700" : "bg-slate-200 text-slate-600 dark:text-slate-300"}>
-                      {doc.initials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className={`text-sm font-bold ${doc.active ? "text-[#0D5A94] dark:text-blue-400" : "text-slate-700 dark:text-slate-200"}`}>{doc.name}</p>
-                    {doc.active
-                      ? <span className="text-[10px] text-[#00725d] bg-[#76f9d6]/30 px-1.5 py-0.5 rounded inline-block mt-0.5 font-semibold">{doc.spec}</span>
-                      : <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium">{doc.spec}</p>
-                    }
-                  </div>
-                </button>
-              ))}
+              {doctors.length === 0 ? (
+                <p className="text-xs text-slate-400 text-center py-3">Memuat data dokter...</p>
+              ) : doctors.map((doc) => {
+                const initials = doc.full_name.split(" ").map((w: string) => w[0]).join("").slice(0, 2).toUpperCase();
+                return (
+                  <button
+                    key={doc.id}
+                    className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors text-left ${
+                      doc.is_active
+                        ? "bg-blue-50 dark:bg-blue-900/20"
+                        : "hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-800"
+                    }`}
+                  >
+                    <Avatar className="h-10 w-10 rounded-lg">
+                      <AvatarFallback className={doc.is_active ? "bg-blue-200 text-blue-700" : "bg-slate-200 text-slate-600 dark:text-slate-300"}>
+                        {initials}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className={`text-sm font-bold ${doc.is_active ? "text-[#0D5A94] dark:text-blue-400" : "text-slate-700 dark:text-slate-200"}`}>{doc.full_name}</p>
+                      {doc.specialization?.name && (
+                        doc.is_active
+                          ? <span className="text-[10px] text-[#00725d] bg-[#76f9d6]/30 px-1.5 py-0.5 rounded inline-block mt-0.5 font-semibold">{doc.specialization.name}</span>
+                          : <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5 font-medium">{doc.specialization.name}</p>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
           </Card>
 
@@ -265,57 +283,34 @@ export default function AppointmentsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {MOCK_APPOINTMENTS.map((apt, i) => {
-                      if (apt.status === "break") return (
-                        <tr key={i} className="even:bg-slate-50 dark:bg-slate-800 dark:even:bg-slate-800">
-                          <td className="p-4 border-b border-r border-slate-100 dark:border-slate-800 text-center align-top bg-slate-50 dark:bg-slate-800">
-                            <span className="text-xs font-bold text-slate-500 dark:text-slate-400">{apt.time}</span>
-                          </td>
-                          <td className="p-2 border-b border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800/50 text-center h-16">
-                            <span className="text-xs text-slate-400 uppercase tracking-widest font-bold">Istirahat Siang</span>
-                          </td>
-                        </tr>
-                      );
-
-                      if (apt.status === "empty") return (
-                        <tr key={i} className="even:bg-slate-50 dark:bg-slate-800 dark:even:bg-slate-800">
-                          <td className="p-4 border-b border-r border-slate-100 dark:border-slate-800 text-center align-top bg-white dark:bg-slate-900">
-                            <span className="text-xs font-bold text-slate-600 dark:text-slate-400">{apt.time}</span>
-                          </td>
-                          <td className="p-2 border-b border-slate-100 dark:border-slate-800 h-28 group bg-white dark:bg-slate-900">
-                            <button
-                              onClick={() => setIsFormOpen(true)}
-                              className="w-full h-full flex items-center justify-center border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg group-hover:border-[#0D5A94] group-hover:bg-blue-50 dark:bg-blue-900/20/50 dark:group-hover:bg-blue-900/10 cursor-pointer transition-all"
-                            >
-                              <span className="text-slate-400 group-hover:text-[#0D5A94] dark:text-blue-400 text-sm font-semibold flex items-center gap-2">
-                                <Plus className="h-4 w-4" /> Isi Slot Kosong
-                              </span>
-                            </button>
-                          </td>
-                        </tr>
-                      );
-
-                      const style = STATUS_STYLE[apt.status] || "";
+                    {dayAppointments.length === 0 ? (
+                      <tr>
+                        <td colSpan={2} className="py-12 text-center text-slate-400 text-sm">
+                          Tidak ada jadwal untuk hari ini
+                        </td>
+                      </tr>
+                    ) : dayAppointments.map((apt, i) => {
+                      const time = new Date(apt.scheduled_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+                      const style = STATUS_STYLE[apt.status] || "bg-slate-50 border-slate-300";
                       const label = STATUS_LABEL[apt.status];
                       const Icon = apt.status === "completed" ? CheckCircle : apt.status === "cancelled" ? XCircle : AlertTriangle;
-
                       return (
-                        <tr key={i} className="even:bg-slate-50 dark:bg-slate-800 dark:even:bg-slate-800">
+                        <tr key={apt.id} className="even:bg-slate-50 dark:bg-slate-800 dark:even:bg-slate-800">
                           <td className="p-4 border-b border-r border-slate-100 dark:border-slate-800 text-center align-top bg-white dark:bg-slate-900">
-                            <span className="text-xs font-bold text-slate-600 dark:text-slate-400">{apt.time}</span>
+                            <span className="text-xs font-bold text-slate-600 dark:text-slate-400">{time}</span>
                           </td>
                           <td className="p-2 border-b border-slate-100 dark:border-slate-800 relative h-28 bg-white dark:bg-slate-900">
                             <div className={`border-l-4 rounded-lg p-3 w-11/12 sm:w-[70%] absolute top-2 hover:shadow-md transition-all cursor-pointer ${style}`}>
                               <div className="flex items-center justify-between mb-1">
-                                <h4 className="text-sm font-bold">{apt.patient}</h4>
+                                <h4 className="text-sm font-bold">{apt.patient?.full_name || "Pasien"}</h4>
                                 {label && (
                                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${label.class}`}>{label.label}</span>
                                 )}
                               </div>
-                              <p className="text-xs font-medium opacity-80">{apt.procedure}</p>
+                              <p className="text-xs font-medium opacity-80">{apt.chief_complaint || "-"}</p>
                               <div className="flex items-center gap-1.5 mt-2.5 opacity-70">
                                 <Icon className="h-3.5 w-3.5" />
-                                <span className="text-[11px] font-medium">{apt.duration}</span>
+                                <span className="text-[11px] font-medium">{apt.doctor?.full_name || "Dokter"}</span>
                               </div>
                             </div>
                           </td>

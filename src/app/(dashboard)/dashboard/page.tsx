@@ -9,70 +9,78 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { formatTime, getInitials, formatCurrency } from "@/lib/utils";
 import { APPOINTMENT_STATUS_MAP } from "@/constants";
-import { supabase } from "@/lib/supabase";
+import { apiFetch } from "@/lib/api-client";
 import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [stats, setStats] = useState({
-    todayAppointments: 5,
+    todayAppointments: 0,
     totalPatients: 0,
     monthlyRevenue: 0,
-    criticalStock: 3,
-    completedToday: 2
+    criticalStock: 0,
+    completedToday: 0
   });
   const [recentAppointments, setRecentAppointments] = useState<any[]>([]);
   const [lowStockItems, setLowStockItems] = useState<{ name: string; qty: number; unit: string; urgent: boolean }[]>([]);
 
   useEffect(() => {
     async function fetchDashboard() {
-      // Count Patients
-      const { count: totalPatients } = await supabase
-        .from("patients")
-        .select("*", { count: "exact", head: true });
+      try {
+        // Fetch patients count
+        type Patient = { id: string };
+        const patients = await apiFetch<Patient[]>('/patients').catch(() => []);
+        const totalPatients = patients.length;
 
-      // Calculate Monthly Revenue
-      const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString();
-      const { data: invoices } = await supabase
-        .from("invoices")
-        .select("total_amount")
-        .eq("status", "paid")
-        .gte("issued_at", startOfMonth);
-      
-      const monthlyRevenue = invoices?.reduce((sum, inv) => sum + Number(inv.total_amount), 0) || 0;
+        // Fetch invoices untuk hitung pendapatan bulan ini
+        type Invoice = { total_amount: string; status: string; issued_at: string };
+        const invoices = await apiFetch<Invoice[]>('/invoices').catch(() => []);
+        const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+        const monthlyRevenue = invoices
+          .filter(inv => inv.status === 'paid' && new Date(inv.issued_at) >= startOfMonth)
+          .reduce((sum, inv) => sum + Number(inv.total_amount), 0);
 
-      // Fetch Low Stock Products (stock_quantity <= minimum_stock)
-      const { data: lowStock } = await supabase
-        .from("products")
-        .select("name, stock_quantity, minimum_stock, unit, is_active")
-        .eq("is_active", true)
-        .filter("stock_quantity", "lte", "minimum_stock")
-        .order("stock_quantity", { ascending: true })
-        .limit(5);
+        // Fetch products untuk low stock
+        type Product = { name: string; stock_quantity: number; minimum_stock: number; unit: string; is_active: boolean };
+        const products = await apiFetch<Product[]>('/products').catch(() => []);
+        const lowStock = products
+          .filter(p => p.is_active && p.stock_quantity <= p.minimum_stock)
+          .sort((a, b) => a.stock_quantity - b.stock_quantity)
+          .slice(0, 5);
+        const mappedLowStock = lowStock.map(p => ({
+          name: p.name,
+          qty: p.stock_quantity,
+          unit: `${p.unit} tersisa`,
+          urgent: p.stock_quantity === 0 || p.stock_quantity < p.minimum_stock / 2,
+        }));
+        setLowStockItems(mappedLowStock);
 
-      const mappedLowStock = (lowStock || []).map((p) => ({
-        name: p.name,
-        qty: p.stock_quantity,
-        unit: `${p.unit} tersisa`,
-        urgent: p.stock_quantity === 0 || p.stock_quantity < p.minimum_stock / 2,
-      }));
+        // Fetch appointments untuk jadwal hari ini dan recent
+        type Apt = { id: string; scheduled_at: string; status: string; chief_complaint?: string; patient?: { full_name: string }; doctor?: { full_name: string } };
+        const apts = await apiFetch<Apt[]>('/appointments').catch(() => []);
+        const today = new Date();
+        const todayApts = apts.filter(a => {
+          const d = new Date(a.scheduled_at);
+          return d.getFullYear() === today.getFullYear() &&
+                 d.getMonth() === today.getMonth() &&
+                 d.getDate() === today.getDate();
+        });
+        const completedToday = todayApts.filter(a => a.status === 'completed').length;
+        const recent = apts
+          .sort((a, b) => new Date(b.scheduled_at).getTime() - new Date(a.scheduled_at).getTime())
+          .slice(0, 4);
+        setRecentAppointments(recent);
 
-      setLowStockItems(mappedLowStock);
-      setStats(prev => ({
-        ...prev,
-        totalPatients: totalPatients || 0,
-        monthlyRevenue,
-        criticalStock: mappedLowStock.length,
-      }));
-
-      // Fetch Recent Appointments
-      const { data: apts } = await supabase
-        .from("appointments")
-        .select("*, patient:patients(full_name), doctor:doctors(full_name)")
-        .order("scheduled_at", { ascending: false })
-        .limit(4);
-      
-      if (apts) setRecentAppointments(apts);
+        setStats({
+          totalPatients,
+          monthlyRevenue,
+          criticalStock: mappedLowStock.length,
+          todayAppointments: todayApts.length,
+          completedToday,
+        });
+      } catch (err) {
+        console.error('Dashboard fetch error:', err);
+      }
     }
     fetchDashboard();
   }, []);

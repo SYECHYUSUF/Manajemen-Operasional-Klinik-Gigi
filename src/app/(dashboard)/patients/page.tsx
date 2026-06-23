@@ -11,7 +11,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { formatDateShort, getInitials } from "@/lib/utils";
 import { Patient } from "@/types";
 import { useTable } from "@/hooks/use-table";
-import { supabase } from "@/lib/supabase";
 import { useEffect, useState as useReactState } from "react";
 import { apiFetch } from "@/lib/api-client";
 import { PatientFormDialog } from "@/components/features/patients/patient-form-dialog";
@@ -23,12 +22,35 @@ export default function PatientsPage() {
   const [showCampaignModal, setShowCampaignModal] = useState(false);
   const [dbPatients, setDbPatients] = useReactState<Patient[]>([]);
   const [isLoading, setIsLoading] = useReactState(true);
+  const [patientStats, setPatientStats] = useReactState({
+    total: 0, newThisMonth: 0, activeCases: 0, completedPct: "0%"
+  });
 
   const fetchPatients = async () => {
     setIsLoading(true);
     try {
       const data = await apiFetch<Patient[]>('/patients');
       setDbPatients(data);
+
+      // Hitung stats dari data yang sudah di-fetch
+      const total = data.length;
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const newThisMonth = data.filter(p => new Date(p.created_at) >= startOfMonth).length;
+      const activePatients = data.filter(p => p.is_active).length;
+      const completedPct = total > 0 ? Math.round((activePatients / total) * 100) + "%" : "0%";
+
+      // Fetch appointments untuk hitung kasus aktif
+      try {
+        type Apt = { status: string };
+        const apts = await apiFetch<Apt[]>('/appointments');
+        const activeCases = apts.filter((a) =>
+          ["confirmed", "checked_in", "in_progress"].includes(a.status)
+        ).length;
+        setPatientStats({ total, newThisMonth, activeCases, completedPct });
+      } catch {
+        setPatientStats({ total, newThisMonth, activeCases: 0, completedPct });
+      }
     } catch (error) {
       console.error("Error fetching patients:", error);
     } finally {
@@ -70,10 +92,10 @@ export default function PatientsPage() {
       {/* ── Stats Bento ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Total Pasien", value: "1,284", icon: <Users className="h-6 w-6" />, bg: "bg-blue-50 dark:bg-blue-900/20", color: "text-[#0D5A94] dark:text-blue-400" },
-          { label: "Baru Bulan Ini", value: "42", icon: <TrendingUp className="h-6 w-6" />, bg: "bg-green-50 dark:bg-green-900/20", color: "text-green-600 dark:text-green-400" },
-          { label: "Kasus Aktif", value: "156", icon: <BriefcaseMedical className="h-6 w-6" />, bg: "bg-orange-50", color: "text-orange-600" },
-          { label: "Selesai", value: "89%", icon: <CheckCircle2 className="h-6 w-6" />, bg: "bg-purple-50 dark:bg-purple-900/20", color: "text-purple-600 dark:text-purple-400" },
+          { label: "Total Pasien", value: patientStats.total.toLocaleString("id-ID"), icon: <Users className="h-6 w-6" />, bg: "bg-blue-50 dark:bg-blue-900/20", color: "text-[#0D5A94] dark:text-blue-400" },
+          { label: "Baru Bulan Ini", value: patientStats.newThisMonth.toString(), icon: <TrendingUp className="h-6 w-6" />, bg: "bg-green-50 dark:bg-green-900/20", color: "text-green-600 dark:text-green-400" },
+          { label: "Kasus Aktif", value: patientStats.activeCases.toString(), icon: <BriefcaseMedical className="h-6 w-6" />, bg: "bg-orange-50", color: "text-orange-600" },
+          { label: "Pasien Aktif", value: patientStats.completedPct, icon: <CheckCircle2 className="h-6 w-6" />, bg: "bg-purple-50 dark:bg-purple-900/20", color: "text-purple-600 dark:text-purple-400" },
         ].map((stat, i) => (
           <Card key={i} className="border-slate-100 dark:border-slate-800 shadow-sm shadow-slate-200/50">
             <CardContent className="p-6 flex items-center gap-4">
