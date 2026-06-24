@@ -26,7 +26,7 @@ export default function LoginPage() {
         }
       );
       setToken(data.access_token);
-      router.push("/dashboard");
+      window.location.href = "/dashboard";
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Login gagal. Periksa email dan password Anda.");
     } finally {
