@@ -326,10 +326,10 @@ export default function InventoryPage() {
         <div className="px-6 py-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between bg-slate-50/50 gap-4">
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
             <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider whitespace-nowrap">Katalog Produk</h3>
-            <div className="flex border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-900">
-              {["Semua", "Obat", "Alat"].map(cat => (
+            <div className="flex flex-wrap border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-900">
+              {["Semua", ...categories.map(c => c.name)].map(cat => (
                 <Button key={cat} variant="ghost" onClick={() => { setActiveCategory(cat); setPage(1); }}
-                  className={`px-4 py-1.5 h-auto text-xs font-bold rounded-none ${activeCategory === cat ? "bg-[#0D5A94] text-white hover:bg-[#004271] hover:text-white" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700"}`}>
+                  className={`px-4 py-1.5 h-auto text-xs font-bold rounded-none border-l border-slate-200 dark:border-slate-700 first:border-l-0 ${activeCategory === cat ? "bg-[#0D5A94] text-white hover:bg-[#004271] hover:text-white" : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800"}`}>
                   {cat}
                 </Button>
               ))}
