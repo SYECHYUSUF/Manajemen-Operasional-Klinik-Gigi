@@ -22,7 +22,7 @@ export default function RegisterPage() {
     agreeTerms: false,
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (form.password !== form.confirmPassword) {
       setError("Password dan konfirmasi password tidak cocok.");
