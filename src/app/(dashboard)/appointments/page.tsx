@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import {
   ChevronLeft, ChevronRight, Filter, MoreVertical, Clock,
-  CheckCircle, XCircle, AlertTriangle, Plus, CalendarPlus, X
+  CheckCircle, XCircle, AlertTriangle, Plus, CalendarPlus, X, Stethoscope
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AppointmentFormDialog } from "@/components/features/appointments/appointment-form-dialog";
 import { apiFetch } from "@/lib/api-client";
+import { useRole } from "@/contexts/role-context";
 
 const MONTHS_ID = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
 const DAYS_ID   = ["Min","Sen","Sel","Rab","Kam","Jum","Sab"];
@@ -53,8 +54,8 @@ const STATUS_LABEL: Record<string, { label: string; class: string }> = {
   checked_in:  { label: "Check-In",    class: "text-teal-600 bg-teal-100" },
 };
 
-type DoctorItem = { id: string; full_name: string; specialization?: { name: string } | null; is_active: boolean };
-type AptItem = { id: string; scheduled_at: string; status: string; chief_complaint?: string; patient?: { full_name: string }; doctor?: { full_name: string } };
+type DoctorItem = { id: string; user_id?: string | null; full_name: string; specialization?: { name: string } | null; is_active: boolean };
+type AptItem = { id: string; doctor_id: string; scheduled_at: string; status: string; chief_complaint?: string; patient?: { full_name: string }; doctor?: { full_name: string } };
 
 export default function AppointmentsPage() {
   const today = new Date();
@@ -63,6 +64,7 @@ export default function AppointmentsPage() {
   const [calMonth, setCalMonth] = useState(today.getMonth());
   const [selectedDay, setSelectedDay] = useState(today.getDate());
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const { isDoctor, isAdmin, userId } = useRole();
   const [doctors, setDoctors] = useState<DoctorItem[]>([]);
   const [allAppointments, setAllAppointments] = useState<AptItem[]>([]);
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
@@ -95,16 +97,28 @@ export default function AppointmentsPage() {
     }
   };
 
+  const currentDoctorId = useMemo(() => {
+    return doctors.find(d => d.user_id === userId)?.id;
+  }, [doctors, userId]);
+
+  const filteredAppointments = useMemo(() => {
+    if (isDoctor) {
+      if (!currentDoctorId) return [];
+      return allAppointments.filter(apt => apt.doctor_id === currentDoctorId);
+    }
+    return allAppointments;
+  }, [allAppointments, isDoctor, currentDoctorId]);
+
   // Filter appointments untuk hari yang dipilih
   const dayAppointments = useMemo(() => {
     const selDate = new Date(calYear, calMonth, selectedDay);
-    return allAppointments.filter(apt => {
+    return filteredAppointments.filter(apt => {
       const aptDate = new Date(apt.scheduled_at);
       return aptDate.getFullYear() === selDate.getFullYear() &&
              aptDate.getMonth() === selDate.getMonth() &&
              aptDate.getDate() === selDate.getDate();
     }).sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime());
-  }, [allAppointments, calYear, calMonth, selectedDay]);
+  }, [filteredAppointments, calYear, calMonth, selectedDay]);
 
   const calCells = useMemo(() => buildCalendar(calYear, calMonth), [calYear, calMonth]);
 
@@ -344,9 +358,15 @@ export default function AppointmentsPage() {
                                   )}
                                 </div>
                                 <p className="text-xs font-medium opacity-80">{apt.chief_complaint || "-"}</p>
-                                <div className="flex items-center gap-1.5 mt-2.5 opacity-70">
-                                  <Icon className="h-3.5 w-3.5" />
-                                  <span className="text-[11px] font-medium">{apt.doctor?.full_name || "Dokter"}</span>
+                                <div className="flex items-center justify-between mt-2.5">
+                                  <div className="flex items-center gap-1.5 opacity-70">
+                                    <Icon className="h-3.5 w-3.5" />
+                                    <span className="text-[11px] font-medium">{label?.label || apt.status}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1.5 bg-white/50 dark:bg-slate-900/50 px-2 py-1 rounded-md shadow-sm border border-black/5 dark:border-white/5">
+                                    <Stethoscope className="h-3 w-3 text-[#0D5A94] dark:text-blue-400" />
+                                    <span className="text-[11px] font-bold text-[#0D5A94] dark:text-blue-400">{apt.doctor?.full_name || "Dokter"}</span>
+                                  </div>
                                 </div>
                               </button>
                               

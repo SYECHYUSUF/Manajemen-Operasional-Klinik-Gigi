@@ -104,6 +104,7 @@ class DoctorUpdate(BaseModel):
 class DoctorResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: UUID
+    user_id: Optional[UUID] = None
     doctor_code: str
     full_name: str
     license_number: str

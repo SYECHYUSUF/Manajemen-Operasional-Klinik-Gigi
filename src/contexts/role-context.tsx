@@ -8,6 +8,7 @@ type Role = "admin" | "doctor" | "cashier" | null;
 
 interface RoleContextType {
   role: Role;
+  userId: string | null;
   isLoading: boolean;
   isAdmin: boolean;
   isDoctor: boolean;
@@ -17,6 +18,7 @@ interface RoleContextType {
 
 const RoleContext = createContext<RoleContextType>({
   role: null,
+  userId: null,
   isLoading: true,
   isAdmin: false,
   isDoctor: false,
@@ -26,12 +28,23 @@ const RoleContext = createContext<RoleContextType>({
 
 export function RoleProvider({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<Role>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   const loadRole = () => {
     const r = getRoleFromToken() as Role;
+    const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+    let uid = null;
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+        uid = payload.sub || null;
+      } catch {}
+    }
+    
     setRole(r);
+    setUserId(uid);
     setIsLoading(false);
 
     // Jika token ada tapi cookie belum ada → set cookie + reload sekali
@@ -70,6 +83,7 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   return (
     <RoleContext.Provider value={{
       role,
+      userId,
       isLoading,
       isAdmin: role === "admin",
       isDoctor: role === "doctor",
