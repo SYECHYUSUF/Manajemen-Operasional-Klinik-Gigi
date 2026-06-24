@@ -65,6 +65,15 @@ export default function AppointmentsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [doctors, setDoctors] = useState<DoctorItem[]>([]);
   const [allAppointments, setAllAppointments] = useState<AptItem[]>([]);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = () => setOpenDropdownId(null);
+    if (openDropdownId) {
+      setTimeout(() => window.addEventListener('click', handleClickOutside), 10);
+    }
+    return () => window.removeEventListener('click', handleClickOutside);
+  }, [openDropdownId]);
 
   useEffect(() => {
     apiFetch<DoctorItem[]>('/doctors').then(setDoctors).catch(() => {});
@@ -324,35 +333,39 @@ export default function AppointmentsPage() {
                           </td>
                           <td className="p-2 border-b border-slate-100 dark:border-slate-800 relative h-28 bg-white dark:bg-slate-900">
                             <div className={`w-11/12 sm:w-[70%] absolute top-2 rounded-lg hover:shadow-md transition-all ${style}`}>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger className="w-full text-left p-3 border-l-4 rounded-lg cursor-pointer outline-none focus:ring-2 focus:ring-[#0D5A94] bg-transparent border-inherit text-inherit">
-                                  <div className="flex items-center justify-between mb-1">
-                                    <h4 className="text-sm font-bold">{apt.patient?.full_name || "Pasien"}</h4>
-                                    {label && (
-                                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${label.class}`}>{label.label}</span>
-                                    )}
-                                  </div>
-                                  <p className="text-xs font-medium opacity-80">{apt.chief_complaint || "-"}</p>
-                                  <div className="flex items-center gap-1.5 mt-2.5 opacity-70">
-                                    <Icon className="h-3.5 w-3.5" />
-                                    <span className="text-[11px] font-medium">{apt.doctor?.full_name || "Dokter"}</span>
-                                  </div>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-48 z-50">
-                                  <DropdownMenuLabel className="text-xs">Ubah Status</DropdownMenuLabel>
-                                  <DropdownMenuSeparator />
+                              <button 
+                                onClick={() => setOpenDropdownId(openDropdownId === apt.id ? null : apt.id)}
+                                className="w-full text-left p-3 border-l-4 rounded-lg cursor-pointer outline-none focus:ring-2 focus:ring-[#0D5A94] bg-transparent border-inherit text-inherit"
+                              >
+                                <div className="flex items-center justify-between mb-1">
+                                  <h4 className="text-sm font-bold">{apt.patient?.full_name || "Pasien"}</h4>
+                                  {label && (
+                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${label.class}`}>{label.label}</span>
+                                  )}
+                                </div>
+                                <p className="text-xs font-medium opacity-80">{apt.chief_complaint || "-"}</p>
+                                <div className="flex items-center gap-1.5 mt-2.5 opacity-70">
+                                  <Icon className="h-3.5 w-3.5" />
+                                  <span className="text-[11px] font-medium">{apt.doctor?.full_name || "Dokter"}</span>
+                                </div>
+                              </button>
+                              
+                              {openDropdownId === apt.id && (
+                                <div className="absolute top-[105%] left-0 w-48 z-[9999] bg-white dark:bg-slate-900 shadow-xl border border-slate-200 dark:border-slate-800 rounded-xl p-1 animate-in fade-in-0 zoom-in-95">
+                                  <div className="px-2 py-1.5 text-xs font-semibold text-slate-500">Ubah Status</div>
+                                  <div className="h-px bg-slate-100 dark:bg-slate-800 my-1"></div>
                                   {Object.entries(STATUS_LABEL).map(([val, { label: txt }]) => (
-                                    <DropdownMenuItem 
-                                      key={val} 
+                                    <button
+                                      key={val}
                                       onClick={() => handleUpdateStatus(apt.id, val)}
                                       disabled={val === apt.status}
-                                      className="cursor-pointer"
+                                      className="w-full text-left px-2 py-1.5 text-sm rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-slate-700 dark:text-slate-200"
                                     >
                                       {txt}
-                                    </DropdownMenuItem>
+                                    </button>
                                   ))}
-                                </DropdownMenuContent>
-                              </DropdownMenu>
+                                </div>
+                              )}
                             </div>
                           </td>
                         </tr>
