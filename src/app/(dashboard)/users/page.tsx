@@ -57,7 +57,7 @@ function getInitials(email: string) {
 }
 
 // ─── Modal Tambah Akun ────────────────────────────────────────────────────────
-const EMPTY_FORM = { email: "", password: "", confirmPassword: "", role: "cashier" };
+const EMPTY_FORM = { email: "", password: "", confirmPassword: "", role: "cashier", full_name: "", license_number: "" };
 
 function AddUserModal({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: () => void }) {
   const [mounted, setMounted] = useState(false);
@@ -93,13 +93,28 @@ function AddUserModal({ open, onClose, onSuccess }: { open: boolean; onClose: ()
     if (!form.email || !form.password) { setError("Email dan password wajib diisi."); return; }
     if (form.password.length < 8) { setError("Password minimal 8 karakter."); return; }
     if (form.password !== form.confirmPassword) { setError("Konfirmasi password tidak cocok."); return; }
+    if (form.role === "doctor") {
+      if (!form.full_name.trim()) { setError("Nama lengkap dokter wajib diisi."); return; }
+      if (!form.license_number.trim()) { setError("Nomor SIP (lisensi) wajib diisi."); return; }
+    }
 
     setSaving(true);
     try {
-      await apiFetch("/auth/register", {
+      const user = await apiFetch<{ id: string }>("/auth/register", {
         method: "POST",
         body: JSON.stringify({ email: form.email, password: form.password, role: form.role }),
       });
+      if (form.role === "doctor") {
+        await apiFetch("/doctors", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: user.id,
+            full_name: form.full_name.trim(),
+            license_number: form.license_number.trim(),
+            email: form.email,
+          }),
+        });
+      }
       setSuccess(true);
       setTimeout(() => {
         onClose();
@@ -178,6 +193,33 @@ function AddUserModal({ open, onClose, onSuccess }: { open: boolean; onClose: ()
               <option value="cashier">Kasir</option>
             </select>
           </div>
+
+          {form.role === "doctor" && (
+            <>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Nama Lengkap Dokter *</label>
+                <Input
+                  type="text"
+                  value={form.full_name}
+                  onChange={e => setForm(p => ({ ...p, full_name: e.target.value }))}
+                  placeholder="dr. Nama Lengkap, Sp.KG"
+                  disabled={saving || success}
+                  className="h-10 rounded-xl"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Nomor SIP (Lisensi) *</label>
+                <Input
+                  type="text"
+                  value={form.license_number}
+                  onChange={e => setForm(p => ({ ...p, license_number: e.target.value }))}
+                  placeholder="SIP-XXXX/XXXX/XXXX"
+                  disabled={saving || success}
+                  className="h-10 rounded-xl"
+                />
+              </div>
+            </>
+          )}
 
           <div>
             <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Password *</label>
