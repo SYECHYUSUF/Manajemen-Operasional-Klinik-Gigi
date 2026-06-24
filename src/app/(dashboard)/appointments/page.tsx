@@ -337,7 +337,12 @@ export default function AppointmentsPage() {
                       return (
                         <button
                           key={i}
-                          onClick={() => cell.current && setSelectedDay(cell.day)}
+                          onClick={() => {
+                            if (cell.current) {
+                              setSelectedDay(cell.day);
+                              setView("Harian");
+                            }
+                          }}
                           className={`min-h-[80px] p-2 rounded-lg text-sm text-left transition-colors border flex flex-col items-start overflow-hidden ${
                             !cell.current
                               ? "text-slate-200 dark:text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-900 border-transparent"
