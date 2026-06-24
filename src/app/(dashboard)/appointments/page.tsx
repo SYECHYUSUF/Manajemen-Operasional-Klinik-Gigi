@@ -109,16 +109,33 @@ export default function AppointmentsPage() {
     return allAppointments;
   }, [allAppointments, isDoctor, currentDoctorId]);
 
-  // Filter appointments untuk hari yang dipilih
-  const dayAppointments = useMemo(() => {
+  // Filter appointments berdasarkan tampilan (Harian/Mingguan)
+  const displayedAppointments = useMemo(() => {
     const selDate = new Date(calYear, calMonth, selectedDay);
+    
+    if (view === "Mingguan") {
+      const startOfWeek = new Date(selDate);
+      startOfWeek.setDate(selDate.getDate() - selDate.getDay());
+      startOfWeek.setHours(0, 0, 0, 0);
+
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+      endOfWeek.setHours(23, 59, 59, 999);
+
+      return filteredAppointments.filter(apt => {
+        const aptDate = new Date(apt.scheduled_at);
+        return aptDate >= startOfWeek && aptDate <= endOfWeek;
+      }).sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime());
+    }
+
+    // Default ke Harian
     return filteredAppointments.filter(apt => {
       const aptDate = new Date(apt.scheduled_at);
       return aptDate.getFullYear() === selDate.getFullYear() &&
              aptDate.getMonth() === selDate.getMonth() &&
              aptDate.getDate() === selDate.getDate();
     }).sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime());
-  }, [filteredAppointments, calYear, calMonth, selectedDay]);
+  }, [filteredAppointments, calYear, calMonth, selectedDay, view]);
 
   const calCells = useMemo(() => buildCalendar(calYear, calMonth), [calYear, calMonth]);
 
@@ -133,7 +150,17 @@ export default function AppointmentsPage() {
 
   const selectedDate = new Date(calYear, calMonth, selectedDay);
   const isToday = selectedDate.toDateString() === today.toDateString();
-  const dayLabel = `${DAYS_ID[selectedDate.getDay()]}, ${selectedDay} ${MONTHS_ID[calMonth]}`;
+  
+  let dayLabel = `${DAYS_ID[selectedDate.getDay()]}, ${selectedDay} ${MONTHS_ID[calMonth]}`;
+  if (view === "Mingguan") {
+    const startOfWeek = new Date(selectedDate);
+    startOfWeek.setDate(selectedDate.getDate() - selectedDate.getDay());
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    dayLabel = `${startOfWeek.getDate()} ${MONTHS_ID[startOfWeek.getMonth()]} - ${endOfWeek.getDate()} ${MONTHS_ID[endOfWeek.getMonth()]} ${endOfWeek.getFullYear()}`;
+  } else if (view === "Bulanan") {
+    dayLabel = `Bulan ${MONTHS_ID[calMonth]} ${calYear}`;
+  }
 
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-500">
@@ -301,21 +328,41 @@ export default function AppointmentsPage() {
                       <div key={`mhdr-${i}`} className="text-center text-[10px] font-bold text-slate-400 py-2">{d}</div>
                     ))}
 
-                    {calCells.map((cell, i) => (
-                      <button
-                        key={i}
-                        onClick={() => cell.current && setSelectedDay(cell.day)}
-                        className={`min-h-[60px] p-2 rounded-lg text-sm text-left transition-colors border ${
-                          !cell.current
-                            ? "text-slate-200 dark:text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-900 border-transparent"
-                            : cell.day === selectedDay
-                              ? "bg-blue-50 dark:bg-blue-900/20 border-[#0D5A94] text-[#0D5A94] dark:text-blue-400 font-bold"
-                              : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
-                        }`}
-                      >
-                        {cell.day}
-                      </button>
-                    ))}
+                    {calCells.map((cell, i) => {
+                      const cellApts = cell.current ? filteredAppointments.filter(apt => {
+                        const d = new Date(apt.scheduled_at);
+                        return d.getDate() === cell.day && d.getMonth() === calMonth && d.getFullYear() === calYear;
+                      }).sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime()) : [];
+
+                      return (
+                        <button
+                          key={i}
+                          onClick={() => cell.current && setSelectedDay(cell.day)}
+                          className={`min-h-[80px] p-2 rounded-lg text-sm text-left transition-colors border flex flex-col items-start overflow-hidden ${
+                            !cell.current
+                              ? "text-slate-200 dark:text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-900 border-transparent"
+                              : cell.day === selectedDay
+                                ? "bg-blue-50 dark:bg-blue-900/20 border-[#0D5A94] text-[#0D5A94] dark:text-blue-400 font-bold"
+                                : "bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
+                          }`}
+                        >
+                          <span className="mb-1.5">{cell.day}</span>
+                          <div className="flex flex-col gap-1 w-full flex-1">
+                            {cellApts.slice(0, 2).map(apt => {
+                              const style = STATUS_STYLE[apt.status] || "bg-slate-50 border-slate-300";
+                              return (
+                                <div key={apt.id} className={`text-[9px] px-1.5 py-0.5 rounded truncate ${style} border-l-2 font-medium w-full text-left`}>
+                                  {new Date(apt.scheduled_at).toLocaleTimeString("id-ID", {hour: "2-digit", minute:"2-digit"})} - {apt.patient?.full_name || "Pasien"}
+                                </div>
+                              );
+                            })}
+                            {cellApts.length > 2 && (
+                              <div className="text-[10px] text-[#0D5A94] dark:text-blue-400 font-bold mt-0.5">+{cellApts.length - 2} lagi</div>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               ) : (
@@ -329,21 +376,22 @@ export default function AppointmentsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {dayAppointments.length === 0 ? (
+                    {displayedAppointments.length === 0 ? (
                       <tr>
                         <td colSpan={2} className="py-12 text-center text-slate-400 text-sm">
-                          Tidak ada jadwal untuk hari ini
+                          Tidak ada jadwal untuk {view === "Mingguan" ? "minggu" : "hari"} ini
                         </td>
                       </tr>
-                    ) : dayAppointments.map((apt, i) => {
+                    ) : displayedAppointments.map((apt, i) => {
                       const time = new Date(apt.scheduled_at).toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit" });
+                      const dateStr = view === "Mingguan" ? new Date(apt.scheduled_at).toLocaleDateString("id-ID", { weekday: 'short', day: 'numeric', month: 'short' }) + " - " : "";
                       const style = STATUS_STYLE[apt.status] || "bg-slate-50 border-slate-300";
                       const label = STATUS_LABEL[apt.status];
                       const Icon = apt.status === "completed" ? CheckCircle : apt.status === "cancelled" ? XCircle : AlertTriangle;
                       return (
                         <tr key={apt.id} className="even:bg-slate-50 dark:bg-slate-800 dark:even:bg-slate-800">
                           <td className="p-4 border-b border-r border-slate-100 dark:border-slate-800 text-center align-top bg-white dark:bg-slate-900">
-                            <span className="text-xs font-bold text-slate-600 dark:text-slate-400">{time}</span>
+                            <span className="text-xs font-bold text-slate-600 dark:text-slate-400 block">{dateStr}{time}</span>
                           </td>
                           <td className="p-2 border-b border-slate-100 dark:border-slate-800 relative h-28 bg-white dark:bg-slate-900">
                             <div className={`w-11/12 sm:w-[70%] absolute top-2 rounded-lg hover:shadow-md transition-all ${style}`}>
