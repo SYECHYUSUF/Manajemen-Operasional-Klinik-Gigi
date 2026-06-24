@@ -237,28 +237,6 @@ export default function PatientsPage() {
           </div>
         </div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="relative overflow-hidden rounded-2xl bg-[#0D5A94] p-8 text-white flex flex-col justify-center min-h-[200px]">
-          <div className="relative z-10">
-            <h4 className="text-xl font-bold mb-2">Automated Check-ups</h4>
-            <p className="text-sm text-blue-100 mb-6 leading-relaxed">
-              Jadwalkan pengingat pembersihan karang gigi otomatis untuk pasien yang belum berkunjung lebih dari 6 bulan.
-            </p>
-            <Button onClick={() => setShowCampaignModal(true)} className="bg-white dark:bg-slate-900 text-[#0D5A94] dark:text-blue-400 hover:bg-slate-50 dark:bg-slate-800 font-bold">
-              Mulai Kampanye
-            </Button>
-          </div>
-        </div>
-        <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-100 dark:border-slate-800 flex flex-col justify-center min-h-[200px]">
-          <h4 className="text-xl font-bold text-[#0D5A94] dark:text-blue-400 mb-2">Dental Intelligence</h4>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6 leading-relaxed">
-            Alat diagnostik AI baru kami dapat membantu menganalisis X-ray digital untuk menemukan karies tahap awal dengan akurasi 98%.
-          </p>
-          <button onClick={() => router.push("/help")} className="text-[#0D5A94] dark:text-blue-400 font-bold text-sm hover:underline inline-flex items-center gap-1">
-            Pelajari fitur AI <ChevronRight className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
 
       <PatientFormDialog open={isFormOpen} onOpenChange={(open) => {
         setIsFormOpen(open);

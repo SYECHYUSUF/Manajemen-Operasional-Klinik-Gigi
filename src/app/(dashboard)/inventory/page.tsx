@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useRole } from "@/contexts/role-context";
 import { useRouter } from "next/navigation";
 import { RefreshCw, PlusCircle, Package, AlertTriangle, AlertCircle, DollarSign, Download, MoreVertical, Search, ScanLine, ChevronLeft, ChevronRight, Activity, X } from "lucide-react";
@@ -40,10 +41,13 @@ function getStatus(p: Product) {
 
 
 function AddProductModal({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: () => void }) {
+  const [mounted, setMounted] = useState(false);
   const [form, setForm] = useState({ name: "", code: "", category: "Obat", stock: "", unit: "", purchase_price: "", selling_price: "", minimum_stock: "5" });
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => setMounted(true), []);
 
   const handleSubmit = async () => {
     if (!form.name || !form.code) return;
@@ -71,65 +75,71 @@ function AddProductModal({ open, onClose, onSuccess }: { open: boolean; onClose:
     }
   };
 
-  if (!open) return null;
-  return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 md:pl-[276px]" onClick={onClose}>
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg border border-slate-100 dark:border-slate-800" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white">Tambah Produk Baru</h2>
-          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800"><X className="h-4 w-4 text-slate-400" /></button>
-        </div>
-        <div className="p-6 space-y-4">
-          {error && <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-2.5 rounded-lg font-semibold text-center">{error}</div>}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2">
-              <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Nama Produk *</label>
-              <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="cth: Amoxicillin 500mg" className="h-10 rounded-xl" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Kode Produk *</label>
-              <Input value={form.code} onChange={e => setForm(p => ({ ...p, code: e.target.value }))} placeholder="PH-AMX-500" className="h-10 rounded-xl" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Satuan</label>
-              <Input value={form.unit} onChange={e => setForm(p => ({ ...p, unit: e.target.value }))} placeholder="Box, Strip, Botol..." className="h-10 rounded-xl" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Stok Awal</label>
-              <Input type="number" value={form.stock} onChange={e => setForm(p => ({ ...p, stock: e.target.value }))} placeholder="0" className="h-10 rounded-xl" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Stok Minimum</label>
-              <Input type="number" value={form.minimum_stock} onChange={e => setForm(p => ({ ...p, minimum_stock: e.target.value }))} placeholder="5" className="h-10 rounded-xl" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Harga Beli</label>
-              <Input type="number" value={form.purchase_price} onChange={e => setForm(p => ({ ...p, purchase_price: e.target.value }))} placeholder="0" className="h-10 rounded-xl" />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Harga Jual</label>
-              <Input type="number" value={form.selling_price} onChange={e => setForm(p => ({ ...p, selling_price: e.target.value }))} placeholder="0" className="h-10 rounded-xl" />
-            </div>
+  if (!mounted || !open) return null;
+  return createPortal(
+    <div className="fixed inset-0 z-[100] overflow-y-auto bg-slate-900/50 backdrop-blur-sm">
+      <div className="flex min-h-full items-center justify-center p-4" onMouseDown={e => { if (e.target === e.currentTarget) onClose(); }}>
+        <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Tambah Produk Baru</h2>
+            <button onClick={onClose} className="p-1.5 rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"><X className="h-4 w-4" /></button>
           </div>
-          {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm px-4 py-2.5 rounded-lg font-semibold text-center">✓ Produk berhasil ditambahkan!</div>}
-        </div>
-        <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
-          <Button variant="outline" onClick={onClose}>Batal</Button>
-          <Button onClick={handleSubmit} disabled={saving || !form.name || !form.code} className="bg-[#0D5A94] hover:bg-[#004271] text-white font-bold gap-2 px-6">
-            {saving ? "Menyimpan..." : "Simpan Produk"}
-          </Button>
+          <div className="p-6 space-y-4">
+            {error && <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-2.5 rounded-lg font-semibold text-center">{error}</div>}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2">
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Nama Produk *</label>
+                <Input value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} placeholder="cth: Amoxicillin 500mg" className="h-10 rounded-xl" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Kode Produk *</label>
+                <Input value={form.code} onChange={e => setForm(p => ({ ...p, code: e.target.value }))} placeholder="PH-AMX-500" className="h-10 rounded-xl" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Satuan</label>
+                <Input value={form.unit} onChange={e => setForm(p => ({ ...p, unit: e.target.value }))} placeholder="Box, Strip, Botol..." className="h-10 rounded-xl" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Stok Awal</label>
+                <Input type="number" value={form.stock} onChange={e => setForm(p => ({ ...p, stock: e.target.value }))} placeholder="0" className="h-10 rounded-xl" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Stok Minimum</label>
+                <Input type="number" value={form.minimum_stock} onChange={e => setForm(p => ({ ...p, minimum_stock: e.target.value }))} placeholder="5" className="h-10 rounded-xl" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Harga Beli</label>
+                <Input type="number" value={form.purchase_price} onChange={e => setForm(p => ({ ...p, purchase_price: e.target.value }))} placeholder="0" className="h-10 rounded-xl" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Harga Jual</label>
+                <Input type="number" value={form.selling_price} onChange={e => setForm(p => ({ ...p, selling_price: e.target.value }))} placeholder="0" className="h-10 rounded-xl" />
+              </div>
+            </div>
+            {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm px-4 py-2.5 rounded-lg font-semibold text-center">✓ Produk berhasil ditambahkan!</div>}
+          </div>
+          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
+            <Button variant="outline" onClick={onClose}>Batal</Button>
+            <Button onClick={handleSubmit} disabled={saving || !form.name || !form.code} className="bg-[#0D5A94] hover:bg-[#004271] text-white font-bold gap-2 px-6">
+              {saving ? "Menyimpan..." : "Simpan Produk"}
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
 function RestockModal({ open, onClose, products, onSuccess }: { open: boolean; onClose: () => void; products: Product[]; onSuccess: () => void }) {
+  const [mounted, setMounted] = useState(false);
   const [selected, setSelected] = useState("");
   const [qty, setQty] = useState("");
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => setMounted(true), []);
 
   const handleSubmit = async () => {
     if (!selected || !qty) return;
@@ -149,39 +159,40 @@ function RestockModal({ open, onClose, products, onSuccess }: { open: boolean; o
     }
   };
 
-  if (!open) return null;
-  return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 md:pl-[276px]" onClick={onClose}>
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md border border-slate-100 dark:border-slate-800" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-          <h2 className="text-lg font-bold text-slate-900 dark:text-white">Restock Produk</h2>
-          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800"><X className="h-4 w-4 text-slate-400" /></button>
-        </div>
-        <div className="p-6 space-y-4">
-          {error && <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-2.5 rounded-lg font-semibold">{error}</div>}
-          {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm px-4 py-2.5 rounded-lg font-semibold text-center">✓ Restock berhasil!</div>}
-          <div className="space-y-4">
+  if (!mounted || !open) return null;
+  return createPortal(
+    <div className="fixed inset-0 z-[100] overflow-y-auto bg-slate-900/50 backdrop-blur-sm">
+      <div className="flex min-h-full items-center justify-center p-4" onMouseDown={e => { if (e.target === e.currentTarget) onClose(); }}>
+        <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Restock Produk</h2>
+            <button onClick={onClose} className="p-1.5 rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"><X className="h-4 w-4" /></button>
+          </div>
+          <div className="p-6 space-y-4">
+            {error && <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-2.5 rounded-lg font-semibold">{error}</div>}
+            {success && <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm px-4 py-2.5 rounded-lg font-semibold text-center">✓ Restock berhasil!</div>}
             <div>
               <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Pilih Produk</label>
               <select value={selected} onChange={e => setSelected(e.target.value)} className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm outline-none focus:ring-2 focus:ring-[#0D5A94]/30">
                 <option value="">-- Pilih produk --</option>
                 {products.map(p => <option key={p.id} value={p.id}>{p.name} (Stok: {p.stock_quantity} {p.unit})</option>)}
               </select>
-            </div>  
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Jumlah Tambahan</label>
+              <Input type="number" value={qty} onChange={e => setQty(e.target.value)} placeholder="Masukkan jumlah..." className="h-10 rounded-xl" />
+            </div>
           </div>
-          <div>
-            <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Jumlah Tambahan</label>
-            <Input type="number" value={qty} onChange={e => setQty(e.target.value)} placeholder="Masukkan jumlah..." className="h-10 rounded-xl" />
+          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
+            <Button variant="outline" onClick={onClose}>Batal</Button>
+            <Button onClick={handleSubmit} disabled={saving || !selected || !qty} className="bg-[#006b57] hover:bg-[#004a3c] text-white font-bold gap-2 px-6">
+              <RefreshCw className="h-4 w-4" />{saving ? "Menyimpan..." : "Konfirmasi Restock"}
+            </Button>
           </div>
-        </div>
-        <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
-          <Button variant="outline" onClick={onClose}>Batal</Button>
-          <Button onClick={handleSubmit} disabled={saving || !selected || !qty} className="bg-[#006b57] hover:bg-[#004a3c] text-white font-bold gap-2 px-6">
-            <RefreshCw className="h-4 w-4" />{saving ? "Menyimpan..." : "Konfirmasi Restock"}
-          </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -291,11 +302,11 @@ export default function InventoryPage() {
           <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">{stokHabis}</h3>
           <p className="text-[10px] text-slate-400 mt-2">Perlu pengadaan segera</p>
         </CardContent></Card>
-        <Card className="bg-[#0D5A94] border-transparent shadow-xl text-white"><CardContent className="p-6">
-          <div className="w-10 h-10 bg-white dark:bg-slate-900/10 rounded-lg flex items-center justify-center text-white mb-4"><DollarSign className="h-5 w-5" /></div>
-          <p className="text-blue-200 text-xs font-bold uppercase tracking-wider">Nilai Inventaris</p>
-          <h3 className="text-2xl font-black mt-1">{formatCurrency(nilaiInventaris)}</h3>
-          <div className="w-full bg-white dark:bg-slate-900/20 h-1.5 rounded-full mt-4 overflow-hidden"><div className="bg-[#76f9d6] w-3/4 h-full rounded-full" /></div>
+        <Card className="border-slate-100 dark:border-slate-800 shadow-sm"><CardContent className="p-6">
+          <div className="w-10 h-10 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg flex items-center justify-center text-emerald-600 dark:text-emerald-400 mb-4"><DollarSign className="h-5 w-5" /></div>
+          <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Nilai Inventaris</p>
+          <h3 className="text-2xl font-black text-slate-900 dark:text-white mt-1">{formatCurrency(nilaiInventaris)}</h3>
+          <p className="text-[10px] text-slate-400 mt-2">Total nilai stok saat ini</p>
         </CardContent></Card>
       </div>
 

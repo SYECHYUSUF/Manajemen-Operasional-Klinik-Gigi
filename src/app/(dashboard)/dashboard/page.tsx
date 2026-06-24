@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Download, CalendarIcon, Users, AlertTriangle, DollarSign, MoreVertical, Settings, Banknote } from "lucide-react";
+import { Download, CalendarIcon, Users, AlertTriangle, DollarSign, MoreVertical, Settings, Banknote, CheckCircle2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -118,7 +118,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Key Metrics Grid ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <Card className="border-slate-100 dark:border-slate-800 shadow-sm shadow-slate-200/50">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
@@ -162,26 +162,11 @@ export default function DashboardPage() {
               </span>
             </div>
             <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Critical Stock Items</p>
-            <h3 className="text-3xl font-extrabold text-red-600">0{stats.criticalStock}</h3>
+            <h3 className="text-3xl font-extrabold text-red-600">{stats.criticalStock}</h3>
             <p className="text-xs text-slate-400 mt-2">Items below safety threshold</p>
           </CardContent>
         </Card>
 
-        <Card className="border-slate-100 dark:border-slate-800 shadow-sm shadow-slate-200/50">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-2 bg-slate-50 dark:bg-slate-800 rounded-lg text-[#0D5A94] dark:text-blue-400">
-                <Banknote className="h-7 w-7" />
-              </div>
-              <span className="text-[#006b57] dark:text-green-400 text-[11px] font-bold bg-[#006b57]/10 px-2 py-1 rounded">
-                On track
-              </span>
-            </div>
-            <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Weekly Revenue</p>
-            <h3 className="text-3xl font-extrabold text-[#0D5A94] dark:text-blue-400">{formatCurrency(stats.monthlyRevenue || 14250000)}</h3>
-            <p className="text-xs text-slate-400 mt-2">Target: {formatCurrency(15000000)} (95%)</p>
-          </CardContent>
-        </Card>
       </div>
 
       {/* ── Bento Layout Content ── */}
@@ -254,24 +239,6 @@ export default function DashboardPage() {
         {/* Side Panel (Col 4) */}
         <div className="col-span-1 lg:col-span-4 space-y-6">
           
-          {/* Revenue Goal Card */}
-          <div className="bg-[#0d5a94] text-white p-6 rounded-xl relative overflow-hidden shadow-sm">
-            <div className="relative z-10">
-              <h3 className="text-xl font-bold mb-2">Weekly Goal</h3>
-              <p className="text-blue-100 text-xs mb-6">You are 95% towards your weekly revenue target. Keep it up!</p>
-              <div className="w-full bg-white dark:bg-slate-900/20 h-2 rounded-full mb-4">
-                <div className="bg-[#76f9d6] w-[95%] h-full rounded-full"></div>
-              </div>
-              <div className="flex justify-between text-xs font-bold">
-                <span>{formatCurrency(stats.monthlyRevenue || 14250000)}</span>
-                <span className="text-blue-200">Goal: {formatCurrency(15000000)}</span>
-              </div>
-            </div>
-             <div className="absolute -right-8 -bottom-8 opacity-10 pointer-events-none">
-                <DollarSign className="h-40 w-40" />
-             </div>
-          </div>
-
           {/* Low Stock Alerts */}
           <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
             <div className="p-6 pb-2">
@@ -284,7 +251,7 @@ export default function DashboardPage() {
             </div>
             <CardContent className="p-6 pt-0 space-y-4">
                {lowStockItems.length === 0 ? (
-                 <p className="text-sm text-slate-400 text-center py-3">✅ Semua stok dalam kondisi aman</p>
+                 <p className="text-sm text-slate-400 text-center py-3 flex items-center justify-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" />Semua stok dalam kondisi aman</p>
                ) : (
                  lowStockItems.map((item, i) => (
                    <div key={i} className={`flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800 border-l-4 ${item.urgent ? 'border-red-500' : 'border-amber-400'}`}>
@@ -314,16 +281,6 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
 
-          {/* Clinical Tip Card */}
-          <div className="relative group h-40 rounded-xl overflow-hidden cursor-pointer bg-slate-900">
-             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-5 z-10">
-                <span className="text-[10px] text-blue-300 font-bold uppercase tracking-widest mb-1">Clinic Resources</span>
-                <h4 className="text-white font-bold leading-tight">Digital X-Ray Systems Maintenance Guide</h4>
-             </div>
-             <div className="absolute inset-0 bg-slate-800 group-hover:scale-105 transition-transform duration-500 flex items-center justify-center">
-                 <Settings className="w-16 h-16 text-slate-700 dark:text-slate-300 opacity-50" />
-             </div>
-          </div>
 
         </div>
       </div>
