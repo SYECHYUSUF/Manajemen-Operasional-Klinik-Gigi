@@ -30,10 +30,10 @@ interface AppUser {
 }
 
 const ROLE_CONFIG: Record<string, { label: string; icon: React.ElementType; color: string; bg: string }> = {
-  admin:   { label: "Admin",   icon: Crown,       color: "text-purple-700 dark:text-purple-400", bg: "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800" },
-  doctor:  { label: "Dokter",  icon: Stethoscope, color: "text-[#0D5A94] dark:text-blue-400",    bg: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800" },
-  cashier: { label: "Kasir",   icon: Receipt,     color: "text-amber-700 dark:text-amber-400",   bg: "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800" },
-  patient: { label: "Pasien",  icon: Users,       color: "text-slate-600 dark:text-slate-400",   bg: "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700" },
+  admin: { label: "Admin", icon: Crown, color: "text-purple-700 dark:text-purple-400", bg: "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800" },
+  doctor: { label: "Dokter", icon: Stethoscope, color: "text-[#0D5A94] dark:text-blue-400", bg: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800" },
+  cashier: { label: "Kasir", icon: Receipt, color: "text-amber-700 dark:text-amber-400", bg: "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800" },
+  patient: { label: "Pasien", icon: Users, color: "text-slate-600 dark:text-slate-400", bg: "bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700" },
 };
 
 function fmtDate(d: string | null) {
