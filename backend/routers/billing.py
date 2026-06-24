@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -51,7 +52,19 @@ async def create_invoice(
     invoice_number = await _generate_invoice_number(db)
     items_data = body.items
     invoice_data = body.model_dump(exclude={"items"})
-    invoice = Invoice(**invoice_data, invoice_number=invoice_number, created_by=current_user.id)
+
+    subtotal = sum(Decimal(str(i.unit_price)) * i.quantity for i in items_data)
+    discount = Decimal(str(invoice_data.get("discount_amount", 0)))
+    tax = Decimal(str(invoice_data.get("tax_amount", 0)))
+    total_amount = max(Decimal("0"), subtotal - discount + tax)
+
+    invoice = Invoice(
+        **invoice_data,
+        invoice_number=invoice_number,
+        created_by=current_user.id,
+        subtotal=subtotal,
+        total_amount=total_amount,
+    )
     db.add(invoice)
     await db.flush()  # get invoice.id before adding items
 
@@ -98,6 +111,13 @@ async def create_payment(
         created_by=current_user.id,
     )
     db.add(payment)
+
+    result = await db.execute(select(Invoice).where(Invoice.id == body.invoice_id))
+    invoice = result.scalar_one_or_none()
+    if invoice:
+        from models import InvoiceStatus
+        invoice.status = InvoiceStatus.paid
+
     await db.commit()
     await db.refresh(payment)
     return payment

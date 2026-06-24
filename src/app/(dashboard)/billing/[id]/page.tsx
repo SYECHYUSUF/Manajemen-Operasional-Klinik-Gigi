@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, use } from "react";
+import { createPortal } from "react-dom";
 import {
   ArrowLeft, Printer, CheckCircle, Clock, CreditCard, Banknote,
   Smartphone, X, Receipt,
@@ -20,10 +21,13 @@ function PaymentModal({ open, onClose, invoice, onSuccess }: {
   invoice: any;
   onSuccess: () => void;
 }) {
+  const [mounted, setMounted] = useState(false);
   const [method, setMethod] = useState("cash");
   const [amountPaid, setAmountPaid] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => setMounted(true), []);
 
   const total = Number(invoice?.total_amount || 0);
   const paid = Number(amountPaid) || 0;
@@ -34,17 +38,15 @@ function PaymentModal({ open, onClose, invoice, onSuccess }: {
     setSaving(true);
     setError("");
     try {
-      const payNum = `PAY-${Date.now().toString().slice(-8)}`;
-      await apiFetch(`/invoices/${invoice.id}`, {
+      await apiFetch('/payments', {
         method: 'POST',
         body: JSON.stringify({
-          payment_number: payNum,
+          invoice_id: invoice.id,
           amount: total,
           method: method,
           notes: change > 0 ? `Kembalian: ${formatCurrency(change)}` : null,
         }),
       });
-
       onSuccess();
       onClose();
     } catch (e: any) {
@@ -54,7 +56,7 @@ function PaymentModal({ open, onClose, invoice, onSuccess }: {
     }
   };
 
-  if (!open) return null;
+  if (!mounted || !open) return null;
 
   const methods = [
     { key: "cash", label: "Tunai", icon: Banknote },
@@ -62,111 +64,111 @@ function PaymentModal({ open, onClose, invoice, onSuccess }: {
     { key: "qris", label: "QRIS", icon: Smartphone },
   ];
 
-  return (
-    <div
-      className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4 md:pl-[276px]"
-      onClick={onClose}
-    >
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-[480px] max-w-[calc(100vw-2rem)] border border-slate-100 dark:border-slate-800" onClick={e => e.stopPropagation()}>
-        <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800">
-          <div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Proses Pembayaran</h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{invoice?.invoice_number}</p>
-          </div>
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition-colors">
-            <X className="h-5 w-5 text-slate-400" />
-          </button>
-        </div>
-
-        <div className="p-6 space-y-5">
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-2.5 rounded-lg">
-              {error}
+  return createPortal(
+    <div className="fixed inset-0 z-[100] overflow-y-auto bg-slate-900/50 backdrop-blur-sm">
+      <div
+        className="flex min-h-full items-center justify-center p-4"
+        onMouseDown={e => { if (e.target === e.currentTarget && !saving) onClose(); }}
+      >
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl border border-slate-100 dark:border-slate-800">
+          <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800">
+            <div>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Proses Pembayaran</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{invoice?.invoice_number}</p>
             </div>
-          )}
-
-          {/* Total */}
-          <div className="text-center bg-gradient-to-br from-[#0D5A94] to-[#0a4a7a] rounded-xl p-5 text-white">
-            <p className="text-blue-200 text-xs font-bold uppercase tracking-wider">Total Tagihan</p>
-            <p className="text-3xl font-black mt-1">{formatCurrency(total)}</p>
+            <button onClick={onClose} className="p-2 rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+              <X className="h-5 w-5" />
+            </button>
           </div>
 
-          {/* Method */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-              Metode Pembayaran
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              {methods.map(m => {
-                const Icon = m.icon;
-                return (
+          <div className="p-6 space-y-5">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-2.5 rounded-lg">
+                {error}
+              </div>
+            )}
+
+            <div className="text-center bg-gradient-to-br from-[#0D5A94] to-[#0a4a7a] rounded-xl p-5 text-white">
+              <p className="text-blue-200 text-xs font-bold uppercase tracking-wider">Total Tagihan</p>
+              <p className="text-3xl font-black mt-1">{formatCurrency(total)}</p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                Metode Pembayaran
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {methods.map(m => {
+                  const Icon = m.icon;
+                  return (
+                    <button
+                      key={m.key}
+                      onClick={() => setMethod(m.key)}
+                      className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border text-sm font-semibold transition-all ${
+                        method === m.key
+                          ? "bg-[#0D5A94] text-white border-[#0D5A94] shadow-lg shadow-blue-900/20"
+                          : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-[#0D5A94]"
+                      }`}
+                    >
+                      <Icon className="h-5 w-5" />
+                      {m.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                Jumlah Dibayar (Rp)
+              </label>
+              <Input
+                type="number"
+                min={0}
+                value={amountPaid}
+                onChange={e => setAmountPaid(e.target.value)}
+                placeholder={total.toString()}
+                className="text-lg font-bold rounded-xl h-12"
+                autoFocus
+              />
+            </div>
+
+            <div className="flex gap-2 flex-wrap">
+              {[total, Math.ceil(total / 50000) * 50000, Math.ceil(total / 100000) * 100000]
+                .filter((v, i, a) => a.indexOf(v) === i)
+                .map(amount => (
                   <button
-                    key={m.key}
-                    onClick={() => setMethod(m.key)}
-                    className={`flex flex-col items-center gap-1.5 py-3 rounded-xl border text-sm font-semibold transition-all ${
-                      method === m.key
-                        ? "bg-[#0D5A94] text-white border-[#0D5A94] shadow-lg shadow-blue-900/20"
-                        : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-[#0D5A94]"
-                    }`}
+                    key={amount}
+                    onClick={() => setAmountPaid(amount.toString())}
+                    className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:bg-blue-900/20 hover:border-[#0D5A94] transition-colors"
                   >
-                    <Icon className="h-5 w-5" />
-                    {m.label}
+                    {formatCurrency(amount)}
                   </button>
-                );
-              })}
+                ))}
             </div>
+
+            {paid >= total && paid > 0 && (
+              <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4 text-center">
+                <p className="text-xs text-emerald-600 font-bold uppercase tracking-wider">Kembalian</p>
+                <p className="text-2xl font-black text-emerald-700 dark:text-emerald-400">{formatCurrency(change)}</p>
+              </div>
+            )}
           </div>
 
-          {/* Amount */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-              Jumlah Dibayar (Rp)
-            </label>
-            <Input
-              type="number"
-              min={0}
-              value={amountPaid}
-              onChange={e => setAmountPaid(e.target.value)}
-              placeholder={total.toString()}
-              className="text-lg font-bold rounded-xl h-12"
-              autoFocus
-            />
+          <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex gap-3">
+            <Button variant="outline" onClick={onClose} className="flex-1">Batal</Button>
+            <Button
+              onClick={handlePay}
+              disabled={saving || paid < total}
+              className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
+            >
+              {saving ? "Memproses..." : "Konfirmasi Bayar"}
+            </Button>
           </div>
-
-          {/* Quick amounts */}
-          <div className="flex gap-2 flex-wrap">
-            {[total, Math.ceil(total / 50000) * 50000, Math.ceil(total / 100000) * 100000].filter((v, i, a) => a.indexOf(v) === i).map(amount => (
-              <button
-                key={amount}
-                onClick={() => setAmountPaid(amount.toString())}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-blue-50 dark:bg-blue-900/20 dark:hover:bg-blue-900/20 hover:border-[#0D5A94] transition-colors"
-              >
-                {formatCurrency(amount)}
-              </button>
-            ))}
-          </div>
-
-          {/* Change */}
-          {paid >= total && paid > 0 && (
-            <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4 text-center">
-              <p className="text-xs text-emerald-600 font-bold uppercase tracking-wider">Kembalian</p>
-              <p className="text-2xl font-black text-emerald-700 dark:text-emerald-400">{formatCurrency(change)}</p>
-            </div>
-          )}
-        </div>
-
-        <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex gap-3">
-          <Button variant="outline" onClick={onClose} className="flex-1">Batal</Button>
-          <Button
-            onClick={handlePay}
-            disabled={saving || paid < total}
-            className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold"
-          >
-            {saving ? "Memproses..." : "Konfirmasi Bayar"}
-          </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -186,7 +188,7 @@ function ReceiptView({ invoice, items, payment }: { invoice: any; items: any[]; 
         <div className="flex justify-between"><span className="text-gray-500">No:</span><span className="font-bold">{invoice.invoice_number}</span></div>
         <div className="flex justify-between"><span className="text-gray-500">Tgl:</span><span>{formatDateLong(invoice.issued_at)}</span></div>
         <div className="flex justify-between"><span className="text-gray-500">Jam:</span><span>{formatTime(invoice.issued_at)}</span></div>
-        <div className="flex justify-between"><span className="text-gray-500">Pasien:</span><span className="font-bold">{invoice.patients?.full_name || "—"}</span></div>
+        <div className="flex justify-between"><span className="text-gray-500">Pasien:</span><span className="font-bold">{invoice.patient?.full_name || "—"}</span></div>
       </div>
 
       {/* Items */}
@@ -364,9 +366,9 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
           <div className="p-8 grid grid-cols-1 sm:grid-cols-2 gap-8 border-b border-dashed border-slate-200 dark:border-slate-800">
             <div>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Ditagihkan Kepada:</p>
-              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-1">{invoice.patients?.full_name || "—"}</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400 font-mono">ID: {invoice.patients?.patient_code}</p>
-              {invoice.patients?.phone && <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{invoice.patients.phone}</p>}
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-1">{invoice.patient?.full_name || "—"}</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400 font-mono">ID: {invoice.patient?.patient_code}</p>
+              {invoice.patient?.phone && <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{invoice.patient.phone}</p>}
             </div>
             <div className="sm:text-right">
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Informasi Tagihan:</p>

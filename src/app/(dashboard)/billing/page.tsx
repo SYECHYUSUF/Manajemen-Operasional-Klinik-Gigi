@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   CreditCard, Download, FileText, Filter, PlusCircle, Search,
   DollarSign, ArrowUpRight, ArrowDownRight, Clock, CheckCircle,
@@ -20,6 +21,7 @@ function CreateInvoiceModal({ open, onClose, onSuccess }: {
   onClose: () => void;
   onSuccess: () => void;
 }) {
+  const [mounted, setMounted] = useState(false);
   const [patients, setPatients] = useState<any[]>([]);
   const [services, setServices] = useState<any[]>([]);
   const [form, setForm] = useState({
@@ -30,6 +32,8 @@ function CreateInvoiceModal({ open, onClose, onSuccess }: {
   });
   const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState("");
+
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     if (!open) return;
@@ -59,22 +63,13 @@ function CreateInvoiceModal({ open, onClose, onSuccess }: {
     if (form.service_ids.length === 0) { setToast("Pilih minimal 1 layanan!"); return; }
     setIsSaving(true);
     try {
-      const now = new Date();
-      const invoiceNumber = `INV-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,"0")}${String(now.getDate()).padStart(2,"0")}-${Date.now().toString().slice(-4)}`;
-      const result = await apiFetch('/invoices', {
+      await apiFetch('/invoices', {
         method: 'POST',
         body: JSON.stringify({
-          invoice: {
-            invoice_number: invoiceNumber,
-            patient_id: form.patient_id,
-            subtotal: subtotal,
-            discount_amount: discount,
-            tax_amount: 0,
-            total_amount: totalAmount,
-            status: "issued",
-            issued_at: now.toISOString(),
-            notes: form.notes || null,
-          },
+          patient_id: form.patient_id,
+          discount_amount: discount,
+          tax_amount: 0,
+          notes: form.notes || null,
           items: selectedServices.map(s => ({
             item_type: "service",
             service_id: s.id,
@@ -110,16 +105,16 @@ function CreateInvoiceModal({ open, onClose, onSuccess }: {
       (s.code || "").toLowerCase().includes(serviceSearch.toLowerCase())
     ), [services, serviceSearch]);
 
-  if (!open) return null;
+  if (!mounted || !open) return null;
 
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4 md:pl-[276px]"
-      onClick={onClose}
-    >
+  return createPortal(
+    <div className="fixed inset-0 z-[100] overflow-y-auto bg-slate-900/50 backdrop-blur-sm">
+      <div
+        className="flex min-h-full items-center justify-center p-4"
+        onMouseDown={e => { if (e.target === e.currentTarget && !isSaving) onClose(); }}
+      >
       <div
         className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-slate-100 dark:border-slate-800"
-        onClick={e => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 dark:border-slate-800 shrink-0">
@@ -291,7 +286,9 @@ function CreateInvoiceModal({ open, onClose, onSuccess }: {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </div>,
+    document.body
   );
 }
 
@@ -325,7 +322,7 @@ export default function BillingPage() {
   const filteredInvoices = useMemo(() => {
     return invoices.filter(inv => {
       const displayStatus = inv.status === "paid" ? "Lunas" : inv.status === "cancelled" ? "Batal" : "Pending";
-      const name = inv.patients?.full_name || "";
+      const name = inv.patient?.full_name || "";
       const matchStatus = activeStatus === "Semua" || displayStatus === activeStatus;
       const matchSearch =
         name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -389,7 +386,7 @@ export default function BillingPage() {
               </span>
             </div>
             <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Pendapatan</p>
-            <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1">{formatCurrency(stats.revenue)}</h3>
+            <h3 className="text-xl font-black text-slate-900 dark:text-white mt-1 truncate">{formatCurrency(stats.revenue)}</h3>
           </CardContent>
         </Card>
 
@@ -399,7 +396,7 @@ export default function BillingPage() {
               <Clock className="h-5 w-5" />
             </div>
             <p className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Belum Dibayar</p>
-            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">{formatCurrency(stats.outstanding)}</h3>
+            <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mt-1 truncate">{formatCurrency(stats.outstanding)}</h3>
             <p className="text-[10px] text-slate-400 mt-2 font-medium">Dari {invoices.length - stats.successfulCount} tagihan aktif</p>
           </CardContent>
         </Card>
@@ -467,7 +464,7 @@ export default function BillingPage() {
               onClick={() => {
                 const csv = ["No. Invoice,Pasien,Tanggal,Total,Status",
                   ...filteredInvoices.map(i =>
-                    `${i.invoice_number},${i.patients?.full_name || ""},${formatDateShort(i.issued_at)},${i.total_amount},${i.status === "paid" ? "Lunas" : "Pending"}`
+                    `${i.invoice_number},${i.patient?.full_name || ""},${formatDateShort(i.issued_at)},${i.total_amount},${i.status === "paid" ? "Lunas" : "Pending"}`
                   )].join("\n");
                 const blob = new Blob([csv], { type: "text/csv" });
                 const url = URL.createObjectURL(blob);
@@ -509,7 +506,6 @@ export default function BillingPage() {
                         <FileText className="h-7 w-7 text-slate-400" />
                       </div>
                       <p className="text-slate-500 dark:text-slate-400 font-semibold">Belum ada tagihan</p>
-                      <p className="text-xs text-slate-400 max-w-xs">Buat tagihan baru dengan menekan tombol &quot;Buat Tagihan Baru&quot; di atas.</p>
                     </div>
                   </td>
                 </tr>
@@ -519,7 +515,7 @@ export default function BillingPage() {
                   <tr key={inv.id} className="hover:bg-blue-50/30 dark:hover:bg-blue-900/10 transition-colors group cursor-pointer even:bg-slate-50 dark:bg-slate-800 dark:even:bg-slate-800" onClick={() => router.push(`/billing/${inv.id}`)}>
                     <td className="px-6 py-4 font-bold text-slate-900 dark:text-white font-mono text-xs">{inv.invoice_number}</td>
                     <td className="px-6 py-4">
-                      <p className="font-bold text-slate-900 dark:text-white">{inv.patients?.full_name || "—"}</p>
+                      <p className="font-bold text-slate-900 dark:text-white">{inv.patient?.full_name || "—"}</p>
                       <p className="text-[10px] text-slate-400">Tindakan Medis</p>
                     </td>
                     <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs">{formatDateShort(inv.issued_at)}</td>

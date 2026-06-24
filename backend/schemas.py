@@ -301,6 +301,7 @@ class InvoiceResponse(BaseModel):
     id: UUID
     invoice_number: str
     patient_id: UUID
+    patient: Optional[PatientResponse] = None
     status: str
     subtotal: Decimal
     discount_amount: Decimal
