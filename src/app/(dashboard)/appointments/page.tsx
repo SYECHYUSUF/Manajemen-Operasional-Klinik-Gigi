@@ -323,35 +323,37 @@ export default function AppointmentsPage() {
                             <span className="text-xs font-bold text-slate-600 dark:text-slate-400">{time}</span>
                           </td>
                           <td className="p-2 border-b border-slate-100 dark:border-slate-800 relative h-28 bg-white dark:bg-slate-900">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger className={`border-l-4 text-left rounded-lg p-3 w-11/12 sm:w-[70%] absolute top-2 hover:shadow-md transition-all cursor-pointer outline-none focus:ring-2 focus:ring-[#0D5A94] ${style}`}>
-                                <div className="flex items-center justify-between mb-1">
-                                  <h4 className="text-sm font-bold">{apt.patient?.full_name || "Pasien"}</h4>
-                                  {label && (
-                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${label.class}`}>{label.label}</span>
-                                  )}
-                                </div>
-                                <p className="text-xs font-medium opacity-80">{apt.chief_complaint || "-"}</p>
-                                <div className="flex items-center gap-1.5 mt-2.5 opacity-70">
-                                  <Icon className="h-3.5 w-3.5" />
-                                  <span className="text-[11px] font-medium">{apt.doctor?.full_name || "Dokter"}</span>
-                                </div>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="start" className="w-48">
-                                <DropdownMenuLabel className="text-xs">Ubah Status</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                {Object.entries(STATUS_LABEL).map(([val, { label: txt }]) => (
-                                  <DropdownMenuItem 
-                                    key={val} 
-                                    onClick={() => handleUpdateStatus(apt.id, val)}
-                                    disabled={val === apt.status}
-                                    className="cursor-pointer"
-                                  >
-                                    {txt}
-                                  </DropdownMenuItem>
-                                ))}
-                              </DropdownMenuContent>
-                            </DropdownMenu>
+                            <div className={`w-11/12 sm:w-[70%] absolute top-2 rounded-lg hover:shadow-md transition-all ${style}`}>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger className="w-full text-left p-3 border-l-4 rounded-lg cursor-pointer outline-none focus:ring-2 focus:ring-[#0D5A94] bg-transparent border-inherit text-inherit">
+                                  <div className="flex items-center justify-between mb-1">
+                                    <h4 className="text-sm font-bold">{apt.patient?.full_name || "Pasien"}</h4>
+                                    {label && (
+                                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${label.class}`}>{label.label}</span>
+                                    )}
+                                  </div>
+                                  <p className="text-xs font-medium opacity-80">{apt.chief_complaint || "-"}</p>
+                                  <div className="flex items-center gap-1.5 mt-2.5 opacity-70">
+                                    <Icon className="h-3.5 w-3.5" />
+                                    <span className="text-[11px] font-medium">{apt.doctor?.full_name || "Dokter"}</span>
+                                  </div>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-48 z-50">
+                                  <DropdownMenuLabel className="text-xs">Ubah Status</DropdownMenuLabel>
+                                  <DropdownMenuSeparator />
+                                  {Object.entries(STATUS_LABEL).map(([val, { label: txt }]) => (
+                                    <DropdownMenuItem 
+                                      key={val} 
+                                      onClick={() => handleUpdateStatus(apt.id, val)}
+                                      disabled={val === apt.status}
+                                      className="cursor-pointer"
+                                    >
+                                      {txt}
+                                    </DropdownMenuItem>
+                                  ))}
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
                           </td>
                         </tr>
                       );
