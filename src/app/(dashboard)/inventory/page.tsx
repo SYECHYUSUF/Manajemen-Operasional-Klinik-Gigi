@@ -23,7 +23,7 @@ type Product = {
   stock_quantity: number;
   minimum_stock: number;
   is_active: boolean;
-  category?: { name: string } | null;
+  category?: { id: string, name: string } | null;
 };
 
 type StockMovement = {
