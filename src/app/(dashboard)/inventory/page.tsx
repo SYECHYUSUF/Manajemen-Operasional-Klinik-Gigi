@@ -131,7 +131,7 @@ function RestockModal({ open, onClose, products }: { open: boolean; onClose: () 
 }
 
 export default function InventoryPage() {
-  const { isDoctor, isLoading: roleLoading } = useRole();
+  const { isDoctor, isAdmin, isLoading: roleLoading } = useRole();
   const router = useRouter();
   const [showAdd, setShowAdd] = useState(false);
   const [showRestock, setShowRestock] = useState(false);
@@ -141,8 +141,8 @@ export default function InventoryPage() {
   const PER_PAGE = 5;
 
   useEffect(() => {
-    if (!roleLoading && !isDoctor) router.replace("/dashboard");
-  }, [roleLoading, isDoctor, router]);
+    if (!roleLoading && !isDoctor && !isAdmin) router.replace("/dashboard");
+  }, [roleLoading, isDoctor, isAdmin, router]);
 
   const filtered = useMemo(() => {
     return MOCK_PRODUCTS.filter(p => {
@@ -153,7 +153,7 @@ export default function InventoryPage() {
   }, [activeCategory, searchQuery]);
 
   if (roleLoading) return <div className="flex items-center justify-center h-64 text-slate-400">Memuat...</div>;
-  if (!isDoctor) return null;
+  if (!isDoctor && !isAdmin) return null;
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PER_PAGE));
   const paged = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
