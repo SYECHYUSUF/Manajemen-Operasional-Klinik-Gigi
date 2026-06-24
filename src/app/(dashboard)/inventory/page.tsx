@@ -411,10 +411,8 @@ export default function InventoryPage() {
                       <div className="flex justify-end gap-1 items-center">
                         <Button onClick={() => { setRestockProductId(item.id); setShowRestock(true); }} variant="ghost" size="sm" className="h-7 text-xs text-[#006b57] dark:text-green-400 hover:bg-emerald-50 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Restock</Button>
                         <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94] dark:text-blue-400">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
+                          <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:text-[#0D5A94] hover:bg-slate-100 dark:text-slate-400 dark:hover:text-blue-400 dark:hover:bg-slate-800">
+                            <MoreVertical className="h-4 w-4" />
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="w-40">
                             <DropdownMenuItem onClick={() => { setEditingProduct(item); setShowAdd(true); }}>
