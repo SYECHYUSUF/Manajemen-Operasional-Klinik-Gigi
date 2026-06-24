@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatCurrency } from "@/lib/utils";
 
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+
 type Product = {
   id: string;
   name: string;
@@ -40,9 +42,29 @@ function getStatus(p: Product) {
 }
 
 
-function AddProductModal({ open, onClose, onSuccess, categories }: { open: boolean; onClose: () => void; onSuccess: () => void; categories: {id: string, name: string}[] }) {
+function ProductFormModal({ open, onClose, onSuccess, categories, initialData }: { open: boolean; onClose: () => void; onSuccess: () => void; categories: {id: string, name: string}[]; initialData?: Product | null }) {
   const [mounted, setMounted] = useState(false);
-  const [form, setForm] = useState({ name: "", code: "", product_category_id: "", stock: "", unit: "", purchase_price: "", selling_price: "", minimum_stock: "5" });
+  const [form, setForm] = useState({ 
+    name: "", code: "", product_category_id: "", stock: "", unit: "", 
+    purchase_price: "", selling_price: "", minimum_stock: "5" 
+  });
+  
+  useEffect(() => {
+    if (open && initialData) {
+      setForm({
+        name: initialData.name,
+        code: initialData.code,
+        product_category_id: initialData.category?.id || "",
+        stock: String(initialData.stock_quantity),
+        unit: initialData.unit,
+        purchase_price: String(initialData.purchase_price),
+        selling_price: String(initialData.selling_price),
+        minimum_stock: String(initialData.minimum_stock),
+      });
+    } else if (open) {
+      setForm({ name: "", code: "", product_category_id: "", stock: "", unit: "", purchase_price: "", selling_price: "", minimum_stock: "5" });
+    }
+  }, [open, initialData]);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -54,8 +76,8 @@ function AddProductModal({ open, onClose, onSuccess, categories }: { open: boole
     setSaving(true); setError("");
     try {
       const { apiFetch } = await import("@/lib/api-client");
-      await apiFetch("/products", {
-        method: "POST",
+      await apiFetch(initialData ? `/products/${initialData.id}` : "/products", {
+        method: initialData ? "PUT" : "POST",
         body: JSON.stringify({
           name: form.name,
           code: form.code,
@@ -68,7 +90,7 @@ function AddProductModal({ open, onClose, onSuccess, categories }: { open: boole
         }),
       });
       setSuccess(true);
-      setTimeout(() => { setSuccess(false); onClose(); onSuccess(); setForm({ name: "", code: "", product_category_id: "", stock: "", unit: "", purchase_price: "", selling_price: "", minimum_stock: "5" }); }, 1200);
+      setTimeout(() => { setSuccess(false); onClose(); onSuccess(); }, 1200);
     } catch (e: any) {
       setError(e?.message || "Gagal menyimpan produk");
     } finally {
@@ -82,7 +104,7 @@ function AddProductModal({ open, onClose, onSuccess, categories }: { open: boole
       <div className="flex min-h-full items-center justify-center p-4" onMouseDown={e => { if (e.target === e.currentTarget) onClose(); }}>
         <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800">
           <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Tambah Produk Baru</h2>
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">{initialData ? "Edit Produk" : "Tambah Produk Baru"}</h2>
             <button onClick={onClose} className="p-1.5 rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"><X className="h-4 w-4" /></button>
           </div>
           <div className="p-6 space-y-4">
@@ -109,7 +131,7 @@ function AddProductModal({ open, onClose, onSuccess, categories }: { open: boole
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Stok Awal</label>
-                <Input type="number" value={form.stock} onChange={e => setForm(p => ({ ...p, stock: e.target.value }))} placeholder="0" className="h-10 rounded-xl" />
+                <Input type="number" value={form.stock} onChange={e => setForm(p => ({ ...p, stock: e.target.value }))} placeholder="0" className="h-10 rounded-xl" disabled={!!initialData} />
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Stok Minimum</label>
@@ -129,7 +151,7 @@ function AddProductModal({ open, onClose, onSuccess, categories }: { open: boole
           <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
             <Button variant="outline" onClick={onClose}>Batal</Button>
             <Button onClick={handleSubmit} disabled={saving || !form.name || !form.code} className="bg-[#0D5A94] hover:bg-[#004271] text-white font-bold gap-2 px-6">
-              {saving ? "Menyimpan..." : "Simpan Produk"}
+              {saving ? "Menyimpan..." : (initialData ? "Simpan Perubahan" : "Simpan Produk")}
             </Button>
           </div>
         </div>
@@ -139,7 +161,7 @@ function AddProductModal({ open, onClose, onSuccess, categories }: { open: boole
   );
 }
 
-function RestockModal({ open, onClose, products, onSuccess }: { open: boolean; onClose: () => void; products: Product[]; onSuccess: () => void }) {
+function RestockModal({ open, onClose, products, onSuccess, defaultProductId }: { open: boolean; onClose: () => void; products: Product[]; onSuccess: () => void; defaultProductId?: string }) {
   const [mounted, setMounted] = useState(false);
   const [selected, setSelected] = useState("");
   const [qty, setQty] = useState("");
@@ -148,6 +170,14 @@ function RestockModal({ open, onClose, products, onSuccess }: { open: boolean; o
   const [error, setError] = useState("");
 
   useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    if (open) {
+      setSelected(defaultProductId || "");
+      setQty("");
+      setError("");
+      setSuccess(false);
+    }
+  }, [open, defaultProductId]);
 
   const handleSubmit = async () => {
     if (!selected || !qty) return;
@@ -216,6 +246,8 @@ export default function InventoryPage() {
   const [movements, setMovements] = useState<StockMovement[]>([]);
   const [categories, setCategories] = useState<{id: string, name: string}[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [restockProductId, setRestockProductId] = useState<string>("");
   const PER_PAGE = 5;
 
   const fetchData = async () => {
@@ -274,8 +306,8 @@ export default function InventoryPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-500 max-w-[1440px] mx-auto">
-      <AddProductModal open={showAdd} onClose={() => setShowAdd(false)} onSuccess={fetchData} categories={categories} />
-      <RestockModal open={showRestock} onClose={() => setShowRestock(false)} products={products} onSuccess={fetchData} />
+      <ProductFormModal open={showAdd} onClose={() => { setShowAdd(false); setEditingProduct(null); }} onSuccess={fetchData} categories={categories} initialData={editingProduct} />
+      <RestockModal open={showRestock} onClose={() => { setShowRestock(false); setRestockProductId(""); }} products={products} onSuccess={fetchData} defaultProductId={restockProductId} />
 
       {/* Header — breadcrumb dihapus */}
       <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-4">
@@ -284,10 +316,10 @@ export default function InventoryPage() {
           <p className="text-slate-500 dark:text-slate-400 mt-1">Pantau stok bahan klinis dan farmasi secara real-time.</p>
         </div>
         <div className="flex gap-3 w-full md:w-auto">
-          <Button onClick={() => setShowRestock(true)} variant="outline" className="flex-1 md:flex-none border-2 border-[#006b57] text-[#006b57] dark:text-green-400 font-bold hover:bg-[#006b57]/5 gap-2">
+          <Button onClick={() => { setRestockProductId(""); setShowRestock(true); }} variant="outline" className="flex-1 md:flex-none border-2 border-[#006b57] text-[#006b57] dark:text-green-400 font-bold hover:bg-[#006b57]/5 gap-2">
             <RefreshCw className="h-4 w-4" /> Restock
           </Button>
-          <Button onClick={() => setShowAdd(true)} className="flex-1 md:flex-none bg-[#0D5A94] hover:bg-[#004271] text-white font-bold shadow-lg shadow-blue-900/20 gap-2">
+          <Button onClick={() => { setEditingProduct(null); setShowAdd(true); }} className="flex-1 md:flex-none bg-[#0D5A94] hover:bg-[#004271] text-white font-bold shadow-lg shadow-blue-900/20 gap-2">
             <PlusCircle className="h-4 w-4" /> Tambah Produk
           </Button>
         </div>
@@ -376,9 +408,20 @@ export default function InventoryPage() {
                     <td className="px-6 py-4 text-slate-500 dark:text-slate-400 text-xs font-medium">{item.unit}</td>
                     <td className="px-6 py-4">{statusBadge(status)}</td>
                     <td className="px-6 py-4 text-right">
-                      <div className="flex justify-end gap-1">
-                        <Button onClick={() => setShowRestock(true)} variant="ghost" size="sm" className="h-7 text-xs text-[#006b57] dark:text-green-400 hover:bg-emerald-50 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Restock</Button>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94] dark:text-blue-400"><MoreVertical className="h-4 w-4" /></Button>
+                      <div className="flex justify-end gap-1 items-center">
+                        <Button onClick={() => { setRestockProductId(item.id); setShowRestock(true); }} variant="ghost" size="sm" className="h-7 text-xs text-[#006b57] dark:text-green-400 hover:bg-emerald-50 font-bold opacity-0 group-hover:opacity-100 transition-opacity">Restock</Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-[#0D5A94] dark:text-blue-400">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-40">
+                            <DropdownMenuItem onClick={() => { setEditingProduct(item); setShowAdd(true); }}>
+                              Edit Produk
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </div>
                     </td>
                   </tr>
