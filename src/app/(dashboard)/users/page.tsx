@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import {
   Users, Shield, Search, MoreVertical, UserPlus,
   Crown, Stethoscope, Receipt, X, RefreshCw,
@@ -56,12 +57,36 @@ function getInitials(email: string) {
 }
 
 // ─── Modal Tambah Akun ────────────────────────────────────────────────────────
+const EMPTY_FORM = { email: "", password: "", confirmPassword: "", role: "cashier" };
+
 function AddUserModal({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: () => void }) {
-  const [form, setForm] = useState({ email: "", password: "", confirmPassword: "", role: "cashier" });
+  const [mounted, setMounted] = useState(false);
+  const [form, setForm] = useState(EMPTY_FORM);
   const [showPass, setShowPass] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
+  // Portal hanya boleh render di client (document.body belum ada saat SSR)
+  useEffect(() => setMounted(true), []);
+
+  // Reset state tiap kali modal dibuka, dan kunci scroll body + Escape untuk tutup
+  useEffect(() => {
+    if (!open) return;
+    setForm(EMPTY_FORM);
+    setError("");
+    setSuccess(false);
+    setShowPass(false);
+
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && !saving) onClose(); };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const handleSubmit = async () => {
     setError("");
@@ -77,11 +102,9 @@ function AddUserModal({ open, onClose, onSuccess }: { open: boolean; onClose: ()
       });
       setSuccess(true);
       setTimeout(() => {
-        setSuccess(false);
         onClose();
         onSuccess();
-        setForm({ email: "", password: "", confirmPassword: "", role: "cashier" });
-      }, 1500);
+      }, 1200);
     } catch (e: any) {
       setError(e?.message || "Gagal membuat akun. Email mungkin sudah terdaftar.");
     } finally {
@@ -89,29 +112,43 @@ function AddUserModal({ open, onClose, onSuccess }: { open: boolean; onClose: ()
     }
   };
 
-  if (!open) return null;
-  return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center px-4" onClick={onClose}>
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md border border-slate-100 dark:border-slate-800" onClick={e => e.stopPropagation()}>
+  if (!mounted || !open) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[100] overflow-y-auto bg-slate-900/50 backdrop-blur-sm">
+      <div
+        className="flex min-h-full items-center justify-center p-4"
+        onMouseDown={e => { if (e.target === e.currentTarget && !saving) onClose(); }}
+      >
+      <div className="w-full max-w-2xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-800">
+        {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-[#0D5A94]/10 rounded-lg flex items-center justify-center">
-              <UserPlus className="h-4 w-4 text-[#0D5A94] dark:text-blue-400" />
+            <div className="w-9 h-9 bg-[#0D5A94]/10 rounded-lg flex items-center justify-center">
+              <UserPlus className="h-4.5 w-4.5 text-[#0D5A94] dark:text-blue-400" />
             </div>
-            <h2 className="font-bold text-slate-900 dark:text-white">Tambah Akun Baru</h2>
+            <div>
+              <h2 className="font-bold text-slate-900 dark:text-white leading-tight">Tambah Akun Baru</h2>
+              <p className="text-xs text-slate-400">Buat akun staf klinik</p>
+            </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800">
-            <X className="h-4 w-4 text-slate-400" />
+          <button
+            onClick={() => !saving && onClose()}
+            className="p-1.5 rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-600 transition-colors"
+          >
+            <X className="h-4 w-4" />
           </button>
         </div>
+
+        {/* Body */}
         <div className="p-6 space-y-4">
           {error && (
-            <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-2.5 rounded-xl">
-              <AlertTriangle className="h-4 w-4 shrink-0" />{error}
+            <div className="flex items-start gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm px-4 py-2.5 rounded-xl">
+              <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />{error}
             </div>
           )}
           {success && (
-            <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm px-4 py-2.5 rounded-xl">
+            <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-sm px-4 py-2.5 rounded-xl">
               <CheckCircle2 className="h-4 w-4 shrink-0" />Akun berhasil dibuat!
             </div>
           )}
@@ -123,6 +160,7 @@ function AddUserModal({ open, onClose, onSuccess }: { open: boolean; onClose: ()
               value={form.email}
               onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
               placeholder="nama@klinik.com"
+              disabled={saving || success}
               className="h-10 rounded-xl"
             />
           </div>
@@ -132,6 +170,7 @@ function AddUserModal({ open, onClose, onSuccess }: { open: boolean; onClose: ()
             <select
               value={form.role}
               onChange={e => setForm(p => ({ ...p, role: e.target.value }))}
+              disabled={saving || success}
               className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm text-slate-900 dark:text-white outline-none focus:ring-2 focus:ring-[#0D5A94]/30"
             >
               <option value="admin">Admin</option>
@@ -147,7 +186,9 @@ function AddUserModal({ open, onClose, onSuccess }: { open: boolean; onClose: ()
                 type={showPass ? "text" : "password"}
                 value={form.password}
                 onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
+                onKeyDown={e => { if (e.key === "Enter") handleSubmit(); }}
                 placeholder="Min. 8 karakter"
+                disabled={saving || success}
                 className="h-10 rounded-xl pr-10"
               />
               <button
@@ -163,14 +204,18 @@ function AddUserModal({ open, onClose, onSuccess }: { open: boolean; onClose: ()
           <div>
             <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Konfirmasi Password *</label>
             <Input
-              type="password"
+              type={showPass ? "text" : "password"}
               value={form.confirmPassword}
               onChange={e => setForm(p => ({ ...p, confirmPassword: e.target.value }))}
+              onKeyDown={e => { if (e.key === "Enter") handleSubmit(); }}
               placeholder="Ulangi password"
+              disabled={saving || success}
               className="h-10 rounded-xl"
             />
           </div>
         </div>
+
+        {/* Footer */}
         <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 flex justify-end gap-3">
           <Button variant="outline" onClick={onClose} disabled={saving}>Batal</Button>
           <Button
@@ -182,7 +227,9 @@ function AddUserModal({ open, onClose, onSuccess }: { open: boolean; onClose: ()
           </Button>
         </div>
       </div>
-    </div>
+      </div>
+    </div>,
+    document.body
   );
 }
 
@@ -290,7 +337,7 @@ export default function UsersPage() {
   if (!isAdmin) return null;
 
   return (
-    <div className="space-y-8 animate-in fade-in-50 duration-500 max-w-6xl mx-auto">
+    <div className="space-y-8 max-w-6xl mx-auto">
       {/* Modal */}
       <AddUserModal open={showAdd} onClose={() => setShowAdd(false)} onSuccess={fetchUsers} />
       {deactivateTarget && (
