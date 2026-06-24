@@ -80,7 +80,8 @@ export default function AppointmentsPage() {
       setAllAppointments((prev) =>
         prev.map((apt) => (apt.id === id ? { ...apt, status: updated.status } : apt))
       );
-    } catch (err) {
+    } catch (err: any) {
+      alert("Gagal mengubah status jadwal: " + (err.message || "Unknown error"));
       console.error("Gagal mengubah status jadwal", err);
     }
   };
@@ -323,19 +324,17 @@ export default function AppointmentsPage() {
                           </td>
                           <td className="p-2 border-b border-slate-100 dark:border-slate-800 relative h-28 bg-white dark:bg-slate-900">
                             <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <div className={`border-l-4 rounded-lg p-3 w-11/12 sm:w-[70%] absolute top-2 hover:shadow-md transition-all cursor-pointer outline-none focus:ring-2 focus:ring-[#0D5A94] ${style}`}>
-                                  <div className="flex items-center justify-between mb-1">
-                                    <h4 className="text-sm font-bold">{apt.patient?.full_name || "Pasien"}</h4>
-                                    {label && (
-                                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${label.class}`}>{label.label}</span>
-                                    )}
-                                  </div>
-                                  <p className="text-xs font-medium opacity-80">{apt.chief_complaint || "-"}</p>
-                                  <div className="flex items-center gap-1.5 mt-2.5 opacity-70">
-                                    <Icon className="h-3.5 w-3.5" />
-                                    <span className="text-[11px] font-medium">{apt.doctor?.full_name || "Dokter"}</span>
-                                  </div>
+                              <DropdownMenuTrigger className={`border-l-4 text-left rounded-lg p-3 w-11/12 sm:w-[70%] absolute top-2 hover:shadow-md transition-all cursor-pointer outline-none focus:ring-2 focus:ring-[#0D5A94] ${style}`}>
+                                <div className="flex items-center justify-between mb-1">
+                                  <h4 className="text-sm font-bold">{apt.patient?.full_name || "Pasien"}</h4>
+                                  {label && (
+                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${label.class}`}>{label.label}</span>
+                                  )}
+                                </div>
+                                <p className="text-xs font-medium opacity-80">{apt.chief_complaint || "-"}</p>
+                                <div className="flex items-center gap-1.5 mt-2.5 opacity-70">
+                                  <Icon className="h-3.5 w-3.5" />
+                                  <span className="text-[11px] font-medium">{apt.doctor?.full_name || "Dokter"}</span>
                                 </div>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="start" className="w-48">
