@@ -84,6 +84,7 @@ class SpecializationResponse(BaseModel):
     name: str
 
 class DoctorCreate(BaseModel):
+    user_id: Optional[UUID] = None
     full_name: str
     license_number: str
     specialization_id: Optional[UUID] = None
