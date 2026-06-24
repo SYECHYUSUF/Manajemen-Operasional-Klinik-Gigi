@@ -90,8 +90,8 @@ export default function DashboardPage() {
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-8">
         <div>
-          <h2 className="text-3xl font-extrabold text-[#0D5A94] dark:text-blue-400">Clinic Overview</h2>
-          <p className="text-slate-500 dark:text-slate-400 text-lg">Welcome back. Here is what is happening at DentalCloud today.</p>
+          <h2 className="text-3xl font-extrabold text-[#0D5A94] dark:text-blue-400">Ringkasan Klinik</h2>
+          <p className="text-slate-500 dark:text-slate-400 text-lg">Selamat datang kembali. Berikut adalah ringkasan aktivitas di DentalCloud hari ini.</p>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <Button
@@ -113,12 +113,12 @@ export default function DashboardPage() {
                 <CalendarIcon className="h-5 w-5" />
               </div>
               <span className="text-[#006b57] dark:text-green-400 text-[11px] font-bold bg-[#006b57]/10 px-2 py-1 rounded">
-                +12% vs last week
+                +12% dibanding minggu lalu
               </span>
             </div>
-            <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Today's Appointments</p>
+            <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Janji Temu Hari Ini</p>
             <h3 className="text-3xl font-extrabold text-[#0D5A94] dark:text-blue-400">{stats.todayAppointments}</h3>
-            <p className="text-xs text-slate-400 mt-2">{stats.completedToday} completed, {stats.todayAppointments - stats.completedToday} pending</p>
+            <p className="text-xs text-slate-400 mt-2">{stats.completedToday} selesai, {stats.todayAppointments - stats.completedToday} menunggu</p>
           </CardContent>
         </Card>
 
@@ -129,12 +129,12 @@ export default function DashboardPage() {
                 <Users className="h-5 w-5" />
               </div>
               <span className="text-[#006b57] dark:text-green-400 text-[11px] font-bold bg-[#006b57]/10 px-2 py-1 rounded">
-                New patients (+4)
+                Pasien Baru (+4)
               </span>
             </div>
-            <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Total Patients</p>
+            <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Total Pasien</p>
             <h3 className="text-3xl font-extrabold text-[#0D5A94] dark:text-blue-400">{stats.totalPatients.toLocaleString("id-ID")}</h3>
-            <p className="text-xs text-slate-400 mt-2">Active records updated daily</p>
+            <p className="text-xs text-slate-400 mt-2">Rekam medis aktif</p>
           </CardContent>
         </Card>
 
@@ -145,12 +145,12 @@ export default function DashboardPage() {
                 <AlertTriangle className="h-5 w-5" />
               </div>
               <span className="text-red-600 text-[11px] font-bold bg-red-50 px-2 py-1 rounded">
-                Attention Required
+                Perlu Perhatian
               </span>
             </div>
-            <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Critical Stock Items</p>
+            <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Stok Kritis</p>
             <h3 className="text-3xl font-extrabold text-red-600">{stats.criticalStock}</h3>
-            <p className="text-xs text-slate-400 mt-2">Items below safety threshold</p>
+            <p className="text-xs text-slate-400 mt-2">Barang di bawah batas aman</p>
           </CardContent>
         </Card>
 
@@ -163,21 +163,21 @@ export default function DashboardPage() {
         <Card className="col-span-1 lg:col-span-8 border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
           <CardHeader className="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between space-y-0 pb-4">
             <div>
-              <CardTitle className="text-xl font-bold text-[#0D5A94] dark:text-blue-400">Recent Appointments</CardTitle>
-              <p className="text-xs text-slate-400 mt-1">Live view of current and upcoming sessions</p>
+              <CardTitle className="text-xl font-bold text-[#0D5A94] dark:text-blue-400">Janji Temu Terakhir</CardTitle>
+              <p className="text-xs text-slate-400 mt-1">Tampilan langsung sesi saat ini dan yang akan datang</p>
             </div>
-            <Button variant="link" onClick={() => router.push("/appointments")} className="text-[#0D5A94] dark:text-blue-400 font-bold">View All</Button>
+            <Button variant="link" onClick={() => router.push("/appointments")} className="text-[#0D5A94] dark:text-blue-400 font-bold">Lihat Semua</Button>
           </CardHeader>
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-sm text-left">
               <thead className="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 uppercase text-[10px] font-black tracking-wider">
                 <tr>
-                  <th className="px-6 py-3">Patient</th>
-                  <th className="px-6 py-3">Procedure</th>
-                  <th className="px-6 py-3">Time</th>
-                  <th className="px-6 py-3">Doctor</th>
+                  <th className="px-6 py-3">Pasien</th>
+                  <th className="px-6 py-3">Prosedur</th>
+                  <th className="px-6 py-3">Waktu</th>
+                  <th className="px-6 py-3">Dokter</th>
                   <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3 text-right">Action</th>
+                  <th className="px-6 py-3 text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
@@ -230,9 +230,9 @@ export default function DashboardPage() {
           <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
             <div className="p-6 pb-2">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-[#0D5A94] dark:text-blue-400">Low Stock</h3>
+                <h3 className="text-xl font-bold text-[#0D5A94] dark:text-blue-400">Stok Menipis</h3>
                 <span className="bg-red-600 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
-                  {stats.criticalStock} ALERTS
+                  {stats.criticalStock} PERINGATAN
                 </span>
               </div>
             </div>
