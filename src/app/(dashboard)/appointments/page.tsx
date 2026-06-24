@@ -148,6 +148,30 @@ export default function AppointmentsPage() {
     else setCalMonth(m => m + 1);
   };
 
+  const handlePrevTime = () => {
+    if (view === "Bulanan") {
+      prevMonth();
+    } else {
+      const d = new Date(calYear, calMonth, selectedDay);
+      d.setDate(d.getDate() - (view === "Mingguan" ? 7 : 1));
+      setCalYear(d.getFullYear());
+      setCalMonth(d.getMonth());
+      setSelectedDay(d.getDate());
+    }
+  };
+
+  const handleNextTime = () => {
+    if (view === "Bulanan") {
+      nextMonth();
+    } else {
+      const d = new Date(calYear, calMonth, selectedDay);
+      d.setDate(d.getDate() + (view === "Mingguan" ? 7 : 1));
+      setCalYear(d.getFullYear());
+      setCalMonth(d.getMonth());
+      setSelectedDay(d.getDate());
+    }
+  };
+
   const selectedDate = new Date(calYear, calMonth, selectedDay);
   const isToday = selectedDate.toDateString() === today.toDateString();
   
@@ -297,11 +321,11 @@ export default function AppointmentsPage() {
             {/* Toolbar */}
             <div className="p-4 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition-colors">
+                <button onClick={handlePrevTime} className="p-1.5 rounded-lg hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition-colors">
                   <ChevronLeft className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 </button>
                 <h3 className="text-xl font-bold text-[#0D5A94] dark:text-blue-400">{dayLabel}</h3>
-                <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition-colors">
+                <button onClick={handleNextTime} className="p-1.5 rounded-lg hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-800 transition-colors">
                   <ChevronRight className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                 </button>
                 {isToday && (
