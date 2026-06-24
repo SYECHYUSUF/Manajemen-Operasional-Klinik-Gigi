@@ -89,18 +89,16 @@ export function AppointmentFormDialog({ open, onOpenChange, onSuccess, defaultPa
 
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) { reset(); setErrorMsg(""); setSuccessMsg(""); } onOpenChange(v); }}>
-      <DialogContent className="sm:max-w-[520px] p-0 overflow-hidden bg-white dark:bg-slate-900">
-        <div className="bg-gradient-to-br from-[#0D5A94] to-[#0a4a7a] p-6 text-white">
-          <div className="flex items-center gap-3 mb-1">
-            <CalendarClock className="h-5 w-5 opacity-80" />
-            <DialogHeader>
-              <DialogTitle className="text-xl font-bold text-white">Buat Janji Temu</DialogTitle>
-            </DialogHeader>
+      <DialogContent className="sm:max-w-[520px] bg-white dark:bg-slate-900">
+        <DialogHeader>
+          <div className="flex items-center gap-2">
+            <CalendarClock className="h-5 w-5 text-[#0D5A94] dark:text-blue-400" />
+            <DialogTitle>Buat Janji Temu</DialogTitle>
           </div>
-          <DialogDescription className="text-blue-100 text-sm mt-1">
+          <DialogDescription>
             Isi detail jadwal konsultasi pasien berikut ini.
           </DialogDescription>
-        </div>
+        </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
           {successMsg && (
@@ -152,12 +150,12 @@ export function AppointmentFormDialog({ open, onOpenChange, onSuccess, defaultPa
             <Input {...register("notes")} placeholder="Alergi obat, permintaan khusus, dsb." className="rounded-xl" />
           </div>
 
-          <DialogFooter className="pt-4 border-t border-slate-100 dark:border-slate-800 mt-2">
-            <Button type="button" variant="ghost" onClick={() => { reset(); setErrorMsg(""); onOpenChange(false); }} className="text-slate-500 font-semibold">
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Batal
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="bg-[#0D5A94] hover:bg-[#004271] text-white font-bold gap-2 px-6">
-              {isSubmitting ? <><Loader2 className="h-4 w-4 animate-spin" /> Menyimpan...</> : "Simpan Janji"}
+            <Button type="submit" disabled={isSubmitting} className="bg-[#0D5A94] hover:bg-[#004271] text-white">
+              {isSubmitting ? <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Menyimpan...</> : "Simpan Janji Temu"}
             </Button>
           </DialogFooter>
         </form>
@@ -165,5 +163,4 @@ export function AppointmentFormDialog({ open, onOpenChange, onSuccess, defaultPa
     </Dialog>
   );
 }
-
 

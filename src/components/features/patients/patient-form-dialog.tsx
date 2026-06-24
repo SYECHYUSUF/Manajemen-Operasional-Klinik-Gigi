@@ -105,15 +105,13 @@ export function PatientFormDialog({ open, onOpenChange }: PatientFormDialogProps
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden bg-white">
-        <div className="bg-[#0D5A94] p-6 text-white">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">Tambah Pasien Baru</DialogTitle>
-            <DialogDescription className="text-blue-100 opacity-90">
-              Masukkan data rekam medis awal pasien ke dalam sistem.
-            </DialogDescription>
-          </DialogHeader>
-        </div>
+      <DialogContent className="sm:max-w-[500px] bg-white dark:bg-slate-900">
+        <DialogHeader>
+          <DialogTitle>Tambah Pasien Baru</DialogTitle>
+          <DialogDescription>
+            Masukkan data rekam medis awal pasien ke dalam sistem.
+          </DialogDescription>
+        </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
           {successMsg && (
@@ -207,11 +205,11 @@ export function PatientFormDialog({ open, onOpenChange }: PatientFormDialogProps
             </div>
           </div>
 
-          <DialogFooter className="pt-4 border-t border-slate-100 mt-6">
-            <Button type="button" variant="ghost" onClick={() => onOpenChange(false)} className="text-slate-500 hover:text-slate-700 font-semibold">
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Batal
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="bg-[#006b57] hover:bg-[#005141] text-white font-bold">
+            <Button type="submit" disabled={isSubmitting} className="bg-[#006b57] hover:bg-[#005141] text-white">
               {isSubmitting ? "Menyimpan..." : "Simpan Pasien"}
             </Button>
           </DialogFooter>
