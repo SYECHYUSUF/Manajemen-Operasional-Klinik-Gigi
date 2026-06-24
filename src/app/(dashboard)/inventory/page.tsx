@@ -446,59 +446,6 @@ export default function InventoryPage() {
         </div>
       </Card>
 
-      {/* Pergerakan Stok */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">Pergerakan Stok Terakhir</h4>
-              <Button variant="link" className="text-xs text-[#0D5A94] dark:text-blue-400 font-bold p-0 h-auto">Lihat Semua</Button>
-            </div>
-            <div className="space-y-5">
-              {movements.length === 0 ? (
-                <p className="text-xs text-slate-400 text-center py-4">Belum ada pergerakan stok.</p>
-              ) : movements.slice(0, 5).map((m) => {
-                const prod = products.find(p => p.id === m.product_id);
-                const isIn = m.type === "in";
-                return (
-                  <div key={m.id} className="flex items-start gap-4">
-                    <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${isIn ? "bg-green-500" : "bg-red-500"}`} />
-                    <div className="flex-1">
-                      <p className="text-xs font-bold text-slate-900 dark:text-white">
-                        {isIn ? "Stok Masuk" : "Stok Keluar"}: {prod?.name || m.product_id}
-                      </p>
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
-                        {isIn ? "+" : "-"}{m.quantity} {prod?.unit || ""} {m.notes ? `· ${m.notes}` : ""}
-                      </p>
-                    </div>
-                    <p className="text-[10px] font-bold text-slate-400 whitespace-nowrap">
-                      {new Date(m.created_at).toLocaleDateString("id-ID", { day: "2-digit", month: "short" })}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
-          <CardContent className="p-6">
-            <h4 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider mb-2">Distribusi Vendor</h4>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mb-6">Ringkasan sumber pasokan dan keandalan pengadaan.</p>
-            <div className="space-y-3">
-              {[["Medline Industries", "bg-[#0D5A94]", "45%"], ["Patterson Dental", "bg-[#006b57]", "30%"], ["Lainnya", "bg-slate-200", "25%"]].map(([name, color, pct]) => (
-                <div key={name} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${color}`} />
-                    <span className="text-xs font-medium text-slate-600 dark:text-slate-300">{name}</span>
-                  </div>
-                  <span className="text-xs font-bold text-slate-900 dark:text-white">{pct}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* FAB Scan */}
       <button
