@@ -139,11 +139,6 @@ export function AppTopbar() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/profile")}>
-                <User className="h-4 w-4 text-slate-400 mr-2" /> Profil Saya
-              </DropdownMenuItem>
-
-              <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="text-red-500 focus:text-red-500 focus:bg-red-50 cursor-pointer"
                 onClick={handleLogout}
