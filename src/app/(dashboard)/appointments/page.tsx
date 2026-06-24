@@ -8,6 +8,14 @@ import {
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator
+} from "@/components/ui/dropdown-menu";
 import { AppointmentFormDialog } from "@/components/features/appointments/appointment-form-dialog";
 import { apiFetch } from "@/lib/api-client";
 
@@ -62,6 +70,20 @@ export default function AppointmentsPage() {
     apiFetch<DoctorItem[]>('/doctors').then(setDoctors).catch(() => {});
     apiFetch<AptItem[]>('/appointments').then(setAllAppointments).catch(() => {});
   }, []);
+
+  const handleUpdateStatus = async (id: string, newStatus: string) => {
+    try {
+      const updated = await apiFetch<AptItem>(`/appointments/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({ status: newStatus }),
+      });
+      setAllAppointments((prev) =>
+        prev.map((apt) => (apt.id === id ? { ...apt, status: updated.status } : apt))
+      );
+    } catch (err) {
+      console.error("Gagal mengubah status jadwal", err);
+    }
+  };
 
   // Filter appointments untuk hari yang dipilih
   const dayAppointments = useMemo(() => {
@@ -300,19 +322,37 @@ export default function AppointmentsPage() {
                             <span className="text-xs font-bold text-slate-600 dark:text-slate-400">{time}</span>
                           </td>
                           <td className="p-2 border-b border-slate-100 dark:border-slate-800 relative h-28 bg-white dark:bg-slate-900">
-                            <div className={`border-l-4 rounded-lg p-3 w-11/12 sm:w-[70%] absolute top-2 hover:shadow-md transition-all cursor-pointer ${style}`}>
-                              <div className="flex items-center justify-between mb-1">
-                                <h4 className="text-sm font-bold">{apt.patient?.full_name || "Pasien"}</h4>
-                                {label && (
-                                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${label.class}`}>{label.label}</span>
-                                )}
-                              </div>
-                              <p className="text-xs font-medium opacity-80">{apt.chief_complaint || "-"}</p>
-                              <div className="flex items-center gap-1.5 mt-2.5 opacity-70">
-                                <Icon className="h-3.5 w-3.5" />
-                                <span className="text-[11px] font-medium">{apt.doctor?.full_name || "Dokter"}</span>
-                              </div>
-                            </div>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <div className={`border-l-4 rounded-lg p-3 w-11/12 sm:w-[70%] absolute top-2 hover:shadow-md transition-all cursor-pointer outline-none focus:ring-2 focus:ring-[#0D5A94] ${style}`}>
+                                  <div className="flex items-center justify-between mb-1">
+                                    <h4 className="text-sm font-bold">{apt.patient?.full_name || "Pasien"}</h4>
+                                    {label && (
+                                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${label.class}`}>{label.label}</span>
+                                    )}
+                                  </div>
+                                  <p className="text-xs font-medium opacity-80">{apt.chief_complaint || "-"}</p>
+                                  <div className="flex items-center gap-1.5 mt-2.5 opacity-70">
+                                    <Icon className="h-3.5 w-3.5" />
+                                    <span className="text-[11px] font-medium">{apt.doctor?.full_name || "Dokter"}</span>
+                                  </div>
+                                </div>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="start" className="w-48">
+                                <DropdownMenuLabel className="text-xs">Ubah Status</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                {Object.entries(STATUS_LABEL).map(([val, { label: txt }]) => (
+                                  <DropdownMenuItem 
+                                    key={val} 
+                                    onClick={() => handleUpdateStatus(apt.id, val)}
+                                    disabled={val === apt.status}
+                                    className="cursor-pointer"
+                                  >
+                                    {txt}
+                                  </DropdownMenuItem>
+                                ))}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </td>
                         </tr>
                       );
