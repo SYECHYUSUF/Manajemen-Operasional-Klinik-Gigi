@@ -43,9 +43,15 @@ export function AppointmentFormDialog({ open, onOpenChange, onSuccess, defaultPa
     apiFetch('/doctors').then(d => { if (Array.isArray(d)) setDoctors(d); });
   }, [open]);
 
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<AppointmentFormValues>({
+  const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<AppointmentFormValues>({
     resolver: zodResolver(appointmentSchema),
   });
+
+  const [patientSearch, setPatientSearch] = useState("");
+  const [patientDropdownOpen, setPatientDropdownOpen] = useState(false);
+  const selectedPatientId = watch("patient_id");
+  const selectedPatient = patients.find(p => p.id === selectedPatientId);
+  const filteredPatients = patients.filter(p => p.full_name.toLowerCase().includes(patientSearch.toLowerCase()));
 
   useEffect(() => {
     if (open && defaultPatientId) {
@@ -113,12 +119,50 @@ export function AppointmentFormDialog({ open, onOpenChange, onSuccess, defaultPa
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 relative">
               <Label className="text-slate-700 dark:text-slate-300 font-semibold text-xs uppercase tracking-wider">Pasien</Label>
-              <select {...register("patient_id")} className={selectClass(!!errors.patient_id)}>
-                <option value="">-- Pilih Pasien --</option>
-                {patients.map(p => <option key={p.id} value={p.id}>{p.full_name}</option>)}
-              </select>
+              <div className="relative">
+                <Input
+                  type="text"
+                  placeholder="Cari nama pasien..."
+                  value={patientDropdownOpen ? patientSearch : (selectedPatient?.full_name || "")}
+                  onChange={(e) => {
+                    setPatientSearch(e.target.value);
+                    setPatientDropdownOpen(true);
+                    if (selectedPatientId) setValue("patient_id", "");
+                  }}
+                  onFocus={() => {
+                    setPatientSearch("");
+                    setPatientDropdownOpen(true);
+                  }}
+                  onBlur={() => setPatientDropdownOpen(false)}
+                  className={`rounded-xl ${errors.patient_id ? "border-red-400" : ""}`}
+                />
+                {patientDropdownOpen && (
+                  <div className="absolute top-[105%] left-0 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl max-h-48 overflow-y-auto z-50">
+                    {filteredPatients.length === 0 ? (
+                      <div className="p-3 text-sm text-slate-500 text-center">Pasien tidak ditemukan</div>
+                    ) : (
+                      filteredPatients.map(p => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onMouseDown={(e) => {
+                            e.preventDefault(); // Mencegah input kehilangan fokus terlalu cepat
+                            setValue("patient_id", p.id, { shouldValidate: true });
+                            setPatientSearch("");
+                            setPatientDropdownOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2.5 text-sm hover:bg-slate-50 dark:hover:bg-slate-700 focus:bg-slate-50 outline-none border-b border-slate-50 dark:border-slate-800 last:border-0"
+                        >
+                          <div className="font-semibold">{p.full_name}</div>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+              <input type="hidden" {...register("patient_id")} />
               {errors.patient_id && <p className="text-xs text-red-500">{errors.patient_id.message}</p>}
             </div>
             <div className="space-y-1.5">
