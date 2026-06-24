@@ -179,7 +179,7 @@ export default function DashboardPage() {
               <CardTitle className="text-xl font-bold text-[#0D5A94] dark:text-blue-400">Recent Appointments</CardTitle>
               <p className="text-xs text-slate-400 mt-1">Live view of current and upcoming sessions</p>
             </div>
-            <Button variant="link" className="text-[#0D5A94] dark:text-blue-400 font-bold">View All</Button>
+            <Button variant="link" onClick={() => router.push("/appointments")} className="text-[#0D5A94] dark:text-blue-400 font-bold">View All</Button>
           </CardHeader>
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-sm text-left">
