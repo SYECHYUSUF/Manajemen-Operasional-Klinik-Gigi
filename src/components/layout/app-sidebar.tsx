@@ -19,8 +19,7 @@ const NAV_ITEMS = [
   { label: "Pasien",          href: "/patients",        icon: Users,           roles: ["admin", "doctor", "cashier"] },
   { label: "Jadwal",          href: "/appointments",    icon: CalendarDays,    roles: ["admin", "doctor", "cashier"] },
 
-  // ── Klinis (Dokter saja) ─────────────────────────────────────────────
-  { label: "Rekam Medis",     href: "/medical-records", icon: FileText,        roles: ["doctor"] },
+  // ── Klinis (Dokter / Admin) ──────────────────────────────────────────
   { label: "Inventaris",      href: "/inventory",       icon: Package,         roles: ["admin", "doctor"] },
 
   // ── Keuangan (Admin + Kasir) ─────────────────────────────────────────
