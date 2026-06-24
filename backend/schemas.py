@@ -242,6 +242,8 @@ class ProductResponse(BaseModel):
     id: UUID
     code: str
     name: str
+    product_category_id: Optional[UUID] = None
+    category: Optional[ProductCategoryResponse] = None
     unit: str
     purchase_price: Decimal
     selling_price: Decimal

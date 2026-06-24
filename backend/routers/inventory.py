@@ -5,10 +5,15 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from dependencies import get_db, get_current_user
-from models import Product, StockMovement, User
-from schemas import ProductCreate, ProductUpdate, ProductResponse, StockMovementCreate, StockMovementResponse
+from schemas import ProductCreate, ProductUpdate, ProductResponse, StockMovementCreate, StockMovementResponse, ProductCategoryResponse
+from models import Product, StockMovement, User, ProductCategory
 
 router = APIRouter(tags=["inventory"])
+
+@router.get("/product-categories", response_model=list[ProductCategoryResponse])
+async def list_product_categories(db: AsyncSession = Depends(get_db), _: User = Depends(get_current_user)):
+    result = await db.execute(select(ProductCategory).order_by(ProductCategory.name))
+    return result.scalars().all()
 
 
 @router.get("/products", response_model=list[ProductResponse])

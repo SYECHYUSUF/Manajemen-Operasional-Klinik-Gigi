@@ -40,9 +40,9 @@ function getStatus(p: Product) {
 }
 
 
-function AddProductModal({ open, onClose, onSuccess }: { open: boolean; onClose: () => void; onSuccess: () => void }) {
+function AddProductModal({ open, onClose, onSuccess, categories }: { open: boolean; onClose: () => void; onSuccess: () => void; categories: {id: string, name: string}[] }) {
   const [mounted, setMounted] = useState(false);
-  const [form, setForm] = useState({ name: "", code: "", category: "Obat", stock: "", unit: "", purchase_price: "", selling_price: "", minimum_stock: "5" });
+  const [form, setForm] = useState({ name: "", code: "", product_category_id: "", stock: "", unit: "", purchase_price: "", selling_price: "", minimum_stock: "5" });
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -59,6 +59,7 @@ function AddProductModal({ open, onClose, onSuccess }: { open: boolean; onClose:
         body: JSON.stringify({
           name: form.name,
           code: form.code,
+          product_category_id: form.product_category_id || undefined,
           unit: form.unit || "pcs",
           stock_quantity: Number(form.stock) || 0,
           minimum_stock: Number(form.minimum_stock) || 5,
@@ -67,7 +68,7 @@ function AddProductModal({ open, onClose, onSuccess }: { open: boolean; onClose:
         }),
       });
       setSuccess(true);
-      setTimeout(() => { setSuccess(false); onClose(); onSuccess(); setForm({ name: "", code: "", category: "Obat", stock: "", unit: "", purchase_price: "", selling_price: "", minimum_stock: "5" }); }, 1200);
+      setTimeout(() => { setSuccess(false); onClose(); onSuccess(); setForm({ name: "", code: "", product_category_id: "", stock: "", unit: "", purchase_price: "", selling_price: "", minimum_stock: "5" }); }, 1200);
     } catch (e: any) {
       setError(e?.message || "Gagal menyimpan produk");
     } finally {
@@ -94,6 +95,13 @@ function AddProductModal({ open, onClose, onSuccess }: { open: boolean; onClose:
               <div>
                 <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Kode Produk *</label>
                 <Input value={form.code} onChange={e => setForm(p => ({ ...p, code: e.target.value }))} placeholder="PH-AMX-500" className="h-10 rounded-xl" />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Kategori</label>
+                <select value={form.product_category_id} onChange={e => setForm(p => ({ ...p, product_category_id: e.target.value }))} className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm outline-none focus:border-[#0D5A94] focus:ring-1 focus:ring-[#0D5A94]">
+                  <option value="">-- Pilih Kategori --</option>
+                  {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-600 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Satuan</label>
@@ -206,6 +214,7 @@ export default function InventoryPage() {
   const [page, setPage] = useState(1);
   const [products, setProducts] = useState<Product[]>([]);
   const [movements, setMovements] = useState<StockMovement[]>([]);
+  const [categories, setCategories] = useState<{id: string, name: string}[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const PER_PAGE = 5;
 
@@ -213,12 +222,14 @@ export default function InventoryPage() {
     setIsLoading(true);
     try {
       const { apiFetch } = await import("@/lib/api-client");
-      const [prods, movs] = await Promise.all([
+      const [prods, movs, cats] = await Promise.all([
         apiFetch<Product[]>("/products").catch(() => [] as Product[]),
         apiFetch<StockMovement[]>("/stock-movements").catch(() => [] as StockMovement[]),
+        apiFetch<{id: string, name: string}[]>("/product-categories").catch(() => []),
       ]);
       setProducts(prods);
       setMovements(movs);
+      setCategories(cats);
     } finally {
       setIsLoading(false);
     }
@@ -263,7 +274,7 @@ export default function InventoryPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-500 max-w-[1440px] mx-auto">
-      <AddProductModal open={showAdd} onClose={() => setShowAdd(false)} onSuccess={fetchData} />
+      <AddProductModal open={showAdd} onClose={() => setShowAdd(false)} onSuccess={fetchData} categories={categories} />
       <RestockModal open={showRestock} onClose={() => setShowRestock(false)} products={products} onSuccess={fetchData} />
 
       {/* Header — breadcrumb dihapus */}
