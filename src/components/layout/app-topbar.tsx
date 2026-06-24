@@ -36,7 +36,6 @@ export function AppTopbar() {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
-  const unreadCount = mockNotifications.filter((n) => !n.is_read).length;
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   const [userRole, setUserRole] = useState("admin");
@@ -104,52 +103,6 @@ export function AppTopbar() {
 
         {/* ── Right actions ── */}
         <div className="flex items-center gap-1 ml-auto">
-          {/* Notifications */}
-          <DropdownMenu>
-            <DropdownMenuTrigger className="relative rounded-full p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors outline-none focus:ring-2 focus:ring-[#0d5a94]">
-              <Bell className="h-5 w-5" />
-              {unreadCount > 0 && (
-                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white dark:ring-slate-900" />
-              )}
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80">
-              <DropdownMenuGroup>
-                <DropdownMenuLabel className="flex items-center justify-between">
-                  <span>Notifikasi</span>
-                  {unreadCount > 0 && (
-                    <Badge variant="destructive" className="text-xs h-5 px-1.5">
-                      {unreadCount} baru
-                    </Badge>
-                  )}
-                </DropdownMenuLabel>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              {mockNotifications.map((notif) => (
-                <DropdownMenuItem key={notif.id} className="flex items-start gap-3 py-3 cursor-pointer">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 mt-0.5">
-                    {NOTIFICATION_TYPE_ICON[notif.type] ?? <Bell className="h-4 w-4 text-slate-500" />}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm leading-snug ${!notif.is_read ? "font-semibold" : "font-medium"}`}>
-                      {notif.title}
-                    </p>
-                    {notif.body && (
-                      <p className="text-xs text-slate-500 mt-0.5 line-clamp-2">{notif.body}</p>
-                    )}
-                    <p className="text-[11px] text-slate-400 mt-1">{formatRelative(notif.created_at)}</p>
-                  </div>
-                  {notif.is_read && <Check className="h-3 w-3 text-slate-300 mt-1 shrink-0" />}
-                </DropdownMenuItem>
-              ))}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Link href="/notifications" className="justify-center text-xs font-semibold text-[#0d5a94] w-full flex">
-                  Lihat Semua Notifikasi
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
           {/* Theme Toggle */}
           {mounted && (
             <button
@@ -159,17 +112,6 @@ export function AppTopbar() {
             >
               {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>
-          )}
-
-          {/* Settings shortcut → App Settings (admin only) */}
-          {userRole === "admin" && (
-            <Link
-              href="/pengaturan"
-              className="rounded-full p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hidden sm:flex"
-              title="Pengaturan Aplikasi"
-            >
-              <Settings className="h-5 w-5" />
-            </Link>
           )}
 
           {/* Divider */}
@@ -200,11 +142,7 @@ export function AppTopbar() {
               <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/profile")}>
                 <User className="h-4 w-4 text-slate-400 mr-2" /> Profil Saya
               </DropdownMenuItem>
-              {userRole === "admin" && (
-                <DropdownMenuItem className="cursor-pointer" onClick={() => router.push("/pengaturan")}>
-                  <Settings className="h-4 w-4 text-slate-400 mr-2" /> Pengaturan
-                </DropdownMenuItem>
-              )}
+
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="text-red-500 focus:text-red-500 focus:bg-red-50 cursor-pointer"
