@@ -345,72 +345,13 @@ function MedicalRecordsContent() {
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* Dental Chart */}
-          <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
-            <CardContent className="p-6">
-              <h3 className="text-xs font-bold text-[#0D5A94] dark:text-blue-400 mb-4 flex items-center gap-2 tracking-widest uppercase">
-                <LayoutGrid className="h-4 w-4" /> Status Odontogram
-              </h3>
-              <div className="aspect-square bg-slate-50 dark:bg-slate-800 rounded-lg flex items-center justify-center p-4 border border-dashed border-slate-200 dark:border-slate-700">
-                <div className="grid grid-cols-8 gap-1 w-full h-full content-start">
-                  {[1,2,3,4,5,6,7,8].map(n => (
-                    <div key={n} className={`w-full h-8 rounded flex items-center justify-center text-[10px] font-bold ${n === 3 ? "bg-red-100 border border-red-200 text-red-600" : "bg-blue-50 dark:bg-blue-900/30 text-[#0D5A94] dark:text-blue-400"}`}>{n}</div>
-                  ))}
-                  {[32,31,30,29,28,27,26,25].map(n => (
-                    <div key={n} className={`w-full h-8 rounded flex items-center justify-center text-[10px] font-bold mt-1 ${n === 29 ? "bg-amber-100 border border-amber-200 text-amber-600 dark:text-amber-400" : "bg-blue-50 dark:bg-blue-900/30 text-[#0D5A94] dark:text-blue-400"}`}>{n}</div>
-                  ))}
-                </div>
-              </div>
-              <div className="mt-4 space-y-2">
-                <div className="flex items-center gap-2 text-xs"><span className="w-3 h-3 bg-red-100 border border-red-200 rounded" /><span className="text-slate-500 dark:text-slate-400">Perlu Ekstraksi</span></div>
-                <div className="flex items-center gap-2 text-xs"><span className="w-3 h-3 bg-amber-100 border border-amber-200 rounded" /><span className="text-slate-500 dark:text-slate-400">Pemantauan Karies</span></div>
-              </div>
-            </CardContent>
-          </Card>
+        
 
           {/* Active Medications */}
-          <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
-            <CardContent className="p-6">
-              <h3 className="text-xs font-bold text-[#0D5A94] dark:text-blue-400 mb-4 flex items-center gap-2 tracking-widest uppercase">
-                <Pill className="h-4 w-4" /> Obat Aktif
-              </h3>
-              <div className="space-y-4">
-                <div className="border-l-2 border-[#006b57] pl-3">
-                  <p className="text-sm font-bold text-slate-900 dark:text-white">Chlorhexidine Gluconate 0.12%</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Obat Kumur - 15ml dua kali sehari</p>
-                  <p className="text-[10px] font-semibold text-slate-400 mt-1.5 uppercase">Berakhir 28 Okt 2023</p>
-                </div>
-              </div>
-              <Button
-                onClick={() => setShowPrescription(true)}
-                variant="outline"
-                className="w-full mt-6 border-slate-200 dark:border-slate-700 text-[#0D5A94] dark:text-blue-400 hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-800 font-bold text-xs h-9"
-              >
-                Terbitkan Resep Baru
-              </Button>
-            </CardContent>
-          </Card>
+         
 
           {/* Next Appointment */}
-          <div className="bg-[#0D5A94] rounded-xl p-6 text-white shadow-md shadow-blue-900/20">
-            <h3 className="text-[10px] font-bold uppercase tracking-widest opacity-70 mb-4">Jadwal Berikutnya</h3>
-            <div className="flex items-center gap-4 mb-5">
-              <div className="w-14 h-14 bg-white dark:bg-slate-900/10 rounded-xl flex flex-col items-center justify-center">
-                <span className="text-[10px] font-bold opacity-90">NOV</span>
-                <span className="text-xl font-black">12</span>
-              </div>
-              <div>
-                <p className="font-bold text-base">Pemeriksaan & Polishing</p>
-                <p className="text-xs opacity-80 mt-0.5">09:30 - Ruang 2B</p>
-              </div>
-            </div>
-            <Button
-              onClick={handleConfirmAttendance}
-              className="w-full bg-white dark:bg-slate-900 text-[#0D5A94] dark:text-blue-400 hover:bg-blue-50 dark:bg-blue-900/20 font-black text-xs h-10 tracking-wide"
-            >
-              KONFIRMASI KEHADIRAN
-            </Button>
-          </div>
+         
         </div>
       </div>
     </div>
