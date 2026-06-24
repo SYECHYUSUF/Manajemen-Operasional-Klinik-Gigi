@@ -95,19 +95,6 @@ export default function DashboardPage() {
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <Button
-            variant="outline"
-            onClick={() => {
-              const csv = "Laporan Dashboard DentalCloud\n" + new Date().toLocaleDateString("id-ID");
-              const blob = new Blob([csv], { type: "text/plain" });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement("a"); a.href = url; a.download = "laporan-dashboard.txt"; a.click();
-            }}
-            className="flex-1 sm:flex-none border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-semibold gap-2"
-          >
-            <Download className="h-4 w-4" />
-            Ekspor Laporan
-          </Button>
-          <Button
             onClick={() => router.push("/appointments")}
             className="flex-1 sm:flex-none bg-[#0D5A94] hover:bg-[#004271] text-white font-semibold gap-2"
           >
