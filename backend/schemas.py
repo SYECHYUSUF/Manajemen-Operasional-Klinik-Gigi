@@ -168,6 +168,8 @@ class AppointmentResponse(BaseModel):
     chief_complaint: Optional[str]
     notes: Optional[str]
     created_at: datetime
+    patient: Optional[PatientResponse] = None
+    doctor: Optional[DoctorResponse] = None
 
 
 # ── Medical Records ───────────────────────────────────────────────────────────
