@@ -1,6 +1,7 @@
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
+from typing import Optional
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,8 +13,15 @@ router = APIRouter(prefix="/medical-records", tags=["medical-records"])
 
 
 @router.get("", response_model=list[MedicalRecordResponse])
-async def list_records(db: AsyncSession = Depends(get_db), _: User = Depends(get_current_user)):
-    result = await db.execute(select(MedicalRecord).order_by(MedicalRecord.created_at.desc()))
+async def list_records(
+    patient_id: Optional[UUID] = None,
+    db: AsyncSession = Depends(get_db), 
+    _: User = Depends(get_current_user)
+):
+    query = select(MedicalRecord).order_by(MedicalRecord.created_at.desc())
+    if patient_id:
+        query = query.where(MedicalRecord.patient_id == patient_id)
+    result = await db.execute(query)
     return result.scalars().all()
 
 

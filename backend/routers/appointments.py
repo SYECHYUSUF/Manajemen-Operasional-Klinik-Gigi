@@ -1,6 +1,7 @@
 from datetime import datetime
 from uuid import UUID
 
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,8 +21,15 @@ async def _generate_appointment_code(db: AsyncSession) -> str:
 
 
 @router.get("", response_model=list[AppointmentResponse])
-async def list_appointments(db: AsyncSession = Depends(get_db), _: User = Depends(get_current_user)):
-    result = await db.execute(select(Appointment).order_by(Appointment.scheduled_at.desc()))
+async def list_appointments(
+    patient_id: Optional[UUID] = None,
+    db: AsyncSession = Depends(get_db), 
+    _: User = Depends(get_current_user)
+):
+    query = select(Appointment).order_by(Appointment.scheduled_at.desc())
+    if patient_id:
+        query = query.where(Appointment.patient_id == patient_id)
+    result = await db.execute(query)
     return result.scalars().all()
 
 
