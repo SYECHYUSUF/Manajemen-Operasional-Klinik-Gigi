@@ -62,8 +62,8 @@ export default function DashboardPage() {
         const todayApts = apts.filter(a => {
           const d = new Date(a.scheduled_at);
           return d.getFullYear() === today.getFullYear() &&
-                 d.getMonth() === today.getMonth() &&
-                 d.getDate() === today.getDate();
+            d.getMonth() === today.getMonth() &&
+            d.getDate() === today.getDate();
         });
         const completedToday = todayApts.filter(a => a.status === 'completed').length;
         const recent = apts
@@ -112,9 +112,6 @@ export default function DashboardPage() {
               <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-[#0D5A94] dark:text-blue-400">
                 <CalendarIcon className="h-5 w-5" />
               </div>
-              <span className="text-[#006b57] dark:text-green-400 text-[11px] font-bold bg-[#006b57]/10 px-2 py-1 rounded">
-                +12% dibanding minggu lalu
-              </span>
             </div>
             <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Janji Temu Hari Ini</p>
             <h3 className="text-3xl font-extrabold text-[#0D5A94] dark:text-blue-400">{stats.todayAppointments}</h3>
@@ -128,9 +125,6 @@ export default function DashboardPage() {
               <div className="p-2 bg-teal-50 rounded-lg text-[#006b57] dark:text-green-400">
                 <Users className="h-5 w-5" />
               </div>
-              <span className="text-[#006b57] dark:text-green-400 text-[11px] font-bold bg-[#006b57]/10 px-2 py-1 rounded">
-                Pasien Baru (+4)
-              </span>
             </div>
             <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Total Pasien</p>
             <h3 className="text-3xl font-extrabold text-[#0D5A94] dark:text-blue-400">{stats.totalPatients.toLocaleString("id-ID")}</h3>
@@ -145,7 +139,7 @@ export default function DashboardPage() {
                 <AlertTriangle className="h-5 w-5" />
               </div>
               <span className="text-red-600 text-[11px] font-bold bg-red-50 px-2 py-1 rounded">
-                Perlu Perhatian
+                Stok menipis
               </span>
             </div>
             <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-1">Stok Kritis</p>
@@ -158,7 +152,7 @@ export default function DashboardPage() {
 
       {/* ── Bento Layout Content ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        
+
         {/* Recent Appointments (Col 8) */}
         <Card className="col-span-1 lg:col-span-8 border-slate-100 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col">
           <CardHeader className="p-6 border-b border-slate-100 dark:border-slate-800 flex flex-row items-center justify-between space-y-0 pb-4">
@@ -206,14 +200,14 @@ export default function DashboardPage() {
                       <td className="px-6 py-4 text-slate-500 dark:text-slate-400">{apt.doctor?.full_name?.split(",")[0].replace("drg. ", "Dr. ") || "Dokter"}</td>
                       <td className="px-6 py-4">
                         <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold ${statusInfo.color}`}>
-                           <span className="w-1.5 h-1.5 rounded-full bg-current opacity-75"></span>
-                           {statusInfo.label}
+                          <span className="w-1.5 h-1.5 rounded-full bg-current opacity-75"></span>
+                          {statusInfo.label}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                         <Button variant="ghost" size="icon" className="h-6 w-6 text-slate-400 hover:bg-slate-100 dark:bg-slate-800">
-                           <MoreVertical className="h-4 w-4" />
-                         </Button>
+                        <Button variant="ghost" size="icon" className="h-6 w-6 text-slate-400 hover:bg-slate-100 dark:bg-slate-800">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
                       </td>
                     </tr>
                   );
@@ -225,7 +219,7 @@ export default function DashboardPage() {
 
         {/* Side Panel (Col 4) */}
         <div className="col-span-1 lg:col-span-4 space-y-6">
-          
+
           {/* Low Stock Alerts */}
           <Card className="border-slate-100 dark:border-slate-800 shadow-sm">
             <div className="p-6 pb-2">
@@ -237,34 +231,34 @@ export default function DashboardPage() {
               </div>
             </div>
             <CardContent className="p-6 pt-0 space-y-4">
-               {lowStockItems.length === 0 ? (
-                 <p className="text-sm text-slate-400 text-center py-3 flex items-center justify-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" />Semua stok dalam kondisi aman</p>
-               ) : (
-                 lowStockItems.map((item, i) => (
-                   <div key={i} className={`flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800 border-l-4 ${item.urgent ? 'border-red-500' : 'border-amber-400'}`}>
-                     <div>
-                       <p className="text-sm font-bold text-slate-700 dark:text-slate-300">{item.name}</p>
-                       <p className="text-xs text-slate-500 dark:text-slate-400">{item.qty} {item.unit}</p>
-                     </div>
-                     <Link href="/inventory">
-                       <Button
-                         variant="ghost"
-                         className="text-[#0D5A94] dark:text-blue-400 text-[12px] font-bold hover:bg-white dark:bg-slate-900 px-2 py-1 h-auto transition-colors"
-                       >
-                         Kelola
-                       </Button>
-                     </Link>
-                   </div>
-                 ))
-               )}
-               <Link href="/inventory">
-                 <Button
-                   variant="outline"
-                   className="w-full mt-4 border-[#0D5A94] text-[#0D5A94] dark:text-blue-400 hover:bg-[#0D5A94] hover:text-white transition-all font-bold"
-                 >
-                   Kelola Inventaris
-                 </Button>
-               </Link>
+              {lowStockItems.length === 0 ? (
+                <p className="text-sm text-slate-400 text-center py-3 flex items-center justify-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500" />Semua stok dalam kondisi aman</p>
+              ) : (
+                lowStockItems.map((item, i) => (
+                  <div key={i} className={`flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-800 border-l-4 ${item.urgent ? 'border-red-500' : 'border-amber-400'}`}>
+                    <div>
+                      <p className="text-sm font-bold text-slate-700 dark:text-slate-300">{item.name}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{item.qty} {item.unit}</p>
+                    </div>
+                    <Link href="/inventory">
+                      <Button
+                        variant="ghost"
+                        className="text-[#0D5A94] dark:text-blue-400 text-[12px] font-bold hover:bg-white dark:bg-slate-900 px-2 py-1 h-auto transition-colors"
+                      >
+                        Kelola
+                      </Button>
+                    </Link>
+                  </div>
+                ))
+              )}
+              <Link href="/inventory">
+                <Button
+                  variant="outline"
+                  className="w-full mt-4 border-[#0D5A94] text-[#0D5A94] dark:text-blue-400 hover:bg-[#0D5A94] hover:text-white transition-all font-bold"
+                >
+                  Kelola Inventaris
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
