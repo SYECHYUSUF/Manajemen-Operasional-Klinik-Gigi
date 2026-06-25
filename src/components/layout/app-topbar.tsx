@@ -215,11 +215,6 @@ export function AppTopbar() {
                 )}
               </div>
             </div>
-
-            <div className="px-4 py-2.5 border-t border-slate-100 dark:border-slate-800 flex items-center gap-4 text-[10px] text-slate-400">
-              <span><kbd className="font-mono font-bold">↵</kbd> Pilih</span>
-              <span><kbd className="font-mono font-bold">Esc</kbd> Tutup</span>
-            </div>
           </div>
         </div>
       )}
