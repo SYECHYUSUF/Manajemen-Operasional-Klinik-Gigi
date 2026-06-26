@@ -35,8 +35,14 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // 2. Cek RBAC hanya jika cookie role sudah ada
-  //    Jika cookie belum ada, biarkan lewat — client-side (role-context) yang handle
+  // 2. Tidak ada session → redirect ke login
+  if (!role && !isPublic) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
+  }
+
+  // 3. Cek RBAC untuk route yang memerlukan role tertentu
   if (role) {
     for (const [route, allowedRoles] of Object.entries(ROLE_ROUTES)) {
       if (pathname.startsWith(route) && !allowedRoles.includes(role)) {
