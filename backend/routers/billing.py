@@ -7,7 +7,7 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from dependencies import get_db, get_current_user
-from models import Invoice, InvoiceItem, Payment, User
+from models import Invoice, InvoiceItem, InvoiceStatus, Payment, User
 from schemas import (
     InvoiceCreate, InvoiceUpdate, InvoiceResponse,
     PaymentCreate, PaymentResponse,
@@ -83,6 +83,8 @@ async def update_invoice(invoice_id: UUID, body: InvoiceUpdate, db: AsyncSession
     invoice = result.scalar_one_or_none()
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
+    if invoice.status == InvoiceStatus.paid:
+        raise HTTPException(status_code=409, detail="Invoice yang sudah lunas tidak dapat diubah")
     for field, value in body.model_dump(exclude_none=True).items():
         setattr(invoice, field, value)
     await db.commit()

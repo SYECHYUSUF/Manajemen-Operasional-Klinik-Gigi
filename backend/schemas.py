@@ -29,6 +29,23 @@ class UserResponse(BaseModel):
     is_active: bool
     created_at: datetime
 
+class UserMeResponse(BaseModel):
+    id: UUID
+    email: str
+    role: str
+    is_active: bool
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    license_number: Optional[str] = None
+    specialization_name: Optional[str] = None
+
+class UserMeUpdate(BaseModel):
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    license_number: Optional[str] = None
+
 
 # ── Patients ────────────────────────────────────────────────────────────────
 
